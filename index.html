@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#16242e">
+<title>Pattern Lab — JEE pattern-recognition trainer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<header>
+  <div class="topbar">
+    <div class="brand"><svg viewBox="0 0 40 40"><path d="M2 20 Q 7 9 12 20 T 22 20 T 32 20 T 38 20" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg>Pattern Lab</div>
+    <button class="who" id="who">Choose profile</button>
+  </div>
+
+  <div id="selbar">
+    <div class="selgrp"><span class="sl">Subject</span><div class="selrow" id="sel-subjects"></div></div>
+    <div class="selgrp"><span class="sl">Topic</span><div class="selrow" id="sel-subs"></div></div>
+    <div class="selgrp"><span class="sl">Chapter</span><div class="selrow" id="sel-chaps"></div></div>
+  </div>
+
+  <h1 id="wtitle"></h1>
+  <div class="wsub" id="wsub"></div>
+  <svg class="wave" viewBox="0 0 400 14" preserveAspectRatio="none"><path d="M0 7 Q 25 0 50 7 T 100 7 T 150 7 T 200 7 T 250 7 T 300 7 T 350 7 T 400 7"/></svg>
+</header>
+
+<nav id="tabs">
+  <button data-tab="map" class="on"><span class="n">L0</span>Map</button>
+  <button data-tab="formulae"><span class="n">L1</span>Formulae</button>
+  <button data-tab="patterns"><span class="n">L2</span>Patterns</button>
+  <button data-tab="guided"><span class="n">L3</span>Guided</button>
+  <button data-tab="practice"><span class="n">L4</span>Practice</button>
+  <button data-tab="review"><span class="n">L5</span>Review</button>
+  <button data-tab="cards"><span class="n">L6</span>Cards</button>
+</nav>
+
+<main>
+  <section class="panel on" id="map">
+    <div class="lead">Coverage Map</div>
+    <div class="lead-sub">The chapter's full method &amp; pattern universe × three difficulty tiers, counted live from the question bank. Red cells are gaps — that's where to add next.</div>
+    <div class="cov-summary" id="cov-summary"></div>
+    <div class="cov-block" id="cov-patterns"></div>
+    <div class="cov-block" id="cov-types"></div>
+  </section>
+
+  <section class="panel" id="formulae">
+    <div class="lead">Formula Arsenal</div>
+    <div class="lead-sub">Bucketed by what they do, each with the trigger that tells you to reach for it. Tap a bucket to open.</div>
+    <div id="bucket-list"></div>
+  </section>
+
+  <section class="panel" id="patterns">
+    <div class="lead">Pattern Library</div>
+    <div class="lead-sub">The named tricks — 18 of them. Read the <b>trigger</b> first; that's the cue you train to spot before computing. Built from Cengage Illustrations 1.1–1.70.</div>
+    <div id="pattern-list"></div>
+  </section>
+
+  <section class="panel" id="guided">
+    <div class="lead">Guided Problems</div>
+    <div class="lead-sub">Laddered Foundation → Main → Advanced. Pick the pattern first, then reveal hints one at a time. The Advanced tier mixes patterns — that's real JEE.</div>
+    <div id="guided-list"></div>
+  </section>
+
+  <section class="panel" id="practice">
+    <div class="lead">Independent Practice</div>
+    <div class="lead-sub">Interleaved across patterns, tiers and every Cengage question-type. Attempt, reveal the official answer + pattern, then log how it went.</div>
+    <div class="filterbar" id="prac-filter"></div>
+    <div id="practice-list"></div>
+  </section>
+
+  <section class="panel" id="review">
+    <div class="lead">Error &amp; Spaced Review</div>
+    <div class="lead-sub">Whatever you logged as missed or slow surfaces here with the pattern to re-fix. Clears as you get them right.</div>
+    <div class="stat-grid" id="stat-grid"></div>
+    <div id="review-list"></div>
+  </section>
+
+  <section class="panel" id="cards">
+    <div class="lead">Pattern Flashcards</div>
+    <div class="lead-sub">Two minutes a day. Read the trigger, name the pattern, flip to check.</div>
+    <div id="flash-mount"></div>
+  </section>
+  <section class="panel" id="coming">
+    <div class="coming-wrap">
+      <div class="coming-big" id="coming-name"></div>
+      <p>This chapter is scaffolded and ready for questions. Add a module or Cengage batch and it appears here — nothing else changes.</p>
+    </div>
+  </section>
+</main>
+
+<footer>
+  Built from Aarav's Cengage chapter &amp; school modules · progress syncs across devices.<br>
+  New questions append to each chapter without disturbing earlier progress.
+</footer>
+
+<div id="profile-modal" class="modal" hidden>
+  <div class="modal-card">
+    <h2>Who's studying?</h2>
+    <div class="ms">Progress is saved per profile and follows you across devices.</div>
+    <div id="pm-list"></div>
+    <div class="pm-add">
+      <input id="pm-name" type="text" placeholder="New profile name" autocomplete="off">
+      <button id="pm-create">Add</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="config.js"></script>
+<script src="curriculum.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
