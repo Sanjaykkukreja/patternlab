@@ -9,7 +9,7 @@ create table if not exists public.profiles (
 
 create table if not exists public.state (
   user_id    text not null,
-  kind       text not null,            -- 'practice' | 'flash'
+  kind       text not null,            -- 'practice' | 'flash' | 'guided'
   item_key   text not null,            -- stable global id, e.g. maths/trig/fg::SC Q1
   data       jsonb not null default '{}',
   updated_at timestamptz default now(),

@@ -15,14 +15,14 @@ let sb = null;
 
 /* ---------- sync layer: in-memory CACHE -> localStorage -> Supabase ---------- */
 let PROFILE = null;
-let CACHE = { practice:{}, flash:{} };
+let CACHE = { practice:{}, flash:{}, guided:{} };
 const LS = p => 'patternlab:state:' + p;
 function persistLocal(){ try{ localStorage.setItem(LS(PROFILE), JSON.stringify(CACHE)); }catch(e){} }
 async function loadProfileState(profile){
   PROFILE = profile;
-  try { CACHE = JSON.parse(localStorage.getItem(LS(profile))) || {practice:{},flash:{}}; }
-  catch(e){ CACHE = {practice:{},flash:{}}; }
-  CACHE.practice = CACHE.practice || {}; CACHE.flash = CACHE.flash || {};
+  try { CACHE = JSON.parse(localStorage.getItem(LS(profile))) || {practice:{},flash:{},guided:{}}; }
+  catch(e){ CACHE = {practice:{},flash:{},guided:{}}; }
+  CACHE.practice = CACHE.practice || {}; CACHE.flash = CACHE.flash || {}; CACHE.guided = CACHE.guided || {};
   if (sb){
     try {
       const { data, error } = await sb.from('state').select('kind,item_key,data').eq('user_id', profile);
@@ -47,6 +47,16 @@ let CHAP = null;  // e.g. "maths/trig/fg" ; practice gid = CHAP + "::" + src
 function normAtt(v){ if(!v) return {a:false,r:null,f:false}; if(typeof v==='string') return {a:true,r:v,f:false}; return Object.assign({a:false,r:null,f:false}, v); }
 function attOf(src){ return normAtt(getState('practice', CHAP + '::' + src)); }
 async function setAtt(src, patch){ return await setState('practice', CHAP + '::' + src, patch); }
+
+/* ---------- guided (L3) progress, keyed by global id e.g. maths/trig/fg::G1 ---------- */
+function guidedState(id){ return getState('guided', CHAP + '::' + id) || {}; }
+function setGuided(id, patch){ return setState('guided', CHAP + '::' + id, patch); }
+function clearGuided(id){
+  const key = CHAP + '::' + id;
+  if (CACHE.guided) delete CACHE.guided[key];
+  persistLocal();
+  if (sb){ try { sb.from('state').delete().eq('user_id',PROFILE).eq('kind','guided').eq('item_key',key); } catch(e){ console.warn('guided reset sync failed', e); } }
+}
 
 /* ===== TABS ===== */
 document.getElementById('tabs').addEventListener('click',e=>{
@@ -121,6 +131,83 @@ function mountPatterns(){
 }
 
 /* ===== L3 GUIDED (grouped by tier) ===== */
+/* Card progress (chosen pattern, hints revealed, solution shown) persists per
+   profile via the 'guided' state kind. A page reload replays it; the only thing
+   that clears a card is its own ↻ button. */
+function guidedCardInner(g,tier){
+  return `<div class="ghead">
+      <div class="ghead-top">
+        <div class="gnum">${g.id}<span class="badge b${tier}">${TIER_LABEL[tier]}</span><span class="badge btype">${g.tax}</span></div>
+        <button class="greset" title="Reset this card" aria-label="Reset this card">↻</button>
+      </div>
+      <div class="q">${g.q}</div>
+    </div>
+    <div class="gbody">
+      <div class="step-q">① Which pattern fits? (30 sec)</div>
+      <div class="chips">${g.opts.map((o,oi)=>`<button class="chip" data-oi="${oi}">${o}</button>`).join('')}</div>
+      <div class="chip-fb"></div><div class="hints"></div>
+      <div class="btn-row" style="display:none">
+        <button class="btn next-hint">Reveal a hint</button>
+        <button class="btn ghost show-sol" style="display:none">Show solution</button>
+      </div>
+    </div>`;
+}
+
+function wireGuidedCard(card){
+  const gi=+card.dataset.gi, g=GUIDED[gi];
+  const fb=card.querySelector('.chip-fb'), hintBox=card.querySelector('.hints');
+  const btnRow=card.querySelector('.btn-row'), nextHint=card.querySelector('.next-hint'), showSol=card.querySelector('.show-sol');
+  let hintsShown=0;
+
+  /* ---- DOM updates (no persistence — reused by both live actions and replay) ---- */
+  function applyChip(oi){
+    card.querySelectorAll('.chip').forEach(c=>c.classList.remove('right','wrong'));
+    const ch=card.querySelector(`.chip[data-oi="${oi}"]`); if(!ch)return;
+    if(oi===g.correct){ch.classList.add('right');fb.className='chip-fb ok';fb.textContent='Right — that\u2019s the cue. Now work it with the hints.';}
+    else{ch.classList.add('wrong');fb.className='chip-fb no';fb.textContent='Not quite — re-read the trigger in L2, then take hint 1.';}
+    btnRow.style.display='flex';
+  }
+  function renderHint(i){
+    const d=document.createElement('div');d.className='hint';
+    d.innerHTML=`<span class="hn">Hint ${i+1}</span>${g.hints[i]}`;hintBox.appendChild(d);
+  }
+  function syncHintButtons(){
+    if(hintsShown>=g.hints.length){nextHint.style.display='none';showSol.style.display='inline-block';}
+  }
+  function revealSolution(){
+    if(card.querySelector('.reveal-sol'))return;
+    const pat=PATTERNS.find(p=>p.id===g.pattern);
+    const d=document.createElement('div');d.className='reveal-sol';
+    d.innerHTML=`<span class="sl">Solution · ${g.pattern} ${pat.name}</span>
+      <div class="ans">Answer: ${g.ans}</div>
+      <div class="why"><b>What told you to use it</b>${g.why}</div>`;
+    card.querySelector('.gbody').appendChild(d);showSol.style.display='none';
+  }
+
+  /* ---- replay saved progress (silent) ---- */
+  const st=guidedState(g.id);
+  if(st.sel!=null) applyChip(st.sel);
+  if(st.hints>0){ const n=Math.min(st.hints,g.hints.length); for(let i=0;i<n;i++) renderHint(i); hintsShown=n; syncHintButtons(); }
+  if(st.sol) revealSolution();
+
+  /* ---- live actions (persist as they happen) ---- */
+  card.querySelectorAll('.chip').forEach(ch=>ch.addEventListener('click',()=>{
+    const oi=+ch.dataset.oi; applyChip(oi); setGuided(g.id,{sel:oi});
+  }));
+  nextHint.addEventListener('click',()=>{
+    if(hintsShown<g.hints.length){ renderHint(hintsShown); hintsShown++; setGuided(g.id,{hints:hintsShown}); }
+    syncHintButtons();
+  });
+  showSol.addEventListener('click',()=>{ revealSolution(); setGuided(g.id,{sol:true}); });
+
+  /* ---- per-card refresh: the only thing that clears progress ---- */
+  card.querySelector('.greset').addEventListener('click',()=>{
+    clearGuided(g.id);
+    card.innerHTML=guidedCardInner(g,g.tier);
+    wireGuidedCard(card);
+  });
+}
+
 function mountGuided(){
   const host=document.getElementById('guided-list');
   let html='';
@@ -128,48 +215,10 @@ function mountGuided(){
     const items=GUIDED.filter(g=>g.tier===tier);
     const desc={1:"clean single-pattern reps — build the reflex",2:"the workhorses you meet most",3:"multi-pattern — the rank-separators"}[tier];
     html+=`<div class="tier-head"><span class="tier-pill tp${tier}">${TIER_LABEL[tier]}</span><span class="desc">${desc}</span></div>`;
-    html+=items.map(g=>{
-      const gi=GUIDED.indexOf(g);
-      return `<div class="gcard" data-gi="${gi}">
-        <div class="ghead"><div class="gnum">${g.id}<span class="badge b${tier}">${TIER_LABEL[tier]}</span><span class="badge btype">${g.tax}</span></div><div class="q">${g.q}</div></div>
-        <div class="gbody">
-          <div class="step-q">① Which pattern fits? (30 sec)</div>
-          <div class="chips">${g.opts.map((o,oi)=>`<button class="chip" data-oi="${oi}">${o}</button>`).join('')}</div>
-          <div class="chip-fb"></div><div class="hints"></div>
-          <div class="btn-row" style="display:none">
-            <button class="btn next-hint">Reveal a hint</button>
-            <button class="btn ghost show-sol" style="display:none">Show solution</button>
-          </div>
-        </div></div>`;
-    }).join('');
+    html+=items.map(g=>`<div class="gcard" data-gi="${GUIDED.indexOf(g)}">${guidedCardInner(g,tier)}</div>`).join('');
   });
   host.innerHTML=html;
-
-  host.querySelectorAll('.gcard').forEach(card=>{
-    const gi=+card.dataset.gi,g=GUIDED[gi];let hintsShown=0;
-    const fb=card.querySelector('.chip-fb'),hintBox=card.querySelector('.hints');
-    const btnRow=card.querySelector('.btn-row'),nextHint=card.querySelector('.next-hint'),showSol=card.querySelector('.show-sol');
-    card.querySelectorAll('.chip').forEach(ch=>ch.addEventListener('click',()=>{
-      const oi=+ch.dataset.oi;
-      if(oi===g.correct){ch.classList.add('right');fb.className='chip-fb ok';fb.textContent='Right — that\u2019s the cue. Now work it with the hints.';}
-      else{ch.classList.add('wrong');fb.className='chip-fb no';fb.textContent='Not quite — re-read the trigger in L2, then take hint 1.';}
-      btnRow.style.display='flex';
-    }));
-    nextHint.addEventListener('click',()=>{
-      if(hintsShown<g.hints.length){const d=document.createElement('div');d.className='hint';
-        d.innerHTML=`<span class="hn">Hint ${hintsShown+1}</span>${g.hints[hintsShown]}`;hintBox.appendChild(d);hintsShown++;}
-      if(hintsShown>=g.hints.length){nextHint.style.display='none';showSol.style.display='inline-block';}
-    });
-    showSol.addEventListener('click',()=>{
-      if(card.querySelector('.reveal-sol'))return;
-      const pat=PATTERNS.find(p=>p.id===g.pattern);
-      const d=document.createElement('div');d.className='reveal-sol';
-      d.innerHTML=`<span class="sl">Solution · ${g.pattern} ${pat.name}</span>
-        <div class="ans">Answer: ${g.ans}</div>
-        <div class="why"><b>What told you to use it</b>${g.why}</div>`;
-      card.querySelector('.gbody').appendChild(d);showSol.style.display='none';
-    });
-  });
+  host.querySelectorAll('.gcard').forEach(card=>wireGuidedCard(card));
 }
 
 /* ===== L4 PRACTICE ===== */
