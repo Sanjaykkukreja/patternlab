@@ -15,14 +15,14 @@ let sb = null;
 
 /* ---------- sync layer: in-memory CACHE -> localStorage -> Supabase ---------- */
 let PROFILE = null;
-let CACHE = { practice:{}, flash:{}, guided:{} };
+let CACHE = { practice:{}, flash:{} };
 const LS = p => 'patternlab:state:' + p;
 function persistLocal(){ try{ localStorage.setItem(LS(PROFILE), JSON.stringify(CACHE)); }catch(e){} }
 async function loadProfileState(profile){
   PROFILE = profile;
-  try { CACHE = JSON.parse(localStorage.getItem(LS(profile))) || {practice:{},flash:{},guided:{}}; }
-  catch(e){ CACHE = {practice:{},flash:{},guided:{}}; }
-  CACHE.practice = CACHE.practice || {}; CACHE.flash = CACHE.flash || {}; CACHE.guided = CACHE.guided || {};
+  try { CACHE = JSON.parse(localStorage.getItem(LS(profile))) || {practice:{},flash:{}}; }
+  catch(e){ CACHE = {practice:{},flash:{}}; }
+  CACHE.practice = CACHE.practice || {}; CACHE.flash = CACHE.flash || {};
   if (sb){
     try {
       const { data, error } = await sb.from('state').select('kind,item_key,data').eq('user_id', profile);
@@ -44,19 +44,11 @@ async function setState(kind, key, patch){
 
 /* ---------- current chapter + practice helpers (keyed by global id) ---------- */
 let CHAP = null;  // e.g. "maths/trig/fg" ; practice gid = CHAP + "::" + src
+let FIGS={}, PRAC_DOCS=null, CUR_TIERS=null;
+function figHTML(key){ return (key && FIGS[key]) ? `<div class="figbox">${FIGS[key]}</div>` : ''; }
 function normAtt(v){ if(!v) return {a:false,r:null,f:false}; if(typeof v==='string') return {a:true,r:v,f:false}; return Object.assign({a:false,r:null,f:false}, v); }
 function attOf(src){ return normAtt(getState('practice', CHAP + '::' + src)); }
 async function setAtt(src, patch){ return await setState('practice', CHAP + '::' + src, patch); }
-
-/* ---------- guided (L3) progress, keyed by global id e.g. maths/trig/fg::G1 ---------- */
-function guidedState(id){ return getState('guided', CHAP + '::' + id) || {}; }
-function setGuided(id, patch){ return setState('guided', CHAP + '::' + id, patch); }
-function clearGuided(id){
-  const key = CHAP + '::' + id;
-  if (CACHE.guided) delete CACHE.guided[key];
-  persistLocal();
-  if (sb){ try { sb.from('state').delete().eq('user_id',PROFILE).eq('kind','guided').eq('item_key',key); } catch(e){ console.warn('guided reset sync failed', e); } }
-}
 
 /* ===== TABS ===== */
 document.getElementById('tabs').addEventListener('click',e=>{
@@ -78,13 +70,14 @@ function renderMap(){
   document.getElementById('cov-summary').innerHTML=`
     <div class="stat"><div class="num" style="color:var(--teal)">${PATTERNS.length}</div><div class="lab">patterns</div></div>
     <div class="stat"><div class="num">${GUIDED.length}</div><div class="lab">guided</div></div>
-    <div class="stat"><div class="num">${PRACTICE.length}</div><div class="lab">practice</div></div>
-    <div class="stat"><div class="num" style="color:var(--amber)">${covered}/${totalCells}</div><div class="lab">cells filled</div></div>`;
+    <div class="stat"><div class="num">${PRACTICE.length}</div><div class="lab">practice Q</div></div>
+    <div class="stat"><div class="num" style="color:var(--amber)">${covered}/${totalCells}</div><div class="lab">slots covered</div></div>`;
 
   const cls=n=>n===0?'z':(n<=2?'p':'g');
   let groups={};TAXA.forEach(t=>{(groups[t.group]=groups[t.group]||[]).push(t);});
   let html=`<div class="ch">Method × difficulty
     <span class="cov-legend"><span><i style="background:#fbeae6"></i>gap</span><span><i style="background:#fbf0dd"></i>1–2</span><span><i style="background:#e3f1ef"></i>3+</span></span></div>
+    <div class="cov-cap">Each cell is one method × difficulty <b>slot</b> — it lights up once ≥1 guided/practice item lands in it. The tiles above count <b>items</b>; this grid counts <b>slots</b>.</div>
     <div class="cov-grid-head"><span style="text-align:left">method / pattern</span><span>Fnd</span><span>Main</span><span>Adv</span></div>`;
   Object.keys(groups).forEach(gr=>{
     html+=`<div class="cov-sub">${gr}</div>`;
@@ -119,6 +112,7 @@ function mountPatterns(){
   document.getElementById('pattern-list').innerHTML=PATTERNS.map(p=>`
     <div class="pcard">
       <div class="top"><span class="pid">${p.id}</span><h3>${p.name}</h3></div>
+      ${figHTML(p.fig)}
       <div class="trigger"><b>Trigger — the cue to spot</b>${p.trigger}</div>
       <div class="rows">
         <div class="prow"><span class="lab">Move</span><span class="val">${p.move}</span></div>
@@ -131,83 +125,6 @@ function mountPatterns(){
 }
 
 /* ===== L3 GUIDED (grouped by tier) ===== */
-/* Card progress (chosen pattern, hints revealed, solution shown) persists per
-   profile via the 'guided' state kind. A page reload replays it; the only thing
-   that clears a card is its own ↻ button. */
-function guidedCardInner(g,tier){
-  return `<div class="ghead">
-      <div class="ghead-top">
-        <div class="gnum">${g.id}<span class="badge b${tier}">${TIER_LABEL[tier]}</span><span class="badge btype">${g.tax}</span></div>
-        <button class="greset" title="Reset this card" aria-label="Reset this card">↻</button>
-      </div>
-      <div class="q">${g.q}</div>
-    </div>
-    <div class="gbody">
-      <div class="step-q">① Which pattern fits? (30 sec)</div>
-      <div class="chips">${g.opts.map((o,oi)=>`<button class="chip" data-oi="${oi}">${o}</button>`).join('')}</div>
-      <div class="chip-fb"></div><div class="hints"></div>
-      <div class="btn-row" style="display:none">
-        <button class="btn next-hint">Reveal a hint</button>
-        <button class="btn ghost show-sol" style="display:none">Show solution</button>
-      </div>
-    </div>`;
-}
-
-function wireGuidedCard(card){
-  const gi=+card.dataset.gi, g=GUIDED[gi];
-  const fb=card.querySelector('.chip-fb'), hintBox=card.querySelector('.hints');
-  const btnRow=card.querySelector('.btn-row'), nextHint=card.querySelector('.next-hint'), showSol=card.querySelector('.show-sol');
-  let hintsShown=0;
-
-  /* ---- DOM updates (no persistence — reused by both live actions and replay) ---- */
-  function applyChip(oi){
-    card.querySelectorAll('.chip').forEach(c=>c.classList.remove('right','wrong'));
-    const ch=card.querySelector(`.chip[data-oi="${oi}"]`); if(!ch)return;
-    if(oi===g.correct){ch.classList.add('right');fb.className='chip-fb ok';fb.textContent='Right — that\u2019s the cue. Now work it with the hints.';}
-    else{ch.classList.add('wrong');fb.className='chip-fb no';fb.textContent='Not quite — re-read the trigger in L2, then take hint 1.';}
-    btnRow.style.display='flex';
-  }
-  function renderHint(i){
-    const d=document.createElement('div');d.className='hint';
-    d.innerHTML=`<span class="hn">Hint ${i+1}</span>${g.hints[i]}`;hintBox.appendChild(d);
-  }
-  function syncHintButtons(){
-    if(hintsShown>=g.hints.length){nextHint.style.display='none';showSol.style.display='inline-block';}
-  }
-  function revealSolution(){
-    if(card.querySelector('.reveal-sol'))return;
-    const pat=PATTERNS.find(p=>p.id===g.pattern);
-    const d=document.createElement('div');d.className='reveal-sol';
-    d.innerHTML=`<span class="sl">Solution · ${g.pattern} ${pat.name}</span>
-      <div class="ans">Answer: ${g.ans}</div>
-      <div class="why"><b>What told you to use it</b>${g.why}</div>`;
-    card.querySelector('.gbody').appendChild(d);showSol.style.display='none';
-  }
-
-  /* ---- replay saved progress (silent) ---- */
-  const st=guidedState(g.id);
-  if(st.sel!=null) applyChip(st.sel);
-  if(st.hints>0){ const n=Math.min(st.hints,g.hints.length); for(let i=0;i<n;i++) renderHint(i); hintsShown=n; syncHintButtons(); }
-  if(st.sol) revealSolution();
-
-  /* ---- live actions (persist as they happen) ---- */
-  card.querySelectorAll('.chip').forEach(ch=>ch.addEventListener('click',()=>{
-    const oi=+ch.dataset.oi; applyChip(oi); setGuided(g.id,{sel:oi});
-  }));
-  nextHint.addEventListener('click',()=>{
-    if(hintsShown<g.hints.length){ renderHint(hintsShown); hintsShown++; setGuided(g.id,{hints:hintsShown}); }
-    syncHintButtons();
-  });
-  showSol.addEventListener('click',()=>{ revealSolution(); setGuided(g.id,{sol:true}); });
-
-  /* ---- per-card refresh: the only thing that clears progress ---- */
-  card.querySelector('.greset').addEventListener('click',()=>{
-    clearGuided(g.id);
-    card.innerHTML=guidedCardInner(g,g.tier);
-    wireGuidedCard(card);
-  });
-}
-
 function mountGuided(){
   const host=document.getElementById('guided-list');
   let html='';
@@ -215,17 +132,56 @@ function mountGuided(){
     const items=GUIDED.filter(g=>g.tier===tier);
     const desc={1:"clean single-pattern reps — build the reflex",2:"the workhorses you meet most",3:"multi-pattern — the rank-separators"}[tier];
     html+=`<div class="tier-head"><span class="tier-pill tp${tier}">${TIER_LABEL[tier]}</span><span class="desc">${desc}</span></div>`;
-    html+=items.map(g=>`<div class="gcard" data-gi="${GUIDED.indexOf(g)}">${guidedCardInner(g,tier)}</div>`).join('');
+    html+=items.map(g=>{
+      const gi=GUIDED.indexOf(g);
+      return `<div class="gcard" data-gi="${gi}">
+        <div class="ghead"><div class="gnum">${g.id}<span class="badge b${tier}">${TIER_LABEL[tier]}</span><span class="badge btype">${g.tax}</span></div><div class="q">${g.q}</div></div>
+        <div class="gbody">
+          ${figHTML(g.fig)}
+          <div class="step-q">① Which pattern fits? (30 sec)</div>
+          <div class="chips">${g.opts.map((o,oi)=>`<button class="chip" data-oi="${oi}">${o}</button>`).join('')}</div>
+          <div class="chip-fb"></div><div class="hints"></div>
+          <div class="btn-row" style="display:none">
+            <button class="btn next-hint">Reveal a hint</button>
+            <button class="btn ghost show-sol" style="display:none">Show solution</button>
+          </div>
+        </div></div>`;
+    }).join('');
   });
   host.innerHTML=html;
-  host.querySelectorAll('.gcard').forEach(card=>wireGuidedCard(card));
+
+  host.querySelectorAll('.gcard').forEach(card=>{
+    const gi=+card.dataset.gi,g=GUIDED[gi];let hintsShown=0;
+    const fb=card.querySelector('.chip-fb'),hintBox=card.querySelector('.hints');
+    const btnRow=card.querySelector('.btn-row'),nextHint=card.querySelector('.next-hint'),showSol=card.querySelector('.show-sol');
+    card.querySelectorAll('.chip').forEach(ch=>ch.addEventListener('click',()=>{
+      const oi=+ch.dataset.oi;
+      if(oi===g.correct){ch.classList.add('right');fb.className='chip-fb ok';fb.textContent='Right — that\u2019s the cue. Now work it with the hints.';}
+      else{ch.classList.add('wrong');fb.className='chip-fb no';fb.textContent='Not quite — re-read the trigger in L2, then take hint 1.';}
+      btnRow.style.display='flex';
+    }));
+    nextHint.addEventListener('click',()=>{
+      if(hintsShown<g.hints.length){const d=document.createElement('div');d.className='hint';
+        d.innerHTML=`<span class="hn">Hint ${hintsShown+1}</span>${g.hints[hintsShown]}`;hintBox.appendChild(d);hintsShown++;}
+      if(hintsShown>=g.hints.length){nextHint.style.display='none';showSol.style.display='inline-block';}
+    });
+    showSol.addEventListener('click',()=>{
+      if(card.querySelector('.reveal-sol'))return;
+      const pat=PATTERNS.find(p=>p.id===g.pattern);
+      const d=document.createElement('div');d.className='reveal-sol';
+      d.innerHTML=`<span class="sl">Solution · ${g.pattern} ${pat.name}</span>
+        <div class="ans">Answer: ${g.ans}</div>
+        <div class="why"><b>What told you to use it</b>${g.why}</div>`;
+      card.querySelector('.gbody').appendChild(d);showSol.style.display='none';
+    });
+  });
 }
 
 /* ===== L4 PRACTICE ===== */
 let pracFilter="All";
 function mountPractice(){
   pracFilter="All";
-  document.getElementById('prac-filter').innerHTML=PRAC_TIERS.map((t,i)=>`<button data-f="${t.k}" class="${i===0?'on':''}">${t.l}</button>`).join('');
+  document.getElementById('prac-filter').innerHTML=(CUR_TIERS||PRAC_TIERS).map((t,i)=>`<button data-f="${t.k}" class="${i===0?'on':''}">${t.l}</button>`).join('');
   renderPractice();
 }
 async function renderPractice(){
@@ -235,23 +191,30 @@ async function renderPractice(){
     if(pracFilter==="Flag")return attOf(p.src).f;
     return String(p.tier)===pracFilter;
   });
-  if(!list.length){host.innerHTML=`<div class="empty"><div class="big">No flagged questions yet.</div>Tap \u2605 on any question to bookmark it for a deeper pass later.</div>`;return;}
-  host.innerHTML=list.map(p=>{
+  if(!list.length){host.innerHTML=`<div class="empty"><div class="big">${pracFilter==="Flag"?"No flagged questions yet.":"Nothing here yet."}</div>Tap \u2605 on any question to bookmark it for a deeper pass later.</div>`;return;}
+
+  const cardHTML = p => {
     const st=attOf(p.src);
-    return `<div class="qcard ${st.a?'done':''}" data-id="${p.src}">
+    const hasChoices = Array.isArray(p.choices) && p.choices.length;
+    const optsHTML = hasChoices
+      ? `<div class="mcq" data-correct="${p.correct}">${p.choices.map((c,ci)=>`<button class="opt" data-ci="${ci}"><span class="ol">${String.fromCharCode(65+ci)}</span><span class="ot">${c}</span></button>`).join('')}</div>`
+      : '';
+    const nudgeBtn = p.nudge?`<div class="qbtns"><button class="btn ghost show-nudge">Need one nudge?</button></div>`:'';
+    const revealBtn = hasChoices?'':`<div class="qbtns"><button class="btn show-ans">Reveal answer &amp; pattern</button></div>`;
+    return `<div class="qcard ${st.a?'done':''} ${hasChoices?'mcqcard':''}" data-id="${p.src}">
       <div class="srcline"><span class="src">${p.src}</span><span class="badge btype">${p.type}</span><span class="badge b${p.tier}">${TIER_LABEL[p.tier]}</span>
         <span class="qctrl">
           <button class="flagbtn ${st.f?'on':''}" data-act="flag" aria-label="Flag for later" title="Flag for later">\u2605</button>
           <button class="attbtn ${st.a?'on':''}" data-act="att">${st.a?'\u2713 Attempted':'Mark attempted'}</button>
         </span></div>
       <div class="qt">${p.q}</div>
-      <div class="qbtns">
-        <button class="btn show-ans">Reveal answer &amp; pattern</button>
-        ${p.nudge?`<button class="btn ghost show-nudge">Need one nudge?</button>`:''}
-      </div>
+      ${figHTML(p.fig)}
+      ${nudgeBtn}
       ${p.nudge?`<div class="nudge-box" style="display:none"><span class="nl">One nudge \u00b7 first move only</span>${p.nudge}</div>`:''}
+      ${optsHTML}
+      ${revealBtn}
       <div class="reveal" style="display:none">
-        <div class="tagline"><span class="ptag">${p.pat}</span><span class="ans">Ans ${p.opt} &nbsp; <span class="b">${p.ans}</span></span></div>
+        <div class="tagline"><span class="ptag">${p.pat}</span><span class="ans">Ans ${p.opt||''} &nbsp; <span class="b">${p.ans}</span></span></div>
         ${p.note?`<div class="note">${p.note}</div>`:''}
         <div class="log-row">
           <button data-r="got" class="${st.r==='got'?'sel':''}">Got it</button>
@@ -259,7 +222,25 @@ async function renderPractice(){
           <button data-r="pattern" class="${st.r==='pattern'?'sel':''}">Wrong pattern</button>
           <button data-r="concept" class="${st.r==='concept'?'sel':''}">Wrong concept</button>
           <button data-r="calc" class="${st.r==='calc'?'sel':''}">Calc slip</button>
-        </div></div></div>`;}).join('');
+        </div></div></div>`;
+  };
+
+  let html='';
+  if(PRAC_DOCS && PRAC_DOCS.length){
+    PRAC_DOCS.forEach(d=>{
+      const items=list.filter(p=>p.doc===d.id);
+      if(!items.length)return;
+      html+=`<div class="srcgroup"><div class="sg-head"><span class="sg-label">${d.label}</span><span class="sg-meta">${items.length} Q \u00b7 added ${d.date}</span></div>${d.note?`<div class="sg-note">${d.note}</div>`:''}</div>`;
+      html+=items.map(cardHTML).join('');
+    });
+    const known=new Set(PRAC_DOCS.map(d=>d.id));
+    const orphan=list.filter(p=>!known.has(p.doc));
+    if(orphan.length){ html+=`<div class="srcgroup"><div class="sg-head"><span class="sg-label">Other</span><span class="sg-meta">${orphan.length} Q</span></div></div>`+orphan.map(cardHTML).join(''); }
+  } else {
+    html=list.map(cardHTML).join('');
+  }
+  host.innerHTML=html;
+
   host.querySelectorAll('.qcard').forEach(card=>{
     const id=card.dataset.id;
     const attBtn=card.querySelector('[data-act="att"]');
@@ -273,9 +254,30 @@ async function renderPractice(){
       const cur=attOf(id);
       if(cur.a){await setAtt(id,{a:false,r:null});setAttView(false);card.querySelectorAll('.log-row button').forEach(x=>x.classList.remove('sel'));}
       else{await setAtt(id,{a:true});setAttView(true);}});
-    card.querySelector('.show-ans').addEventListener('click',function(){card.querySelector('.reveal').style.display='block';this.style.display='none';markAtt();});
+
+    const mcq=card.querySelector('.mcq');
+    if(mcq){
+      const correct=+mcq.dataset.correct;
+      mcq.querySelectorAll('.opt').forEach(btn=>btn.addEventListener('click',function(){
+        if(mcq.classList.contains('answered'))return;
+        mcq.classList.add('answered');
+        const ci=+this.dataset.ci;
+        mcq.querySelectorAll('.opt').forEach(b=>{
+          const bi=+b.dataset.ci;
+          if(bi===correct)b.classList.add('correct');
+          else if(bi===ci)b.classList.add('wrong');
+          b.disabled=true;
+        });
+        card.querySelector('.reveal').style.display='block';
+        markAtt();
+      }));
+    }
+
+    const showAns=card.querySelector('.show-ans');
+    if(showAns)showAns.addEventListener('click',function(){card.querySelector('.reveal').style.display='block';this.style.display='none';markAtt();});
     const sn=card.querySelector('.show-nudge');
-    if(sn)sn.addEventListener('click',function(){card.querySelector('.nudge-box').style.display='block';this.style.display='none';markAtt();});
+    if(sn)sn.addEventListener('click',function(){card.querySelector('.nudge-box').style.display='block';this.style.display='none';});
+
     card.querySelectorAll('.log-row button').forEach(b=>b.addEventListener('click',async()=>{
       await setAtt(id,{a:true,r:b.dataset.r});setAttView(true);
       card.querySelectorAll('.log-row button').forEach(x=>x.classList.toggle('sel',x===b));}));
@@ -346,7 +348,7 @@ function setMode(ready){
 function loadChapter(path){
   const c = CONTENT[path], m = findChapter(path);
   CHAP = path;
-  if (c){ TAXA=c.taxa; FORMULAE=c.formulae; PATTERNS=c.patterns; GUIDED=c.guided; PRACTICE=c.practice; }
+  if (c){ TAXA=c.taxa; FORMULAE=c.formulae; PATTERNS=c.patterns; GUIDED=c.guided; PRACTICE=c.practice; FIGS=c.figs||{}; PRAC_DOCS=c.pracDocs||null; CUR_TIERS=c.pracTiers||(typeof PRAC_TIERS!=="undefined"?PRAC_TIERS:[{k:"All",l:"All"},{k:"Flag",l:"\u2605 Flagged"}]); }
   document.getElementById('wtitle').textContent = m.chap.name;
   document.getElementById('wsub').textContent =
     m.subjName + ' \u00b7 ' + m.subName + (m.chap.grade ? ('  \u00b7  Class ' + m.chap.grade) : '');
