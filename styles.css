@@ -323,3 +323,20 @@ header{position:static}                 /* selectors make the header tall; don't
 
 .cov-cap{font-size:10.5px;line-height:1.45;color:var(--ink-faint);padding:9px 15px;border-bottom:1px solid var(--line);background:#fafcfb}
 .cov-cap b{color:var(--ink-soft);font-weight:600}
+
+/* ===== Reset button (per qcard / per gcard) ===== */
+.resetbtn{font-size:14px;line-height:1;border:1px solid var(--line);background:var(--paper);color:#a8b2af;border-radius:8px;padding:3px 7px;cursor:pointer;transition:.12s;font-weight:600}
+.resetbtn:hover{color:var(--ink-soft);border-color:#c8cfcd}
+.resetbtn:focus-visible{outline:2px solid var(--teal);outline-offset:1px}
+.gcard .gnum .resetbtn{margin-left:6px;font-size:13px;padding:2px 6px}
+
+/* ===== Pattern card: source questions dropdown ===== */
+.pcard .src-details{border-top:1px solid var(--line);background:#fafcfb}
+.pcard .src-details summary{padding:8px 16px;font-family:var(--mono);font-size:10.5px;color:var(--ink-soft);cursor:pointer;letter-spacing:.02em;list-style:none;user-select:none}
+.pcard .src-details summary::-webkit-details-marker{display:none}
+.pcard .src-details summary:hover{color:var(--ink)}
+.pcard .src-details[open] summary{border-bottom:1px solid var(--line);color:var(--ink)}
+.pcard .src-q{padding:10px 16px;border-bottom:1px dashed #e6ebea}
+.pcard .src-q:last-child{border-bottom:none}
+.pcard .src-q-label{font-family:var(--mono);font-size:10px;color:var(--teal);font-weight:600;letter-spacing:.04em;display:block;margin-bottom:4px}
+.pcard .src-q-text{font-size:12.5px;line-height:1.5;color:var(--ink-soft)}
