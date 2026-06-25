@@ -15,7 +15,10 @@
 <header>
   <div class="topbar">
     <div class="brand"><svg viewBox="0 0 40 40"><path d="M2 20 Q 7 9 12 20 T 22 20 T 32 20 T 38 20" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg>Pattern Lab</div>
-    <button class="who" id="who">Choose profile</button>
+    <div class="topbar-r">
+      <button class="manifest-btn" id="manifest-btn" title="Project manifest" aria-label="Open project manifest">&#8801;</button>
+      <button class="who" id="who">Choose profile</button>
+    </div>
   </div>
 
   <div id="selbar">
@@ -107,6 +110,17 @@
       <input id="pm-name" type="text" placeholder="New profile name" autocomplete="off">
       <button id="pm-create">Add</button>
     </div>
+  </div>
+</div>
+
+<div id="manifest-modal" class="modal" hidden>
+  <div class="modal-card manifest-card">
+    <div class="manifest-head">
+      <h2>Project Manifest</h2>
+      <button class="modal-close" id="manifest-close" aria-label="Close">&times;</button>
+    </div>
+    <div class="ms">A live snapshot of what's covered, when, and from where. New chapters get added here as they're built. Health stats compute from the question bank.</div>
+    <div id="manifest-body"></div>
   </div>
 </div>
 

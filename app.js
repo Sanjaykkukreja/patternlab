@@ -528,6 +528,58 @@ function bindOnce(){
     if (!v.trim()) return;
     const p = await createProfile(v); chooseProfile(p.id, p.name);
   });
+  const mbtn = document.getElementById('manifest-btn');
+  const mmodal = document.getElementById('manifest-modal');
+  const mclose = document.getElementById('manifest-close');
+  if (mbtn && mmodal) {
+    mbtn.addEventListener('click', () => { mountManifest(); mmodal.hidden = false; });
+    if (mclose) mclose.addEventListener('click', () => { mmodal.hidden = true; });
+    mmodal.addEventListener('click', e => { if (e.target === mmodal) mmodal.hidden = true; });
+  }
+}
+
+/* ===== Project Manifest ===== */
+function mountManifest(){
+  const body = document.getElementById('manifest-body');
+  if(!body || typeof CHAPTER_META === 'undefined' || !Array.isArray(CHAPTER_META)) return;
+  const rows = CHAPTER_META.map(meta => {
+    const c = (typeof CONTENT !== 'undefined') ? CONTENT[meta.id] : null;
+    if(!c){
+      return `<div class="manifest-row pending"><div class="m-meta"><div class="m-when">${meta.created||''}</div><div class="m-where">${meta.grade} \u00b7 ${meta.subject} \u00b7 ${meta.topic}</div><h3>${meta.chapter}</h3><div class="m-sources">Source: ${(meta.sources||[]).join(' + ')}</div></div><div class="m-health"><div class="m-empty">Scaffolded \u2014 not yet populated</div></div></div>`;
+    }
+    const prac = c.practice || [];
+    const t1 = prac.filter(p=>p.tier===1).length;
+    const t2 = prac.filter(p=>p.tier===2).length;
+    const t3 = prac.filter(p=>p.tier===3).length;
+    const mcq = prac.filter(p=>Array.isArray(p.choices)).length;
+    const t3Mark = t3 >= 20 ? '<span class="ok">\u2713</span>' : `<span class="warn">\u2717 short ${20-t3}</span>`;
+    const pats = c.patterns || [];
+    const patsWithText = pats.filter(p=>p.srcText && Object.keys(p.srcText).length).length;
+    let pendingEntries = 0, filledEntries = 0;
+    pats.forEach(p => {
+      if(p.srcText){
+        Object.values(p.srcText).forEach(v => {
+          if(typeof v === 'string' && v.indexOf('(text pending') >= 0) pendingEntries++;
+          else filledEntries++;
+        });
+      }
+    });
+    const pct = prac.length ? Math.round(mcq/prac.length*100) : 0;
+    return `<div class="manifest-row">
+      <div class="m-meta">
+        <div class="m-when">${meta.created||''}</div>
+        <div class="m-where">${meta.grade} \u00b7 ${meta.subject} \u00b7 ${meta.topic}</div>
+        <h3>${meta.chapter}</h3>
+        <div class="m-sources">Source: ${(meta.sources||[]).join(' + ')}</div>
+      </div>
+      <div class="m-health">
+        <div class="m-stat"><span class="ml">Practice</span><span class="mv">${prac.length} \u00b7 t1: ${t1} t2: ${t2} t3: ${t3} ${t3Mark}</span></div>
+        <div class="m-stat"><span class="ml">MCQ enabled</span><span class="mv">${mcq}/${prac.length} (${pct}%)</span></div>
+        <div class="m-stat"><span class="ml">Patterns</span><span class="mv">${pats.length} total \u00b7 ${patsWithText} with srcText${pendingEntries?' \u00b7 '+pendingEntries+' entries pending upload':''}</span></div>
+      </div>
+    </div>`;
+  }).join('');
+  body.innerHTML = rows || '<div class="m-empty">No chapters in CHAPTER_META yet.</div>';
 }
 (async function boot(){
   bindOnce();
