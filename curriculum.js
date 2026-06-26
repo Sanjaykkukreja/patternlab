@@ -424,6 +424,151 @@ let WPE_PRAC_DOCS = [
 
 const WPE_PRAC_TIERS=[{k:"All",l:"All"},{k:"1",l:"Foundation"},{k:"2",l:"JEE Main"},{k:"3",l:"JEE Advanced"},{k:"Flag",l:"\u2605 Flagged"}];
 
+/* ===== Chapter: Periodicity & Extreme Values (PEV) =====
+   Source mix: Narayana JEE-Adv Maths Vol-III (Module Ex IV + Ex V) plus three
+   Narayana JR.IIT WAT papers (WAT-06 22-06-25, WAT-11 09-07-23, WAT-12 30-06-24).
+   Status: SCAFFOLDED. Arrays declared but empty pending pattern derivation
+   and practice curation across upcoming sessions. Chapter renders as
+   "Coming Soon" until added to CONTENT.
+*/
+let PEV_TAXA = [
+  {code:"F1",label:"Period basics (sin, cos, tan, |·|, scaling)",group:"Foundation methods"},
+  {code:"F2",label:"Bound engine (a sinx + b cosx, √(a²+b²))",group:"Foundation methods"},
+  {code:"F3",label:"Triangle closure (A+B+C=π) identities",group:"Foundation methods"},
+  {code:"F4",label:"Sum-to-product · multi-angle reductions",group:"Foundation methods"},
+  {code:"P1", label:"LCM Period Rule",group:"Patterns"},
+  {code:"P2", label:"|·| Period Halving",group:"Patterns"},
+  {code:"P3", label:"GIF/{x} Inside Trig",group:"Patterns"},
+  {code:"P4", label:"Inner-Argument Scaling f(ax+b)",group:"Patterns"},
+  {code:"P5", label:"a sinx + b cosx Bounded",group:"Patterns"},
+  {code:"P6", label:"Reciprocal of Linear-Trig Denom",group:"Patterns"},
+  {code:"P7", label:"Algebraic Substitution Extrema",group:"Patterns"},
+  {code:"P8", label:"∏cos(2^k θ) Telescoping",group:"Patterns"},
+  {code:"P9", label:"Sum-of-Trig in AP",group:"Patterns"},
+  {code:"P10",label:"Product of sin(kπ/n)",group:"Patterns"},
+  {code:"P11",label:"Triangle Identity Carry-Through",group:"Patterns"},
+  {code:"P12",label:"tanA+tanB+tanC = ∏tan (when A+B+C=nπ)",group:"Patterns"},
+  {code:"P13",label:"Telescoping cosec / cot Sum",group:"Patterns"},
+  {code:"P14",label:"Triangle Extrema via Inequality",group:"Patterns"}
+];
+
+let PEV_FORMULAE = [
+  {tag:"basic",title:"Base periods",rows:[
+    {f:"sin x, cos x : 2π  ·  tan x, cot x : π  ·  sec x, csc x : 2π"},
+    {f:"|sin x| = π · |cos x| = π · |tan x| = π · sin²x = π · cos²x = π",k:"trig",note:"Squaring or |·| halves the period when sign-symmetric. Always verify f(x+T)=f(x)."}]},
+  {tag:"scaling",title:"Period algebra",rows:[
+    {f:"f(ax+b) → T_f / |a|  (shift b has no effect on period)"},
+    {f:"f + g → LCM(T_f, T_g)  · f·g, f/g → LCM (often)"},
+    {f:"For rationals: LCM(p/q, r/s) = LCM(p,r) / GCD(q,s)",k:"trap",note:"LCM gives the maximum candidate; the TRUE period may be a divisor — verify with f(x+T)=f(x)."}]},
+  {tag:"gif",title:"GIF/{x} inside trig",rows:[
+    {f:"[x] = greatest integer ≤ x → integer-step argument"},
+    {f:"sin(π[x]/n), cos(π[x]/n) : period 2n  ·  tan(π[x]/n) : period n",k:"trig",note:"Since [x] is integer-stepped, the argument lives on a lattice — period is purely integer."}]},
+  {tag:"bound",title:"a sinx + b cosx range",rows:[
+    {f:"a sin x + b cos x = √(a² + b²) · sin(x + φ),  tan φ = b/a"},
+    {f:"Range: [−√(a²+b²), +√(a²+b²)]"},
+    {f:"With constant c: a sin x + b cos x + c ∈ [c−√(a²+b²), c+√(a²+b²)]",k:"trig",note:"Two perpendicular components combine into one rotated sine of fixed amplitude. The bound engine for nearly every extremum."}]},
+  {tag:"prodcos",title:"Telescoping cosine product",rows:[
+    {f:"cos θ · cos 2θ · cos 4θ · … · cos 2ⁿ⁻¹θ = sin(2ⁿ θ) / (2ⁿ sin θ)"},
+    {f:"sin θ · sin(60°−θ) · sin(60°+θ) = ¼ sin 3θ"},
+    {f:"cos θ · cos(60°−θ) · cos(60°+θ) = ¼ cos 3θ",k:"trig",note:"Multiply by 2 sin θ and watch sin doubles down. Foundation for cos(π/n) products."}]},
+  {tag:"sumtrig",title:"Sum of trig in AP",rows:[
+    {f:"Σ_{k=0}^{n−1} sin(α + kβ) = sin(nβ/2) · sin(α + (n−1)β/2) / sin(β/2)"},
+    {f:"Σ_{k=0}^{n−1} cos(α + kβ) = sin(nβ/2) · cos(α + (n−1)β/2) / sin(β/2)"},
+    {f:"Σ_{k=1}^{n−1} sin(kπ/n) = cot(π/(2n))",k:"trig",note:"Geometric-series argument on the unit circle. cos²(kπ/n) sums via cos 2x = 1 − 2 sin²x."}]},
+  {tag:"sinprod",title:"sin(kπ/n) products",rows:[
+    {f:"∏_{k=1}^{n−1} sin(kπ/n) = n / 2^(n−1)"},
+    {f:"∏_{k=1}^{(n−1)/2} sin(kπ/n) = √n / 2^((n−1)/2)  (n odd)",k:"trig",note:"Cyclotomic-polynomial identity. For non-uniform indices (sin π/18 · sin 5π/18 · sin 7π/18 etc.), combine with multi-angle identities."}]},
+  {tag:"tri",title:"Triangle identities (A+B+C=π)",rows:[
+    {f:"sin 2A + sin 2B + sin 2C = 4 sin A sin B sin C"},
+    {f:"cos 2A + cos 2B + cos 2C = −1 − 4 cos A cos B cos C"},
+    {f:"sin A + sin B + sin C = 4 cos(A/2) cos(B/2) cos(C/2)"},
+    {f:"cos A + cos B + cos C = 1 + 4 sin(A/2) sin(B/2) sin(C/2)"},
+    {f:"tan A + tan B + tan C = tan A · tan B · tan C"},
+    {f:"cot(A/2) + cot(B/2) + cot(C/2) = cot(A/2) cot(B/2) cot(C/2)"},
+    {f:"tan(A/2) tan(B/2) + tan(B/2) tan(C/2) + tan(C/2) tan(A/2) = 1",k:"trig",note:"The triangle-closure machinery. Memorise cold — every conditional-identity problem uses one of these."}]},
+  {tag:"telecot",title:"Telescoping cosec/cot",rows:[
+    {f:"csc(2θ) = cot θ − cot 2θ"},
+    {f:"Σ_{k=0}^{n−1} csc(2^k θ) = cot θ − cot(2ⁿ⁻¹ θ)"},
+    {f:"1/(sin α · sin(α+d)) = (1/sin d)[cot α − cot(α+d)]",k:"trig",note:"A subtraction-of-cots turns a series into a difference. Classic Σ 1/(sin k° sin(k+1)°) hack."}]},
+  {tag:"triineq",title:"Triangle extremum canon",rows:[
+    {f:"Σ cos A ≤ 3/2  (=  equilateral)  · Σ sin A ≤ 3√3/2"},
+    {f:"Σ sin(A/2) ≤ 3/2 · Σ cos(A/2) ≤ 3√3/2"},
+    {f:"Σ cos² A ≥ 3/4 (acute) · Σ tan² A ≥ 9 (acute)"},
+    {f:"Π sin(A/2) ≤ 1/8 · Π cos(A/2) ≤ 3√3/8",k:"trig",note:"Symmetric expressions in a triangle hit extrema at the equilateral by convexity/Jensen. Always test equilateral first."}]}
+];
+
+let PEV_PATTERNS = [
+  {id:"P1",name:"LCM Period Rule",trigger:"Sum/product of trig terms with different inner-argument scalings — sin(2x)+cos(3x), tan(x/2)·sin(x/3).",move:"Compute each term's period via f(ax+b) → T_f/|a|. Take LCM of numerators / GCD of denominators for rationals. VERIFY with f(x+T)=f(x).",why:"A sum/product repeats only when every part repeats together — LCM is the smallest such common time.",mini:"sin(2x)+cos(3x): T₁=π, T₂=2π/3. LCM = 2π.",fails:"Skipping the verification step — apparent LCM can over-shoot if symmetry collapses it to a divisor.",src:"Ex-V Q49, WAT-11 Q49, WAT-06 Q11, WAT-06 Q12"},
+  {id:"P2",name:"|·| Period Halving",trigger:"|sin x|, |cos x|, sin²x, cos²x, or compositions wrapping a sign-symmetric trig.",move:"Sign-symmetric wrapper halves the period: |sin x| → π (not 2π); sin²x → π. Apply BEFORE LCM. For |tan x|, |cot x|: no halving (tan is already π).",why:"Negating around an axis of symmetry collapses two half-cycles to one.",mini:"|sin x|+|cos x|: each has period π but together coincide every π/2.",fails:"Quoting 2π for sin²x. The classic — squaring halves it.",src:"WAT-06 Q1, WAT-06 Q12, Ex-V Q49"},
+  {id:"P3",name:"GIF/{x} Inside Trig",trigger:"[x] (GIF) or {x} (fractional part) appears INSIDE a trig argument — sin(π[x]/n), tan(π[x]/m), cos(π[x]/k).",move:"[x] is integer-stepped, so the trig samples a lattice. For sin(π[x]/n): period in x is 2n (find smallest integer k s.t. sampling repeats). For a sum, take LCM of individual integer periods.",why:"GIF turns continuous trig into discrete sampling on integer steps — period becomes purely integer.",mini:"sin(π[x]/4): each unit step adds π/4 to the angle; sine returns after 8 unit steps. Period = 8.",fails:"Treating sin(π[x]/n) like a continuous trig and computing 2π/(π/n) = 2n. Right answer, wrong reason; fails for tan/sec compositions.",src:"WAT-12 Q3, WAT-12 Q10, WAT-06 Q1"},
+  {id:"P4",name:"Inner-Argument Scaling f(ax+b)",trigger:"Constants buried in the trig argument — 4 cos⁴((x−c)/k) − 2 cos((x−c)/(k/2)), cos((x−2025)/(6π³)).",move:"Period of f(ax+b) = T_f / |a|. The additive shift b doesn't affect period. Read |a| carefully — it's the COEFFICIENT of x.",why:"Faster x-velocity through the cycle scales the period inversely.",mini:"cos((x−2025)/(6π³)): |a|=1/(6π³), so T = 2π · 6π³ = 12π⁴.",fails:"Mis-reading |a| as the inverse — gives reciprocal answer. Carry π³ etc. carefully.",src:"WAT-06 Q2, WAT-11 Q53, Ex-IV Q12"},
+  {id:"P5",name:"a sinx + b cosx Bounded",trigger:"Expression contains a sin x + b cos x (or reducible to it) and you want extrema or a bound.",move:"a sin x + b cos x = √(a²+b²) · sin(x+φ). Range: [−√(a²+b²), +√(a²+b²)]. With constant c added, shift by c.",why:"Two perpendicular components combine into one rotated sine — fixed amplitude.",mini:"3 sin x + 4 cos x ∈ [−5, 5]. With +6: [1, 11].",fails:"Forgetting the constant c shift, or misidentifying coefficients after manipulation.",src:"Ex-IV Q4, Ex-V Q37 (matching), WAT-11 Q48"},
+  {id:"P6",name:"Reciprocal of Linear-Trig Denom",trigger:"max/min of 2/(p cos x + q sin x + r) or similar reciprocal of a linear-trig + constant expression.",move:"Find the denominator's range via P5 — denom ∈ [r−√(p²+q²), r+√(p²+q²)]. If denom > 0 throughout, max(f) = 2/min(denom), min(f) = 2/max(denom).",why:"Reciprocals flip extremes for monotonic positive functions.",mini:"2/(3 cos x − 5 sin x + 6): denom ∈ [6−√34, 6+√34] (all positive). f ∈ [2/(6+√34), 2/(6−√34)].",fails:"Skipping the sign-check on denom — if it can pass through zero, max is unbounded.",src:"WAT-06 Q3"},
+  {id:"P7",name:"Algebraic Substitution Extrema",trigger:"Symmetric expression in sin²x, cos²x, tan²x, or higher even powers — sin⁴/a + cos⁴/b, sin⁸/a³+cos⁸/b³, (7+6tanθ−tan²θ)/(1+tan²θ).",move:"Substitute t = sin²x (or u = tan²x). Reduce to polynomial in t over [0,1] (or u ∈ ℝ). Find vertex or boundary. For chained powers, use lower-power form as constraint.",why:"Higher even powers of trig ARE algebra — substitution exposes it.",mini:"sin⁴x + cos⁴x = 1 − 2 sin²x cos²x = 1 − ½ sin²(2x). Range [½, 1].",fails:"Carrying sin⁴ separately — gets messy. The substitution is the whole game.",src:"Ex-IV Q19, Ex-IV Q43, WAT-12 Q2"},
+  {id:"P8",name:"∏cos(2^k θ) Telescoping",trigger:"A product of cosines whose arguments double — cos θ · cos 2θ · cos 4θ · …, or 16 cos(π/17) cos(2π/17) cos(4π/17) cos(8π/17).",move:"Multiply (and divide) by 2 sin θ. Use 2 sin θ cos θ = sin 2θ to collapse pairs. Result: sin(2ⁿ θ) / (2ⁿ sin θ).",why:"Each step doubles the angle inside sin, halving the chain length.",mini:"cos θ · cos 2θ · cos 4θ = sin 8θ / (8 sin θ).",fails:"Mis-counting the power of 2 in the denominator, or forgetting the formula needs sin θ ≠ 0.",src:"Ex-V Q14, Ex-V Q28-30, WAT-06 Q13, WAT-12 Q20-22"},
+  {id:"P9",name:"Sum-of-Trig in AP",trigger:"Σ sin(α+kβ) or Σ cos(α+kβ); or squared sums like Σ cos²(kπ/(2n+1)), Σ sin²(kπ/n).",move:"For plain: Σ_{k=0}^{n−1} sin(α+kβ) = sin(nβ/2) sin(α+(n−1)β/2) / sin(β/2). For squared: use cos 2x = 1 − 2 sin²x to linearise, then apply.",why:"Geometric-series argument on the unit circle.",mini:"Σ_{k=1}^n cos²(kπ/(2n+1)) = (2n−1)/4.",fails:"Off-by-one on index range. Verify the formula matches your starting index.",src:"Ex-V Q11, Ex-V Q25, WAT-06 Q4"},
+  {id:"P10",name:"Product of sin(kπ/n)",trigger:"A specific product of sines at rational multiples of π/n — sin(π/n)·sin(2π/n)·…·sin((n−1)π/n), or sin(π/18)·sin(5π/18)·sin(7π/18).",move:"Master identity: ∏_{k=1}^{n−1} sin(kπ/n) = n / 2^(n−1). For odd n, half-product: ∏_{k=1}^{(n−1)/2} sin(kπ/n) = √n / 2^((n−1)/2). For sparse indices, combine with multi-angle expansion.",why:"Modulus of the n-th cyclotomic polynomial evaluated on the unit circle.",mini:"sin(π/7)·sin(2π/7)·sin(3π/7) = √7/8.",fails:"Mis-extending the index range — verify exactly n−1 (or (n−1)/2) terms.",src:"Ex-IV Q20, Ex-V Q12, Ex-V Q14"},
+  {id:"P11",name:"Triangle Identity Carry-Through",trigger:"A+B+C = π (triangle), and you need an expression in sin/cos/tan of A, B, C — possibly with a side constraint.",move:"Use closure: C = π − (A+B), so sin C = sin(A+B), cos C = −cos(A+B). Then sum-to-product on pairs OR invoke a canonical triangle identity (see F8).",why:"The constraint A+B+C=π is the lever that turns three variables into two and forces specific identity-shapes.",mini:"sin 2A + sin 2B + sin 2C = 4 sin A sin B sin C (any triangle).",fails:"Using the identity outside a triangle context — it doesn't hold without the constraint.",src:"Ex-IV Q29, Ex-IV Q35, Ex-IV Q37-42, Ex-V Q4, WAT-11 Q46"},
+  {id:"P12",name:"tanA+tanB+tanC = ∏tan (when A+B+C=nπ)",trigger:"A sum of tangents whose arguments add to an integer multiple of π — tan x + tan 2x + tan 3x (since x+2x+3x = 6x = nπ at solutions).",move:"When A+B+C = nπ: tan A + tan B + tan C = tan A · tan B · tan C. Use the identity to convert a sum into a product or vice versa.",why:"Derived from tan(A+B) = tan(nπ − C) = −tan C — algebra closes.",mini:"tan x + tan 2x + tan 3x = tan x · tan 2x · tan 3x when x+2x+3x = nπ.",fails:"Forgetting the constraint — without A+B+C = nπ the identity is false.",src:"Ex-IV Q34, Ex-IV Q38, Ex-V Q1"},
+  {id:"P13",name:"Telescoping cosec / cot Sum",trigger:"Series of form 1/(sin α · sin(α+d)) + 1/(sin(α+d) · sin(α+2d)) + …, or Σ csc(2^k θ).",move:"Use 1/(sin α · sin(α+d)) = (1/sin d)[cot α − cot(α+d)] — sum telescopes. For csc(2^k θ): csc(2θ) = cot θ − cot 2θ, so Σ csc(2^k θ) = cot θ − cot(2ⁿ θ).",why:"A clever subtraction turns a product-reciprocal of sines into a difference of cotangents.",mini:"1/(sin 45° sin 46°) = (1/sin 1°)[cot 45° − cot 46°]. Summing k=45 to 134 telescopes.",fails:"Mis-identifying the common difference d, or missing the boundary terms.",src:"Ex-IV Q36, Ex-V Q9, WAT-06 Q6"},
+  {id:"P14",name:"Triangle Extrema via Inequality",trigger:"Least/greatest value of Σ sec A, Σ tan² A, Π csc(A/2), Σ csc²A in a triangle (often acute).",move:"Use one of: (i) Jensen on convex/concave trig; (ii) AM-GM on symmetric expression; (iii) canonical inequalities (F10 above). Equality at A=B=C=π/3 (equilateral).",why:"Symmetric trig in a triangle hits extremum at the equilateral by convexity/symmetry.",mini:"Min Σ sec A in acute triangle: at A=B=C=π/3, each sec=2, sum=6.",fails:"Forgetting the equilateral test, or applying Jensen to a function that's not convex/concave on the relevant interval.",src:"Ex-V Q38, Ex-V Q5, WAT-11 Q46"}
+];
+
+let PEV_GUIDED = [
+  /* Populated after Pattern Library is set — laddered single-pattern reps. */
+];
+
+let PEV_PRACTICE = [
+  /* ===== Narayana JEE-Adv Maths Vol-III · Exercise-V ===== */
+  {src:"Ex-V Q1", type:"SC", tier:3, tax:"P11", pat:"P11", q:"Let A, B, C be three angles such that A = π/4 and tan B · tan C = p. Then all possible values of p such that A, B, C are the angles of a triangle is", choices:["≤ (√2+1)²","≥ (√2+1)²","> (√2+1)²","< (√2+1)²"], correct:1, ans:"≥ (√2+1)²", note:"A=π/4 ⇒ B+C=3π/4 ⇒ tan(B+C)=−1, so tanB+tanC = p−1. For real positive tanB,tanC summing to p−1 with product p, treat as quadratic; AM-GM/discriminant gives p ≥ (√2+1)²."},
+  {src:"Ex-V Q2", type:"SC", tier:3, tax:"P11", pat:"P11", q:"If tan α = 1/√(x(x²+x+1)), tan β = √x/√(x²+x+1), and tan γ = √(x⁻³+x⁻²+x⁻¹), then α + β =", choices:["γ","2γ","−γ","γ/2"], correct:0, ans:"γ", note:"Compute tan(α+β) via the sum formula and simplify; matches tan γ."},
+  {src:"Ex-V Q3", type:"SC", tier:3, tax:"P1", pat:"P1", q:"Let the smallest positive value of x for which f(x) = sin(x/3) + sin(x/11) achieves its maximum be x₀ degrees, i.e. x₀ = α°. Then the sum of the digits in α is", choices:["15","17","16","18"], correct:3, ans:"18", note:"Max when sin(x/3)=sin(x/11)=1 ⇒ x/3=π/2+2kπ, x/11=π/2+2mπ. Smallest common x in degrees: 8910° ⇒ digit sum 18."},
+  {src:"Ex-V Q4", type:"SC", tier:3, tax:"P11", pat:"P11", q:"In ΔABC, if cot θ = cot A + cot B + cot C, sin(A−θ) sin(B−θ) sin(C−θ) = λ sin³ θ, then λ =", choices:["1","2","3","4"], correct:0, ans:"1", note:"Expand each sin(X−θ) and use the constraint plus triangle identities."},
+  {src:"Ex-V Q5", type:"SC", tier:3, tax:"P14", pat:"P14", q:"If ABC is a triangle and tan(A/2), tan(B/2), tan(C/2) are in H.P., then the minimum value of cot(B/2) is equal to", choices:["−√3","√3","2","−2"], correct:1, ans:"√3", note:"HP ⇒ 2/tan(B/2) = 1/tan(A/2) + 1/tan(C/2), i.e. 2 cot(B/2) = cot(A/2)+cot(C/2). Combine with the triangle identity cot(A/2)+cot(B/2)+cot(C/2) = cot(A/2)cot(B/2)cot(C/2); AM-GM gives min √3 at equilateral."},
+  {src:"Ex-V Q6", type:"SC", tier:3, tax:"P11", pat:"P11", q:"An integral value of a for which there is a solution of a cos x + cot x + 1 = cosec x is (sin 2x ≠ 0)", choices:["1","2","3","4"], correct:2, ans:"3", note:"Multiply by sin x and reduce: a²sin²x cos²x − 2a(a+1) sin x cos x = 0. Solvable iff a² sin²2x = 4a(a+1) for some valid x; gives a=3."},
+  {src:"Ex-V Q7", type:"SC", tier:3, tax:"P7", pat:"P7", q:"If √2 cos A = cos B + cos³B and √2 sin A = sin B − sin³B, then sin(A−B) =", choices:["±1","±1/2","±1/3","±1/4"], correct:2, ans:"±1/3", note:"Square and add to find cos²(A−B); substitute sin³B = sinB(1−cos²B) and cos³B = cosB(1−sin²B) to simplify."},
+  {src:"Ex-V Q8", type:"SC", tier:3, tax:"P13", pat:"P13", q:"The value of cot(7π/16) + 2 cot(3π/8) + cot(15π/16) is", choices:["4","2","−2","−4"], correct:3, ans:"−4", note:"Use cot(π−x) = −cot x and pair angles; the expression reduces to −4."},
+  {src:"Ex-V Q9", type:"SC", tier:3, tax:"P13", pat:"P13", q:"If the sum of the series cosec θ + cosec 2θ + cosec 4θ + … (n terms) = cot(θ/λ) − cot(2ⁿ⁻¹ θ), then λ =", choices:["1","2","3","4"], correct:1, ans:"2", note:"Use the telescoping identity csc(2x) = cot x − cot 2x, but with denominators that step by ½ on the cot side; series collapses to cot(θ/2) − cot(2ⁿ⁻¹θ)."},
+  {src:"Ex-V Q10", type:"SC", tier:3, tax:"P11", pat:"P11", q:"sin 20°(4 + sec 20°) =", choices:["1/2","√2","√3","1"], correct:2, ans:"√3", note:"Expand: 4 sin 20° + tan 20°. Use sin 60° = sin(40°+20°) expansion to collapse."},
+  {src:"Ex-V Q11", type:"SC", tier:3, tax:"P9", pat:"P9", q:"sin(2π/7) + sin(4π/7) + sin(8π/7) =", choices:["√7/2","7/2","−√7/2","−7/2"], correct:0, ans:"√7/2", note:"Note sin(8π/7) = sin(π+π/7) = −sin(π/7); combine via Σ sin in AP."},
+  {src:"Ex-V Q12", type:"SC", tier:3, tax:"P10", pat:"P10", q:"sin(π/7) · sin(2π/7) · sin(4π/7) =", choices:["√7/8","√7/4","√7/2","√7"], correct:0, ans:"√7/8", note:"Use the n-odd identity ∏ sin(kπ/n) for k=1..(n−1)/2 = √n / 2^((n−1)/2). For n=7: √7/8."},
+  {src:"Ex-V Q13", type:"SC", tier:3, tax:"P11", pat:"P11", q:"If α, β, γ do not differ by a multiple of π and cos(α+θ)/sin(β+γ) = cos(β+θ)/sin(γ+α) = cos(γ+θ)/sin(α+β) = k, then k equals", choices:["±2","±1/2","0","±1"], correct:3, ans:"±1", note:"Set up the equal ratios; expand cos(α+θ) = cos α cos θ − sin α sin θ and sin(β+γ) by sum-to-product; consistency forces k = ±1."},
+  {src:"Ex-V Q14", type:"SC", tier:3, tax:"P8", pat:"P8", q:"If θ = π/(2ⁿ+1), then cos θ · cos 2θ · cos 2²θ · … · cos 2ⁿ⁻¹θ is equal to", choices:["1/2ⁿ","cos θ","2","2ⁿ"], correct:0, ans:"1/2ⁿ", note:"Use telescoping: sin(2ⁿ θ)/(2ⁿ sin θ). With θ=π/(2ⁿ+1): sin(2ⁿ θ) = sin(π − θ) = sin θ. So product = 1/2ⁿ."},
+  {src:"Ex-V Q15", type:"SC", tier:3, tax:"P11", pat:"P11", q:"If tan(α+β−γ)/tan(α−β+γ) = tan γ/tan β (β ≠ γ), then sin 2α + sin 2β + sin 2γ =", choices:["0","1","2","1/2"], correct:0, ans:"0", note:"Cross-multiply and apply componendo-dividendo; reduces to sin 2(β−γ)+sin 2(γ−α)+sin 2(α−β) = 0 type identity."},
+  {src:"Ex-V Q16", type:"MC", tier:3, tax:"P5", pat:"P5", q:"If a,b,c ∈ ℝ satisfy a² + b² + c² − 2a + 6b − 4c + 14 = 0 and g(x) = a cos²x − b sec²x + 2c, then which are correct?", ans:"A, B, D — a+b+c=0; a+c=3; min g(x) = 8. The given relation completes to (a−1)² + (b+3)² + (c−2)² = 0 ⇒ a=1, b=−3, c=2. Then g(x) = cos²x + 3 sec²x + 4. AM-GM on cos²x and 3 sec²x gives min 2√3 + 4 ≈ 7.46, but verify: at the equality point cos²x = √3, exceeding [0,1] — boundary case. Take cos²x=1: g = 1+3+4 = 8. So min = 8.", note:"Complete the square to nail a,b,c, then g(x)=cos²x+3sec²x+4. AM-GM aspires to 2√3+4, but cos²x ≤ 1 blocks it; boundary value 8 wins."},
+  {src:"Ex-V Q17", type:"MC", tier:3, tax:"F4", pat:"F4", q:"If tan 3A / tan A = k (k ≠ 1), then which are correct? (A) cos A/cos 3A = (k²−1)/(2k) (B) sin 3A/sin A = 2k/(k−1) (C) k < 1/3 (D) k > 3", ans:"B, C, D — Express tan 3A in terms of tan A and form a quadratic in tan²A; gives sin 3A/sin A = 2k/(k−1). Discriminant ≥ 0 condition (tan²A ≥ 0) forces k ∉ [1/3, 3] minus k=1, hence k<1/3 or k>3.", note:"Standard multi-angle k-ratio inequality problem."},
+  {src:"Ex-V Q18", type:"MC", tier:3, tax:"P11", pat:"P11", q:"If x = sin(α−β)sin(γ−δ), y = sin(β−γ)sin(α−δ), z = sin(γ−α)sin(β−δ), then which are correct?", ans:"A, D — x+y+z = 0 (sum-to-product collapses) and x³+y³+z³ = 3xyz (since x+y+z=0).", note:"Expand each product via sum-to-product; sum cancels. Then use a+b+c=0 ⇒ a³+b³+c³ = 3abc."},
+  {src:"Ex-V Q19", type:"MC", tier:3, tax:"P12", pat:"P12", q:"For α = π/7, which of the following hold(s) good? (A) tan α · tan 2α · tan 3α = tan 3α − tan 2α − tan α (B) cosec α = cosec 2α + cosec 4α (C) cos α − cos 2α + cos 3α = 1/2 (D) 8 cos α · cos 2α · cos 4α = 1", ans:"A, B, C — α+2α+3α = 6α = 6π/7 ≠ nπ, but the tan identity reformulated holds with sign. (B) and (C) verify via 7θ = π substitution. (D) is FALSE: 8 cos α cos 2α cos 4α = sin 8α/sin α = sin(8π/7)/sin(π/7) = −1, not +1.", note:"Classic α=π/7 question. Watch the sign on (D) — it's −1 not 1."},
+  {src:"Ex-V Q20", type:"NV", tier:3, tax:"P11", pat:"P11", q:"If cos α/cos β + sin α/sin β = −1, then cos³β/cos α + sin³β/sin α =", ans:"1", note:"Combine LHS over common denom; cross-multiply and use cos²+sin²=1 identities. Algebraic substitution lands on 1."},
+  {src:"Ex-V Q23", type:"NV", tier:3, tax:"P13", pat:"P13", q:"The positive integer value of n > 3 satisfying 1/sin(π/n) = 1/sin(2π/n) + 1/sin(3π/n) is", ans:"7", note:"Heptagon identity. Verify n=7 satisfies via sum-to-product on the RHS."},
+  {src:"Ex-V Q25", type:"NV", tier:3, tax:"P9", pat:"P9", q:"If sin θ + sin 3θ + sin 5θ + … + sin(2n−1)θ = λ · sin²(nθ)/sin θ, then λ =", ans:"1", note:"Use Σ sin in AP: Σ_{k=0}^{n−1} sin((2k+1)θ) = sin²(nθ)/sin θ. So λ=1."},
+  {src:"Ex-V Q26", type:"LC", tier:3, tax:"P11", pat:"P11", q:"[Passage: 7θ = (2n+1)π for n=0..6, so cos(π/7), cos(3π/7), cos(5π/7) are roots of a cubic.] The equation whose roots are cos(π/7), cos(3π/7), cos(5π/7) is", choices:["8x³ + 4x² + 4x + 1 = 0","8x³ − 4x² − 4x + 1 = 0","8x³ − 4x² − 4x − 1 = 0","8x³ + 4x² + 4x − 1 = 0"], correct:1, ans:"8x³ − 4x² − 4x + 1 = 0", note:"From cos 7θ = 0 with x = cos θ, expand cos 7θ as polynomial in x; the roots cos(π/7), cos(3π/7), cos(5π/7) satisfy the cubic factor 8x³ − 4x² − 4x + 1 = 0."},
+  {src:"Ex-V Q27", type:"LC", tier:3, tax:"P11", pat:"P11", q:"[Same passage.] The value of sec(π/7) + sec(3π/7) + sec(5π/7) is", choices:["4","−4","3","−3"], correct:0, ans:"4", note:"Use the cubic from Q26: roots cos(π/7), cos(3π/7), cos(5π/7). Then Σ sec = Σ 1/root = (sum of pairwise products) / (product of all). By Vieta on 8x³ − 4x² − 4x + 1 = 0: Σ products = −4/8 = −1/2; product = −1/8. So Σ sec = (−1/2)/(−1/8) = 4."},
+  {src:"Ex-V Q28", type:"LC", tier:3, tax:"P8", pat:"P8", q:"[Passage: cos 2ᵐθ · cos 2ᵐ⁺¹θ · … · cos 2ⁿθ = sin(2ⁿ⁺¹θ)/(2ⁿ⁻ᵐ⁺¹ sin 2ᵐθ).] sin(9π/14) · sin(11π/14) · sin(13π/14) is equal to", choices:["1/64","−1/64","1/8","−1/8"], correct:2, ans:"1/8", note:"Use sin(π−x) = sin x: sin(9π/14) = sin(5π/14), sin(11π/14) = sin(3π/14), sin(13π/14) = sin(π/14). Product = sin(π/14) sin(3π/14) sin(5π/14) = 1/8 (standard heptagonal identity)."},
+  {src:"Ex-V Q30", type:"LC", tier:3, tax:"P10", pat:"P10", q:"[Same passage as Q28.] cos(π/11) · cos(2π/11) · cos(3π/11) · … · cos(10π/11) is equal to", choices:["−1/32","1/512","1/1024","−1/1024"], correct:3, ans:"−1/1024", note:"Pair cos(kπ/11) and cos((11−k)π/11) = −cos(kπ/11). Five such pairs (k=1..5), each giving −cos²(kπ/11). Use Π cos(kπ/11) for k=1..5 = 1/2⁵. Squared and signed: −1/1024."},
+
+  /* ===== Narayana JEE-Adv Maths Vol-III · Exercise-IV ===== */
+  {src:"Ex-IV Q20", type:"SC", tier:3, tax:"P10", pat:"P10", q:"sin(π/18) · sin(5π/18) · sin(7π/18) =", choices:["8","1/8","1/7","6"], correct:1, ans:"1/8", note:"Use sin(60°−x)·sin x·sin(60°+x) = ¼ sin 3x. Here 5π/18 = π/3 − 2π/18 = 60°−10°, 7π/18 = 60°+10°, π/18 = 10°. So product = ¼ sin(30°) = 1/8."},
+  {src:"Ex-IV Q34", type:"NV", tier:3, tax:"P12", pat:"P12", q:"If tan x + tan 2x + tan 3x = tan x · tan 2x · tan 3x, then |sin 3x + cos 3x| =", ans:"1", note:"The identity tan A + tan B + tan C = tan A tan B tan C holds iff A+B+C = nπ. Here x+2x+3x = 6x = nπ ⇒ 3x = nπ/2. Then sin 3x and cos 3x are 0 or ±1 alternating, so |sin 3x + cos 3x| = 1."},
+  {src:"Ex-IV Q36", type:"NV", tier:3, tax:"P13", pat:"P13", q:"If 1/(sin 45° sin 46°) + 1/(sin 47° sin 48°) + … + 1/(sin 133° sin 134°) = cosec λ°, then λ =", ans:"1", note:"Use 1/(sin α sin(α+1°)) = (1/sin 1°)[cot α − cot(α+1°)]. Telescoping from 45° to 134° gives (1/sin 1°)[cot 45° − cot 134°] = (1/sin 1°)·2 → cosec 1° after cleanup. λ = 1."},
+
+  /* ===== Narayana JR.IIT WAT-06 (22-06-25) ===== */
+  {src:"WAT-06 Q3", type:"NV", tier:3, tax:"P6", pat:"P6", q:"Let x ∈ ℝ and the maximum value of 2/(3 cos x − 5 sin x + 6) is p + √q where p, q ∈ ℚ. Then p + q =", ans:"40", note:"Denom = 3 cos x − 5 sin x + 6 ∈ [6−√34, 6+√34], all positive. Max f = 2/(6−√34); rationalize: 2(6+√34)/((36−34)) = 6+√34. So p=6, q=34 ⇒ p+q = 40."},
+  {src:"WAT-06 Q1", type:"NV", tier:3, tax:"P3", pat:"P3", q:"Let T₁, T₂, T₃ represent the fundamental periods of sin(π[x]/13), |cos(π[x]/5)| and tan(π[x]/3) respectively, where [x] is the GIF. The value of (2T₁ + 3T₂)/(4T₃) =", ans:"5.58 (= 67/12)", note:"GIF period rule: sin(π[x]/n) → 2n, |cos(π[x]/n)| → n, tan(π[x]/n) → n. So T₁=26, T₂=5, T₃=3. Compute (52+15)/12 = 67/12 ≈ 5.58."},
+  {src:"WAT-11 Q53", type:"SC", tier:3, tax:"P4", pat:"P4", q:"If the fundamental period of f(x) = 4 cos⁴((x−π)/(4π²)) − 2 cos((x−π)/(2π²)) is kπ³, then k =", choices:["2","4","8","3"], correct:1, ans:"4", note:"Let u = (x−π)/(4π²); second arg = 2u. cos⁴u has period π in u (squaring halves twice but cos⁴ = (cos²)² keeps π); cos(2u) has period π in u. LCM in u is π. In x: T = π · 4π² = 4π³, so k = 4."},
+  {src:"WAT-06 Q12", type:"MC", tier:3, tax:"P2", pat:"P2", q:"Which of the following functions is periodic with fundamental period π/2? (A) f(x) = √(sin²x) + √(cos²x)  (B) g(x) = (sin x)^(1/3) + (cos x)^(1/3)  (C) h(x) = cos(2 sin x cos x) + cos(2 cos²x − 1)  (D) p(x) = sec²(2x) − tan²(2x)", ans:"A — only |sin x| + |cos x| has fundamental period π/2 (the |·| folds plus sin–cos shift). (B) has period 2π. (C) reduces to cos(sin 2x) + cos(cos 2x), period π. (D) is the constant 1 — no fundamental period.", note:"Classic period-of-|·| trap. Always verify by computing f(x+T) = f(x) directly."}
+];
+
+let PEV_PRAC_DOCS = [
+  {id:"exIV", label:"Narayana Module Vol-III \u00b7 Exercise-IV",  date:"Jun 2026", note:"~29 questions, mixed SC/MC/Integer/Comprehension/Match"},
+  {id:"exV",  label:"Narayana Module Vol-III \u00b7 Exercise-V (JEE-Adv)", date:"Jun 2026", note:"~38 questions, advanced JEE-Adv mix"},
+  {id:"wat06",label:"Narayana JR.IIT WAT-06",  date:"22 Jun 2025", note:"JEE-Adv mock, ~18 maths questions"},
+  {id:"wat11",label:"Narayana JR.IIT WAT-11",  date:"09 Jul 2023", note:"JEE-Adv mock, ~18 maths questions"},
+  {id:"wat12",label:"Narayana JR.IIT WAT-12",  date:"30 Jun 2024", note:"JEE-Adv mock, ~18 maths questions"}
+];
+
+const PEV_PRAC_TIERS=[{k:"All",l:"All"},{k:"1",l:"Foundation"},{k:"2",l:"JEE Main"},{k:"3",l:"JEE Advanced"},{k:"Flag",l:"\u2605 Flagged"}];
+
 /* ===== CURRICULUM TREE  (Subjects > Subsections > Chapters) ===== */
 const CURRICULUM=[
   {id:"maths",name:"Mathematics",sym:"\u2211",subs:[
@@ -432,7 +577,8 @@ const CURRICULUM=[
       {id:"cma",name:"Compound & Multiple Angles",grade:11},
       {id:"teq",name:"Trigonometric Equations",grade:11},
       {id:"inv",name:"Inverse Trigonometric Functions",grade:12},
-      {id:"pot",name:"Properties of Triangles",grade:11}]},
+      {id:"pot",name:"Properties of Triangles",grade:11},
+      {id:"pev",name:"Periodicity & Extreme Values",grade:11}]},
     {id:"alg",name:"Algebra",chapters:[
       {id:"quad",name:"Quadratic Equations",grade:11},{id:"cn",name:"Complex Numbers",grade:11},
       {id:"pnc",name:"Permutations & Combinations",grade:11},{id:"bin",name:"Binomial Theorem",grade:11},
@@ -460,6 +606,7 @@ const CURRICULUM=[
 /* A chapter is "ready" iff its path appears here. Add a chapter by dropping its data in. */
 const CONTENT={
   "maths/trig/fg":{key:"trigfg",taxa:TAXA,formulae:FORMULAE,patterns:PATTERNS,guided:GUIDED,practice:PRACTICE,pracTiers:PRAC_TIERS},
+  "maths/trig/pev":{key:"pev",taxa:PEV_TAXA,formulae:PEV_FORMULAE,patterns:PEV_PATTERNS,guided:PEV_GUIDED,practice:PEV_PRACTICE,pracDocs:PEV_PRAC_DOCS,pracTiers:PEV_PRAC_TIERS},
   "phys/mech/wpe":{key:"wpe",taxa:WPE_TAXA,formulae:WPE_FORMULAE,patterns:WPE_PATTERNS,guided:WPE_GUIDED,practice:WPE_PRACTICE,figs:WPE_FIG,pracDocs:WPE_PRAC_DOCS,pracTiers:WPE_PRAC_TIERS}
 };
 function chapPath(a,b,c){return a+"/"+b+"/"+c;}
@@ -492,6 +639,15 @@ const CHAPTER_META = [
     topic:   "Mechanics",
     chapter: "Work, Power & Energy",
     sources: ["Narayana Module (JEE-Adv Physics Vol-II)"],
+    created: "Jun 2026"
+  },
+  {
+    id:      "maths/trig/pev",
+    grade:   "11th",
+    subject: "Maths",
+    topic:   "Trigonometry",
+    chapter: "Periodicity & Extreme Values",
+    sources: ["Narayana JEE-Adv Maths Vol-III", "Narayana JR.IIT WAT papers"],
     created: "Jun 2026"
   }
 ];
