@@ -12,19 +12,45 @@
 </head>
 <body>
 
-<header>
-  <div class="topbar">
+<!-- ===== Left nav drawer (opened by the ☰ button) ===== -->
+<div id="scrim" hidden></div>
+<aside id="drawer" aria-hidden="true" aria-label="Navigation menu">
+  <div class="drawer-head">
     <div class="brand"><svg viewBox="0 0 40 40"><path d="M2 20 Q 7 9 12 20 T 22 20 T 32 20 T 38 20" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg>Pattern Lab</div>
-    <div class="topbar-r">
-      <button class="manifest-btn" id="manifest-btn" title="Project manifest" aria-label="Open project manifest">&#8801;</button>
-      <button class="who" id="who">Choose profile</button>
+    <button class="drawer-close" id="drawer-close" aria-label="Close menu">&times;</button>
+  </div>
+  <div class="drawer-scroll">
+    <div class="drawer-sec">
+      <div class="drawer-h">Navigate</div>
+      <div id="selbar">
+        <div class="selgrp"><span class="sl">Subject</span><div class="selrow" id="sel-subjects"></div></div>
+        <div class="selgrp"><span class="sl">Topic</span><div class="selrow" id="sel-subs"></div></div>
+        <div class="selgrp"><span class="sl">Chapter</span><div class="selrow" id="sel-chaps"></div></div>
+      </div>
+    </div>
+    <div class="drawer-sec">
+      <div class="drawer-h">Tools</div>
+      <button class="drawer-item" data-tool="manifest">
+        <span class="di-ic">&#9636;</span>
+        <span class="di-t"><b>Project Manifest</b><small>Coverage, sources &amp; health</small></span>
+      </button>
+      <button class="drawer-item" data-tool="gaps">
+        <span class="di-ic">&#9873;</span>
+        <span class="di-t"><b>Gap Analysis</b><small>Weekly test misses to re-fix</small></span>
+      </button>
     </div>
   </div>
+</aside>
 
-  <div id="selbar">
-    <div class="selgrp"><span class="sl">Subject</span><div class="selrow" id="sel-subjects"></div></div>
-    <div class="selgrp"><span class="sl">Topic</span><div class="selrow" id="sel-subs"></div></div>
-    <div class="selgrp"><span class="sl">Chapter</span><div class="selrow" id="sel-chaps"></div></div>
+<header>
+  <div class="topbar">
+    <div class="topbar-l">
+      <button class="menu-btn" id="menu-btn" title="Open menu" aria-label="Open navigation menu" aria-controls="drawer" aria-expanded="false">&#9776;</button>
+      <div class="brand"><svg viewBox="0 0 40 40"><path d="M2 20 Q 7 9 12 20 T 22 20 T 32 20 T 38 20" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg>Pattern Lab</div>
+    </div>
+    <div class="topbar-r">
+      <button class="who" id="who">Choose profile</button>
+    </div>
   </div>
 
   <h1 id="wtitle"></h1>
@@ -127,6 +153,7 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script src="config.js"></script>
 <script src="curriculum.js"></script>
+<script src="gaplog.js"></script>
 <script src="app.js"></script>
 </body>
 </html>

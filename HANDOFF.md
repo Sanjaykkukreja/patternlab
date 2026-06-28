@@ -381,8 +381,21 @@ without needing the printed book.
   `localStorage` under `pl.gaplog.<id>` — **no Supabase/app.js coupling.**
 - Exposes `window.GapLog.open()` / `.close()` / `.refreshLauncher()`.
 
-**Files NOT touched**: app.js, index.html, styles.css, config.js, schema.sql,
-README.md (Gap Log was deliberately built standalone — see §10).
+**index.html · app.js · styles.css (drawer integration)**
+- Replaced the topbar `≡` manifest button with a `☰` menu button (`#menu-btn`)
+  that opens a **left nav drawer** (`#drawer` + `#scrim`). The Subject→Topic→
+  Chapter selector (`#selbar`) moved OUT of the header INTO the drawer's
+  "Navigate" section (same element ids, so `renderSelectors()` / selector
+  handlers are unchanged). Added a "Tools" section with **Project Manifest**
+  (opens the existing modal) and **Gap Analysis** (calls `window.GapLog.open()`).
+- The L0–L6 tabs stay as the in-chapter view bar (unchanged). Drawer closes on
+  chapter pick, scrim tap, ✕, or Esc. `app.js` `bindOnce()` updated accordingly;
+  `mountManifest()` unchanged.
+- `gaplog.js` reskinned to the **light theme** via the app's CSS tokens (matches
+  the manifest modal) and **no longer auto-injects a floating button** — it is
+  launched solely from the drawer. `window.GapLog.open()/close()` is the API.
+
+**Files unchanged this session**: config.js, schema.sql, README.md.
 
 ### 25 Jun 2026
 

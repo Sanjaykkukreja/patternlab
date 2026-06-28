@@ -2,18 +2,16 @@
    gaplog.js — Pattern Lab "Gap Log" (weekly test-miss loop closer)
    SELF-CONTAINED. Load AFTER curriculum.js (which defines `GAPLOG`):
        <script src="curriculum.js"></script>
-       <script src="gaplog.js"></script>     <!-- add this one line -->
-   It auto-injects a launcher button (⚑ Gaps). To wire your own nav button
-   instead, call  window.GapLog.open()  from its click handler.
-   Ladder state (chip pick / hints shown / solution / re-done) persists in
-   localStorage under "pl.gaplog.<id>" — no Supabase/app.js coupling.
+       <script src="gaplog.js"></script>
+       <script src="app.js"></script>
+   Launched from the left drawer's "Gap Analysis" item via window.GapLog.open().
+   (No floating button.) Styling matches the app's light theme via CSS tokens.
+   Per-entry ladder state {oi,h,s,done} persists in localStorage under
+   "pl.gaplog.<id>" — no Supabase / app.js coupling.
    ========================================================================= */
 (function () {
   "use strict";
-  if (typeof GAPLOG === "undefined" || !Array.isArray(GAPLOG)) {
-    console.warn("[gaplog] GAPLOG array not found — is curriculum.js loaded first?");
-    return;
-  }
+  function gaplogReady(){ try { return typeof GAPLOG !== "undefined" && Array.isArray(GAPLOG); } catch(e){ return false; } }
   var LS = "pl.gaplog.";
   function esc(s){return String(s==null?"":s).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c];});}
   function getState(id){ try{return JSON.parse(localStorage.getItem(LS+id))||{};}catch(e){return{};} }
@@ -25,51 +23,55 @@
   function injectStyle(){
     if(styleInjected) return; styleInjected = true;
     var css = ""
-    + ".gl-ov{position:fixed;inset:0;background:rgba(8,10,16,.72);z-index:9000;display:none;overflow:auto;-webkit-overflow-scrolling:touch;}"
+    + ".gl-ov{position:fixed;inset:0;z-index:9000;background:rgba(22,36,46,.55);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);display:none;overflow:auto;-webkit-overflow-scrolling:touch;}"
     + ".gl-ov.show{display:block;}"
-    + ".gl-wrap{max-width:760px;margin:0 auto;padding:14px 12px 60px;}"
-    + ".gl-top{position:sticky;top:0;background:#11141c;border:1px solid #232838;border-radius:14px;padding:12px 14px;margin-bottom:12px;box-shadow:0 6px 24px rgba(0,0,0,.4);}"
-    + ".gl-top h2{margin:0 0 2px;font:600 17px/1.2 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;color:#eef1f8;}"
-    + ".gl-sub{font:400 12px/1.4 system-ui;color:#8b93a7;}"
-    + ".gl-x{position:absolute;top:10px;right:12px;width:30px;height:30px;border:none;border-radius:8px;background:#1c2130;color:#cfd6e6;font-size:18px;cursor:pointer;}"
-    + ".gl-filters{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;}"
-    + ".gl-f{border:1px solid #2a3142;background:#161b27;color:#aab3c6;font:500 12px system-ui;padding:5px 10px;border-radius:999px;cursor:pointer;}"
-    + ".gl-f.on{background:#3b82f6;border-color:#3b82f6;color:#fff;}"
-    + ".gl-grp{font:600 12px system-ui;letter-spacing:.04em;text-transform:uppercase;color:#7a8298;margin:16px 4px 8px;}"
-    + ".gl-card{background:#11141c;border:1px solid #232838;border-radius:14px;padding:14px;margin-bottom:12px;}"
-    + ".gl-h{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-bottom:8px;}"
-    + ".gl-badge{font:600 10px system-ui;letter-spacing:.03em;padding:3px 8px;border-radius:999px;text-transform:uppercase;}"
-    + ".gl-b-new{background:#3a1d2b;color:#ff8fb0;border:1px solid #5d2b40;}"
-    + ".gl-b-exist{background:#15314a;color:#7cc0ff;border:1px solid #1f4d75;}"
-    + ".gl-b-type{background:#222838;color:#9aa6bd;border:1px solid #2f374a;}"
-    + ".gl-b-done{background:#143524;color:#6ee7a0;border:1px solid #1f5638;}"
-    + ".gl-qno{font:700 13px system-ui;color:#eef1f8;margin-right:2px;}"
-    + ".gl-meta{font:400 11px system-ui;color:#7a8298;width:100%;}"
-    + ".gl-q{font:500 14.5px/1.5 system-ui;color:#e6eaf3;margin:6px 0 10px;white-space:pre-wrap;}"
-    + ".gl-pat{font:500 12.5px/1.45 system-ui;color:#cbd3e3;background:#161b27;border:1px solid #232838;border-left:3px solid #3b82f6;border-radius:8px;padding:8px 10px;margin:8px 0;}"
-    + ".gl-pat.new{border-left-color:#ff6fa0;}"
-    + ".gl-pat b{color:#fff;}"
-    + ".gl-why{font:400 12.5px/1.5 system-ui;color:#9aa6bd;margin:6px 0 10px;}"
-    + ".gl-np{background:#1a1320;border:1px solid #3a2030;border-radius:10px;padding:10px 12px;margin:8px 0;}"
-    + ".gl-np .t{font:700 12px system-ui;color:#ff9cba;text-transform:uppercase;letter-spacing:.04em;margin-bottom:6px;}"
-    + ".gl-np .r{font:400 12.5px/1.5 system-ui;color:#d7c2cd;margin:3px 0;}"
-    + ".gl-np .r b{color:#ffd0df;}"
-    + ".gl-lad{margin-top:6px;border-top:1px dashed #2a3142;padding-top:10px;}"
-    + ".gl-lq{font:600 12px system-ui;color:#8b93a7;text-transform:uppercase;letter-spacing:.04em;margin-bottom:7px;}"
-    + ".gl-chip{display:block;width:100%;text-align:left;border:1px solid #2a3142;background:#161b27;color:#d7dce8;font:500 13px/1.4 system-ui;padding:9px 11px;border-radius:9px;margin-bottom:6px;cursor:pointer;}"
-    + ".gl-chip:hover{border-color:#3b82f6;}"
-    + ".gl-chip.ok{background:#143524;border-color:#2f7d54;color:#aef0c8;}"
-    + ".gl-chip.bad{background:#3a1722;border-color:#7d2f45;color:#ffb6c6;}"
+    + ".gl-wrap{max-width:760px;margin:0 auto;padding:16px 14px 64px;font-family:var(--body,'Inter',system-ui,sans-serif);}"
+    + ".gl-top{position:sticky;top:0;z-index:2;background:var(--paper,#fff);border:1px solid var(--line,#dde4e2);border-radius:16px;padding:14px 16px;margin-bottom:14px;box-shadow:0 10px 30px rgba(22,36,46,.18);}"
+    + ".gl-top h2{margin:0 0 2px;font-family:var(--disp,'Space Grotesk',sans-serif);font-weight:600;font-size:19px;color:var(--ink,#16242e);}"
+    + ".gl-sub{font-size:12px;line-height:1.45;color:var(--ink-soft,#42525d);}"
+    + ".gl-x{position:absolute;top:12px;right:14px;width:30px;height:30px;border:none;border-radius:8px;background:none;color:var(--ink-faint,#7d8c95);font-size:23px;line-height:1;cursor:pointer;}"
+    + ".gl-x:hover{color:var(--ink,#16242e);background:#f0f4f3;}"
+    + ".gl-filters{display:flex;flex-wrap:wrap;gap:6px;margin-top:11px;}"
+    + ".gl-f{font-family:var(--body,sans-serif);font-size:12px;font-weight:500;border:1px solid var(--line,#dde4e2);background:var(--mist,#e8edeb);color:var(--ink-soft,#42525d);padding:5px 11px;border-radius:20px;cursor:pointer;}"
+    + ".gl-f:hover{border-color:var(--teal,#0f766e);color:var(--teal,#0f766e);}"
+    + ".gl-f.on{background:var(--teal,#0f766e);border-color:var(--teal,#0f766e);color:#fff;}"
+    + ".gl-grp{font-family:var(--mono,monospace);font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-faint,#7d8c95);margin:18px 4px 9px;font-weight:600;}"
+    + ".gl-card{background:var(--paper,#fff);border:1px solid var(--line,#dde4e2);border-radius:16px;padding:15px;margin-bottom:13px;box-shadow:0 1px 2px rgba(22,36,46,.05),0 6px 18px rgba(22,36,46,.05);}"
+    + ".gl-h{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-bottom:9px;}"
+    + ".gl-badge{font-family:var(--mono,monospace);font-size:9.5px;font-weight:600;letter-spacing:.03em;padding:3px 8px;border-radius:20px;text-transform:uppercase;}"
+    + ".gl-b-new{background:var(--coral-soft,#fbe9e4);color:var(--coral,#bf4d36);border:1px solid #efc9bf;}"
+    + ".gl-b-exist{background:var(--teal-soft,#e3f1ef);color:var(--teal,#0f766e);border:1px solid #bfe0db;}"
+    + ".gl-b-type{background:var(--mist,#e8edeb);color:var(--ink-soft,#42525d);border:1px solid var(--line,#dde4e2);}"
+    + ".gl-b-done{background:#eaf6ef;color:var(--green,#2f8f63);border:1px solid #bfe3cd;}"
+    + ".gl-qno{font-family:var(--disp,sans-serif);font-weight:700;font-size:13px;color:var(--ink,#16242e);margin-right:2px;}"
+    + ".gl-meta{font-family:var(--mono,monospace);font-size:10.5px;color:var(--ink-faint,#7d8c95);width:100%;}"
+    + ".gl-q{font-size:14.5px;line-height:1.55;color:var(--ink,#16242e);margin:6px 0 11px;white-space:pre-wrap;}"
+    + ".gl-pat{font-size:12.5px;line-height:1.45;color:var(--ink-soft,#42525d);background:var(--mist,#e8edeb);border:1px solid var(--line,#dde4e2);border-left:3px solid var(--teal,#0f766e);border-radius:9px;padding:8px 11px;margin:8px 0;}"
+    + ".gl-pat.new{border-left-color:var(--coral,#bf4d36);}"
+    + ".gl-pat b{color:var(--ink,#16242e);}"
+    + ".gl-why{font-size:12.5px;line-height:1.5;color:var(--ink-soft,#42525d);margin:6px 0 10px;}"
+    + ".gl-why b{color:var(--ink,#16242e);}"
+    + ".gl-np{background:#fdf6f3;border:1px solid #f1d7cd;border-radius:11px;padding:11px 13px;margin:9px 0;}"
+    + ".gl-np .t{font-family:var(--mono,monospace);font-size:10px;font-weight:600;color:var(--coral,#bf4d36);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px;}"
+    + ".gl-np .r{font-size:12.5px;line-height:1.5;color:var(--ink-soft,#42525d);margin:3px 0;}"
+    + ".gl-np .r b{color:var(--ink,#16242e);}"
+    + ".gl-lad{margin-top:8px;border-top:1px dashed var(--line,#dde4e2);padding-top:11px;}"
+    + ".gl-lq{font-family:var(--mono,monospace);font-size:10.5px;font-weight:600;color:var(--ink-faint,#7d8c95);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px;}"
+    + ".gl-chip{display:block;width:100%;text-align:left;border:1px solid var(--line,#dde4e2);background:var(--paper,#fff);color:var(--ink,#16242e);font-family:var(--body,sans-serif);font-size:13.5px;line-height:1.4;padding:10px 12px;border-radius:10px;margin-bottom:7px;cursor:pointer;transition:border-color .12s,background .12s;}"
+    + ".gl-chip:hover{border-color:var(--teal,#0f766e);}"
+    + ".gl-chip.ok{background:#eaf6ef;border-color:var(--green,#2f8f63);color:#1f6b46;}"
+    + ".gl-chip.bad{background:var(--coral-soft,#fbe9e4);border-color:var(--coral,#bf4d36);color:#8f3826;}"
     + ".gl-chip .mk{float:right;font-weight:700;}"
-    + ".gl-act{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;}"
-    + ".gl-btn{border:1px solid #2a3142;background:#1b2130;color:#cfd6e6;font:600 12.5px system-ui;padding:8px 12px;border-radius:9px;cursor:pointer;}"
-    + ".gl-btn.p{background:#3b82f6;border-color:#3b82f6;color:#fff;}"
-    + ".gl-btn:disabled{opacity:.4;cursor:default;}"
-    + ".gl-hint{font:400 13px/1.55 system-ui;color:#d7dce8;background:#161b27;border:1px solid #232838;border-radius:9px;padding:9px 11px;margin-top:7px;}"
-    + ".gl-hint .n{color:#7cc0ff;font-weight:700;margin-right:6px;}"
-    + ".gl-sol{font:500 13.5px/1.6 system-ui;color:#aef0c8;background:#10231a;border:1px solid #1f5638;border-radius:9px;padding:10px 12px;margin-top:8px;white-space:pre-wrap;}"
-    + ".gl-launch{position:fixed;right:14px;bottom:14px;z-index:8000;border:none;border-radius:999px;background:#3b82f6;color:#fff;font:600 13px system-ui;padding:11px 16px;box-shadow:0 6px 20px rgba(59,130,246,.45);cursor:pointer;}"
-    + ".gl-empty{color:#7a8298;font:400 13px system-ui;text-align:center;padding:30px 10px;}";
+    + ".gl-act{display:flex;flex-wrap:wrap;gap:8px;margin-top:9px;}"
+    + ".gl-btn{font-family:var(--disp,sans-serif);font-weight:600;font-size:12.5px;border:1px solid var(--line,#dde4e2);background:var(--paper,#fff);color:var(--ink-soft,#42525d);padding:8px 13px;border-radius:10px;cursor:pointer;transition:.12s;}"
+    + ".gl-btn:hover{border-color:var(--teal,#0f766e);color:var(--teal,#0f766e);}"
+    + ".gl-btn.p{background:var(--teal,#0f766e);border-color:var(--teal,#0f766e);color:#fff;}"
+    + ".gl-btn.p:hover{background:#0c655e;color:#fff;}"
+    + ".gl-hint{font-size:13px;line-height:1.55;color:var(--ink,#16242e);background:var(--mist,#e8edeb);border:1px solid var(--line,#dde4e2);border-radius:10px;padding:9px 12px;margin-top:8px;}"
+    + ".gl-hint .n{font-family:var(--mono,monospace);color:var(--teal,#0f766e);font-weight:700;margin-right:6px;}"
+    + ".gl-sol{font-size:13.5px;line-height:1.6;color:var(--ink,#16242e);background:#eaf6ef;border:1px solid #bfe3cd;border-radius:10px;padding:10px 13px;margin-top:9px;white-space:pre-wrap;}"
+    + ".gl-sol::before{content:'Solution';display:block;font-family:var(--mono,monospace);font-size:9.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--green,#2f8f63);margin-bottom:4px;}"
+    + ".gl-empty{color:var(--ink-faint,#7d8c95);font-size:13px;text-align:center;padding:34px 10px;}";
     var st = document.createElement("style"); st.textContent = css; document.head.appendChild(st);
   }
 
@@ -86,13 +88,12 @@
       }
       html += '<button class="'+cls+'" data-act="chip" data-id="'+esc(g.id)+'" data-i="'+i+'"'+(picked?' disabled':'')+'>'+esc(opt)+mk+'</button>';
     });
-    // hints revealed so far
     for (var k=0;k<h;k++){
       html += '<div class="gl-hint"><span class="n">Hint '+(k+1)+'</span>'+esc((L.hints||[])[k]||"")+'</div>';
     }
     html += '<div class="gl-act">';
     if (h < (L.hints||[]).length){
-      html += '<button class="gl-btn" data-act="hint" data-id="'+esc(g.id)+'">Reveal hint ('+(h)+'/'+(L.hints||[]).length+')</button>';
+      html += '<button class="gl-btn" data-act="hint" data-id="'+esc(g.id)+'">Reveal hint ('+h+'/'+(L.hints||[]).length+')</button>';
     }
     if (!sol){
       html += '<button class="gl-btn p" data-act="sol" data-id="'+esc(g.id)+'">Show solution</button>';
@@ -139,7 +140,7 @@
     if (FILTER === "all") return true;
     if (FILTER === "new") return g.diagnosis === "new";
     if (FILTER === "unresolved") return !st.done;
-    return g.chapter === FILTER;   // chapter name
+    return g.chapter === FILTER;
   }
 
   function render(){
@@ -148,9 +149,9 @@
     var open = GAPLOG.filter(function(g){return !getState(g.id).done;}).length;
 
     var html = '<div class="gl-wrap">';
-    html += '<div class="gl-top"><button class="gl-x" data-act="close">×</button>';
+    html += '<div class="gl-top"><button class="gl-x" data-act="close" aria-label="Close">×</button>';
     html += '<h2>Gap Log</h2>';
-    html += '<div class="gl-sub">'+GAPLOG.length+' logged · '+open+' still to re-do cold · tagged to the chapter each belongs to</div>';
+    html += '<div class="gl-sub">'+GAPLOG.length+' logged · '+open+' still to re-do cold · each tagged to the chapter it belongs to</div>';
     html += '<div class="gl-filters">';
     html += '<button class="gl-f'+(FILTER==="all"?" on":"")+'" data-act="filter" data-f="all">All</button>';
     html += '<button class="gl-f'+(FILTER==="unresolved"?" on":"")+'" data-act="filter" data-f="unresolved">⚑ Redo-cold</button>';
@@ -160,7 +161,6 @@
     });
     html += '</div></div>';
 
-    // group by chapter (respecting filter)
     var shown = 0;
     chapters.forEach(function(c){
       var items = GAPLOG.filter(function(g){return g.chapter===c && passesFilter(g);});
@@ -198,22 +198,23 @@
     overlay.addEventListener("click", onClick);
     document.body.appendChild(overlay);
   }
-  function open(){ ensureOverlay(); render(); overlay.classList.add("show"); document.body.style.overflow="hidden"; }
+  function open(){
+    if(!gaplogReady()){ console.warn("[gaplog] open() called but GAPLOG isn't loaded yet."); alert("Gap Log data not loaded yet — ensure the updated curriculum.js (with GAPLOG) is deployed and loaded before gaplog.js."); return; }
+    ensureOverlay(); render(); overlay.classList.add("show"); document.body.style.overflow="hidden";
+  }
   function close(){ if(overlay){ overlay.classList.remove("show"); document.body.style.overflow=""; } }
 
-  function addLauncher(){
-    injectStyle();
-    if(document.querySelector(".gl-launch")) return;
-    var b = document.createElement("button");
-    b.className = "gl-launch"; b.type="button";
-    var open_n = GAPLOG.filter(function(g){return !getState(g.id).done;}).length;
-    b.innerHTML = "⚑ Gaps" + (open_n? ' <span style="background:#fff;color:#3b82f6;border-radius:999px;padding:0 6px;margin-left:4px;font-size:11px;">'+open_n+'</span>' : '');
-    b.addEventListener("click", open);
-    document.body.appendChild(b);
-  }
+  // public API — the left drawer's "Gap Analysis" item calls window.GapLog.open()
+  window.GapLog = { open: open, close: close };
 
-  // public API + auto-launcher
-  window.GapLog = { open: open, close: close, refreshLauncher: function(){ var b=document.querySelector(".gl-launch"); if(b) b.remove(); addLauncher(); } };
-  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", addLauncher);
-  else addLauncher();
+  function ready(){
+    if (gaplogReady()){ console.log("[gaplog] ready — " + GAPLOG.length + " entries. Open via the drawer → Gap Analysis (or window.GapLog.open())."); }
+  }
+  function waitReady(tries){
+    if (gaplogReady()) return ready();
+    if (tries <= 0){ console.warn("[gaplog] GAPLOG not found. Check: (1) deploy the NEW curriculum.js containing GAPLOG; (2) load it BEFORE gaplog.js; (3) hard-refresh to clear the GitHub Pages cache."); return; }
+    setTimeout(function(){ waitReady(tries-1); }, 150);
+  }
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", function(){ waitReady(20); });
+  else waitReady(20);
 })();

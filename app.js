@@ -520,7 +520,7 @@ function bindOnce(){
   });
   document.getElementById('sel-subjects').addEventListener('click', e => { const b=e.target.closest('[data-subj]'); if(b) pickSubject(b.dataset.subj); });
   document.getElementById('sel-subs').addEventListener('click',     e => { const b=e.target.closest('[data-sub]');  if(b) pickSub(b.dataset.sub); });
-  document.getElementById('sel-chaps').addEventListener('click',    e => { const b=e.target.closest('[data-chap]'); if(b) pickChap(b.dataset.chap); });
+  document.getElementById('sel-chaps').addEventListener('click',    e => { const b=e.target.closest('[data-chap]'); if(b){ pickChap(b.dataset.chap); if(window.__closeDrawer) window.__closeDrawer(); } });
   document.getElementById('who').addEventListener('click', openProfileModal);
   document.getElementById('pm-list').addEventListener('click', e => { const b=e.target.closest('.pm-pick'); if(b) chooseProfile(b.dataset.id, b.dataset.name); });
   document.getElementById('pm-create').addEventListener('click', async () => {
@@ -528,14 +528,50 @@ function bindOnce(){
     if (!v.trim()) return;
     const p = await createProfile(v); chooseProfile(p.id, p.name);
   });
-  const mbtn = document.getElementById('manifest-btn');
+  /* ===== Left nav drawer (opened by the ☰ menu button) ===== */
+  const menuBtn = document.getElementById('menu-btn');
+  const drawer  = document.getElementById('drawer');
+  const scrim   = document.getElementById('scrim');
+  const dclose  = document.getElementById('drawer-close');
+  function openDrawer(){
+    if(!drawer) return;
+    drawer.classList.add('open'); drawer.setAttribute('aria-hidden','false');
+    if(menuBtn) menuBtn.setAttribute('aria-expanded','true');
+    if(scrim) scrim.hidden = false;
+    document.body.classList.add('drawer-open');
+  }
+  function closeDrawer(){
+    if(!drawer) return;
+    drawer.classList.remove('open'); drawer.setAttribute('aria-hidden','true');
+    if(menuBtn) menuBtn.setAttribute('aria-expanded','false');
+    if(scrim) scrim.hidden = true;
+    document.body.classList.remove('drawer-open');
+  }
+  window.__closeDrawer = closeDrawer;   // used by the chapter-pick handler above
+  if (menuBtn) menuBtn.addEventListener('click', openDrawer);
+  if (scrim)   scrim.addEventListener('click', closeDrawer);
+  if (dclose)  dclose.addEventListener('click', closeDrawer);
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeDrawer(); });
+
+  /* Manifest modal — now opened from the drawer's Tools section */
   const mmodal = document.getElementById('manifest-modal');
   const mclose = document.getElementById('manifest-close');
-  if (mbtn && mmodal) {
-    mbtn.addEventListener('click', () => { mountManifest(); mmodal.hidden = false; });
-    if (mclose) mclose.addEventListener('click', () => { mmodal.hidden = true; });
-    mmodal.addEventListener('click', e => { if (e.target === mmodal) mmodal.hidden = true; });
-  }
+  if (mclose && mmodal) mclose.addEventListener('click', () => { mmodal.hidden = true; });
+  if (mmodal) mmodal.addEventListener('click', e => { if (e.target === mmodal) mmodal.hidden = true; });
+
+  /* Drawer Tools: Project Manifest + Gap Analysis */
+  if (drawer) drawer.addEventListener('click', e => {
+    const it = e.target.closest('[data-tool]'); if (!it) return;
+    const tool = it.dataset.tool;
+    closeDrawer();
+    if (tool === 'manifest'){
+      mountManifest();
+      if (mmodal) mmodal.hidden = false;
+    } else if (tool === 'gaps'){
+      if (window.GapLog && typeof window.GapLog.open === 'function') window.GapLog.open();
+      else alert('Gap Log isn\u2019t loaded. Make sure gaplog.js is included after curriculum.js in index.html, and that the deployed curriculum.js contains the GAPLOG data.');
+    }
+  });
 }
 
 /* ===== Project Manifest ===== */

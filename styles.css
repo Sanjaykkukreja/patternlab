@@ -370,3 +370,49 @@ header{position:static}                 /* selectors make the header tall; don't
 .m-stat .ok{color:#2a8c5b;font-weight:600;margin-left:4px}
 .m-stat .warn{color:#c25a3b;font-weight:600;margin-left:4px}
 .m-empty{font-size:12px;color:var(--ink-faint);font-style:italic}
+
+/* ===================== LEFT NAV DRAWER ===================== */
+.topbar-l{display:flex;align-items:center;gap:10px;min-width:0}
+.menu-btn{font-size:17px;line-height:1;color:#bfe0db;background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.18);border-radius:9px;width:32px;height:30px;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;flex:none;transition:.12s}
+.menu-btn:hover{background:rgba(255,255,255,.22);color:#fff}
+.menu-btn:focus-visible{outline:2px solid var(--teal);outline-offset:1px}
+
+#scrim{position:fixed;inset:0;z-index:300;background:rgba(22,36,46,.5);backdrop-filter:blur(2px);-webkit-backdrop-filter:blur(2px)}
+#drawer{position:fixed;top:0;left:0;bottom:0;z-index:310;width:300px;max-width:86vw;background:var(--ink);color:#eaf3f1;
+  transform:translateX(-102%);transition:transform .24s cubic-bezier(.4,0,.2,1);
+  display:flex;flex-direction:column;box-shadow:0 0 44px rgba(0,0,0,.4);will-change:transform}
+#drawer.open{transform:none}
+.drawer-head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:16px 15px 13px;border-bottom:1px solid rgba(255,255,255,.10)}
+.drawer-head .brand{display:flex;align-items:center;gap:9px;font-family:var(--disp);font-weight:600;font-size:16px;color:#fff;letter-spacing:-.01em}
+.drawer-head .brand svg{width:24px;height:24px;color:#7fd3c8;flex:none}
+.drawer-close{background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.18);color:#cfe6e2;font-size:19px;line-height:1;width:30px;height:30px;border-radius:9px;cursor:pointer;flex:none;display:flex;align-items:center;justify-content:center}
+.drawer-close:hover{background:rgba(255,255,255,.22);color:#fff}
+.drawer-scroll{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:16px 14px 28px}
+.drawer-sec{margin-bottom:22px}
+.drawer-sec:last-child{margin-bottom:0}
+.drawer-h{font-family:var(--mono);font-size:9px;letter-spacing:.11em;text-transform:uppercase;color:#7fb3ab;margin:0 2px 10px}
+
+/* selector groups stack vertically inside the drawer */
+#drawer #selbar{display:flex;flex-direction:column;gap:14px;margin:0}
+#drawer .selgrp{flex-direction:column;align-items:stretch;gap:7px}
+#drawer .selgrp .sl{width:auto;padding-top:0;color:#8fb6b0}
+#drawer .selrow{overflow:visible}
+#drawer #sel-subjects,#drawer #sel-subs{flex-wrap:wrap}
+#drawer #sel-chaps{flex-direction:column;gap:6px}
+#drawer #sel-chaps .selpill.chap{width:100%;justify-content:space-between;border-radius:10px;padding:9px 12px}
+
+/* Tools list */
+.drawer-item{display:flex;align-items:center;gap:11px;width:100%;text-align:left;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:12px;padding:11px 12px;margin-bottom:9px;cursor:pointer;color:#eaf3f1;transition:.13s}
+.drawer-item:last-child{margin-bottom:0}
+.drawer-item:hover{background:rgba(255,255,255,.13);border-color:rgba(255,255,255,.24)}
+.drawer-item .di-ic{flex:none;width:32px;height:32px;border-radius:9px;background:rgba(127,211,200,.16);color:#9fe0d6;display:flex;align-items:center;justify-content:center;font-size:15px}
+.drawer-item .di-t{display:flex;flex-direction:column;gap:1px;min-width:0}
+.drawer-item .di-t b{font-family:var(--disp);font-weight:600;font-size:14px;color:#fff}
+.drawer-item .di-t small{font-size:11px;color:#9ec4be}
+
+body.drawer-open{overflow:hidden}
+
+/* On wide screens the drawer stays an overlay (simple, predictable on all sizes). */
+@media (min-width:1100px){
+  #drawer{width:320px}
+}
