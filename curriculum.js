@@ -498,24 +498,79 @@ let PEV_FORMULAE = [
 ];
 
 let PEV_PATTERNS = [
-  {id:"P1",name:"LCM Period Rule",trigger:"Sum/product of trig terms with different inner-argument scalings — sin(2x)+cos(3x), tan(x/2)·sin(x/3).",move:"Compute each term's period via f(ax+b) → T_f/|a|. Take LCM of numerators / GCD of denominators for rationals. VERIFY with f(x+T)=f(x).",why:"A sum/product repeats only when every part repeats together — LCM is the smallest such common time.",mini:"sin(2x)+cos(3x): T₁=π, T₂=2π/3. LCM = 2π.",fails:"Skipping the verification step — apparent LCM can over-shoot if symmetry collapses it to a divisor.",src:"Ex-V Q49, WAT-11 Q49, WAT-06 Q11, WAT-06 Q12"},
-  {id:"P2",name:"|·| Period Halving",trigger:"|sin x|, |cos x|, sin²x, cos²x, or compositions wrapping a sign-symmetric trig.",move:"Sign-symmetric wrapper halves the period: |sin x| → π (not 2π); sin²x → π. Apply BEFORE LCM. For |tan x|, |cot x|: no halving (tan is already π).",why:"Negating around an axis of symmetry collapses two half-cycles to one.",mini:"|sin x|+|cos x|: each has period π but together coincide every π/2.",fails:"Quoting 2π for sin²x. The classic — squaring halves it.",src:"WAT-06 Q1, WAT-06 Q12, Ex-V Q49"},
-  {id:"P3",name:"GIF/{x} Inside Trig",trigger:"[x] (GIF) or {x} (fractional part) appears INSIDE a trig argument — sin(π[x]/n), tan(π[x]/m), cos(π[x]/k).",move:"[x] is integer-stepped, so the trig samples a lattice. For sin(π[x]/n): period in x is 2n (find smallest integer k s.t. sampling repeats). For a sum, take LCM of individual integer periods.",why:"GIF turns continuous trig into discrete sampling on integer steps — period becomes purely integer.",mini:"sin(π[x]/4): each unit step adds π/4 to the angle; sine returns after 8 unit steps. Period = 8.",fails:"Treating sin(π[x]/n) like a continuous trig and computing 2π/(π/n) = 2n. Right answer, wrong reason; fails for tan/sec compositions.",src:"WAT-12 Q3, WAT-12 Q10, WAT-06 Q1"},
-  {id:"P4",name:"Inner-Argument Scaling f(ax+b)",trigger:"Constants buried in the trig argument — 4 cos⁴((x−c)/k) − 2 cos((x−c)/(k/2)), cos((x−2025)/(6π³)).",move:"Period of f(ax+b) = T_f / |a|. The additive shift b doesn't affect period. Read |a| carefully — it's the COEFFICIENT of x.",why:"Faster x-velocity through the cycle scales the period inversely.",mini:"cos((x−2025)/(6π³)): |a|=1/(6π³), so T = 2π · 6π³ = 12π⁴.",fails:"Mis-reading |a| as the inverse — gives reciprocal answer. Carry π³ etc. carefully.",src:"WAT-06 Q2, WAT-11 Q53, Ex-IV Q12"},
-  {id:"P5",name:"a sinx + b cosx Bounded",trigger:"Expression contains a sin x + b cos x (or reducible to it) and you want extrema or a bound.",move:"a sin x + b cos x = √(a²+b²) · sin(x+φ). Range: [−√(a²+b²), +√(a²+b²)]. With constant c added, shift by c.",why:"Two perpendicular components combine into one rotated sine — fixed amplitude.",mini:"3 sin x + 4 cos x ∈ [−5, 5]. With +6: [1, 11].",fails:"Forgetting the constant c shift, or misidentifying coefficients after manipulation.",src:"Ex-IV Q4, Ex-V Q37 (matching), WAT-11 Q48"},
-  {id:"P6",name:"Reciprocal of Linear-Trig Denom",trigger:"max/min of 2/(p cos x + q sin x + r) or similar reciprocal of a linear-trig + constant expression.",move:"Find the denominator's range via P5 — denom ∈ [r−√(p²+q²), r+√(p²+q²)]. If denom > 0 throughout, max(f) = 2/min(denom), min(f) = 2/max(denom).",why:"Reciprocals flip extremes for monotonic positive functions.",mini:"2/(3 cos x − 5 sin x + 6): denom ∈ [6−√34, 6+√34] (all positive). f ∈ [2/(6+√34), 2/(6−√34)].",fails:"Skipping the sign-check on denom — if it can pass through zero, max is unbounded.",src:"WAT-06 Q3"},
-  {id:"P7",name:"Algebraic Substitution Extrema",trigger:"Symmetric expression in sin²x, cos²x, tan²x, or higher even powers — sin⁴/a + cos⁴/b, sin⁸/a³+cos⁸/b³, (7+6tanθ−tan²θ)/(1+tan²θ).",move:"Substitute t = sin²x (or u = tan²x). Reduce to polynomial in t over [0,1] (or u ∈ ℝ). Find vertex or boundary. For chained powers, use lower-power form as constraint.",why:"Higher even powers of trig ARE algebra — substitution exposes it.",mini:"sin⁴x + cos⁴x = 1 − 2 sin²x cos²x = 1 − ½ sin²(2x). Range [½, 1].",fails:"Carrying sin⁴ separately — gets messy. The substitution is the whole game.",src:"Ex-IV Q19, Ex-IV Q43, WAT-12 Q2"},
-  {id:"P8",name:"∏cos(2^k θ) Telescoping",trigger:"A product of cosines whose arguments double — cos θ · cos 2θ · cos 4θ · …, or 16 cos(π/17) cos(2π/17) cos(4π/17) cos(8π/17).",move:"Multiply (and divide) by 2 sin θ. Use 2 sin θ cos θ = sin 2θ to collapse pairs. Result: sin(2ⁿ θ) / (2ⁿ sin θ).",why:"Each step doubles the angle inside sin, halving the chain length.",mini:"cos θ · cos 2θ · cos 4θ = sin 8θ / (8 sin θ).",fails:"Mis-counting the power of 2 in the denominator, or forgetting the formula needs sin θ ≠ 0.",src:"Ex-V Q14, Ex-V Q28-30, WAT-06 Q13, WAT-12 Q20-22"},
-  {id:"P9",name:"Sum-of-Trig in AP",trigger:"Σ sin(α+kβ) or Σ cos(α+kβ); or squared sums like Σ cos²(kπ/(2n+1)), Σ sin²(kπ/n).",move:"For plain: Σ_{k=0}^{n−1} sin(α+kβ) = sin(nβ/2) sin(α+(n−1)β/2) / sin(β/2). For squared: use cos 2x = 1 − 2 sin²x to linearise, then apply.",why:"Geometric-series argument on the unit circle.",mini:"Σ_{k=1}^n cos²(kπ/(2n+1)) = (2n−1)/4.",fails:"Off-by-one on index range. Verify the formula matches your starting index.",src:"Ex-V Q11, Ex-V Q25, WAT-06 Q4"},
-  {id:"P10",name:"Product of sin(kπ/n)",trigger:"A specific product of sines at rational multiples of π/n — sin(π/n)·sin(2π/n)·…·sin((n−1)π/n), or sin(π/18)·sin(5π/18)·sin(7π/18).",move:"Master identity: ∏_{k=1}^{n−1} sin(kπ/n) = n / 2^(n−1). For odd n, half-product: ∏_{k=1}^{(n−1)/2} sin(kπ/n) = √n / 2^((n−1)/2). For sparse indices, combine with multi-angle expansion.",why:"Modulus of the n-th cyclotomic polynomial evaluated on the unit circle.",mini:"sin(π/7)·sin(2π/7)·sin(3π/7) = √7/8.",fails:"Mis-extending the index range — verify exactly n−1 (or (n−1)/2) terms.",src:"Ex-IV Q20, Ex-V Q12, Ex-V Q14"},
-  {id:"P11",name:"Triangle Identity Carry-Through",trigger:"A+B+C = π (triangle), and you need an expression in sin/cos/tan of A, B, C — possibly with a side constraint.",move:"Use closure: C = π − (A+B), so sin C = sin(A+B), cos C = −cos(A+B). Then sum-to-product on pairs OR invoke a canonical triangle identity (see F8).",why:"The constraint A+B+C=π is the lever that turns three variables into two and forces specific identity-shapes.",mini:"sin 2A + sin 2B + sin 2C = 4 sin A sin B sin C (any triangle).",fails:"Using the identity outside a triangle context — it doesn't hold without the constraint.",src:"Ex-IV Q29, Ex-IV Q35, Ex-IV Q37-42, Ex-V Q4, WAT-11 Q46"},
-  {id:"P12",name:"tanA+tanB+tanC = ∏tan (when A+B+C=nπ)",trigger:"A sum of tangents whose arguments add to an integer multiple of π — tan x + tan 2x + tan 3x (since x+2x+3x = 6x = nπ at solutions).",move:"When A+B+C = nπ: tan A + tan B + tan C = tan A · tan B · tan C. Use the identity to convert a sum into a product or vice versa.",why:"Derived from tan(A+B) = tan(nπ − C) = −tan C — algebra closes.",mini:"tan x + tan 2x + tan 3x = tan x · tan 2x · tan 3x when x+2x+3x = nπ.",fails:"Forgetting the constraint — without A+B+C = nπ the identity is false.",src:"Ex-IV Q34, Ex-IV Q38, Ex-V Q1"},
-  {id:"P13",name:"Telescoping cosec / cot Sum",trigger:"Series of form 1/(sin α · sin(α+d)) + 1/(sin(α+d) · sin(α+2d)) + …, or Σ csc(2^k θ).",move:"Use 1/(sin α · sin(α+d)) = (1/sin d)[cot α − cot(α+d)] — sum telescopes. For csc(2^k θ): csc(2θ) = cot θ − cot 2θ, so Σ csc(2^k θ) = cot θ − cot(2ⁿ θ).",why:"A clever subtraction turns a product-reciprocal of sines into a difference of cotangents.",mini:"1/(sin 45° sin 46°) = (1/sin 1°)[cot 45° − cot 46°]. Summing k=45 to 134 telescopes.",fails:"Mis-identifying the common difference d, or missing the boundary terms.",src:"Ex-IV Q36, Ex-V Q9, WAT-06 Q6"},
-  {id:"P14",name:"Triangle Extrema via Inequality",trigger:"Least/greatest value of Σ sec A, Σ tan² A, Π csc(A/2), Σ csc²A in a triangle (often acute).",move:"Use one of: (i) Jensen on convex/concave trig; (ii) AM-GM on symmetric expression; (iii) canonical inequalities (F10 above). Equality at A=B=C=π/3 (equilateral).",why:"Symmetric trig in a triangle hits extremum at the equilateral by convexity/symmetry.",mini:"Min Σ sec A in acute triangle: at A=B=C=π/3, each sec=2, sum=6.",fails:"Forgetting the equilateral test, or applying Jensen to a function that's not convex/concave on the relevant interval.",src:"Ex-V Q38, Ex-V Q5, WAT-11 Q46"}
+  {id:"P1",name:"LCM Period Rule",trigger:"Sum/product of trig terms with different inner-argument scalings — sin(2x)+cos(3x), tan(x/2)·sin(x/3).",move:"Compute each term's period via f(ax+b) → T_f/|a|. Take LCM of numerators / GCD of denominators for rationals. VERIFY with f(x+T)=f(x).",why:"A sum/product repeats only when every part repeats together — LCM is the smallest such common time.",mini:"sin(2x)+cos(3x): T₁=π, T₂=2π/3. LCM = 2π.",fails:"Skipping the verification step — apparent LCM can over-shoot if symmetry collapses it to a divisor.",src:"Ex-V Q49, WAT-11 Q49, WAT-06 Q11, WAT-06 Q12",srcText:{"Ex-V Q49":"(text pending — Ex-V Q49 not yet curated into PRACTICE)","WAT-11 Q49":"(text pending — WAT-11 Q49 not yet curated into PRACTICE)","WAT-06 Q11":"(text pending — WAT-06 Q11 not yet curated into PRACTICE)","WAT-06 Q12":"Which of the following functions is periodic with fundamental period π/2? (A) f(x) = √(sin²x) + √(cos²x)  (B) g(x) = (sin x)^(1/3) + (cos x)^(1/3)  (C) h(x) = cos(2 sin x cos x) + cos(2 cos²x − 1)  (D) p(x) = sec²(2x) − tan²(2x)"}},
+  {id:"P2",name:"|·| Period Halving",trigger:"|sin x|, |cos x|, sin²x, cos²x, or compositions wrapping a sign-symmetric trig.",move:"Sign-symmetric wrapper halves the period: |sin x| → π (not 2π); sin²x → π. Apply BEFORE LCM. For |tan x|, |cot x|: no halving (tan is already π).",why:"Negating around an axis of symmetry collapses two half-cycles to one.",mini:"|sin x|+|cos x|: each has period π but together coincide every π/2.",fails:"Quoting 2π for sin²x. The classic — squaring halves it.",src:"WAT-06 Q1, WAT-06 Q12, Ex-V Q49",srcText:{"WAT-06 Q1":"Let T₁, T₂, T₃ represent the fundamental periods of sin(π[x]/13), |cos(π[x]/5)| and tan(π[x]/3) respectively, where [x] is the GIF. The value of (2T₁ + 3T₂)/(4T₃) =","WAT-06 Q12":"Which of the following functions is periodic with fundamental period π/2? (A) f(x) = √(sin²x) + √(cos²x)  (B) g(x) = (sin x)^(1/3) + (cos x)^(1/3)  (C) h(x) = cos(2 sin x cos x) + cos(2 cos²x − 1)  (D) p(x) = sec²(2x) − tan²(2x)","Ex-V Q49":"(text pending — Ex-V Q49 not yet curated into PRACTICE)"}},
+  {id:"P3",name:"GIF/{x} Inside Trig",trigger:"[x] (GIF) or {x} (fractional part) appears INSIDE a trig argument — sin(π[x]/n), tan(π[x]/m), cos(π[x]/k).",move:"[x] is integer-stepped, so the trig samples a lattice. For sin(π[x]/n): period in x is 2n (find smallest integer k s.t. sampling repeats). For a sum, take LCM of individual integer periods.",why:"GIF turns continuous trig into discrete sampling on integer steps — period becomes purely integer.",mini:"sin(π[x]/4): each unit step adds π/4 to the angle; sine returns after 8 unit steps. Period = 8.",fails:"Treating sin(π[x]/n) like a continuous trig and computing 2π/(π/n) = 2n. Right answer, wrong reason; fails for tan/sec compositions.",src:"WAT-12 Q3, WAT-12 Q10, WAT-06 Q1",srcText:{"WAT-12 Q3":"(text pending — WAT-12 Q3 not yet curated into PRACTICE)","WAT-12 Q10":"(text pending — WAT-12 Q10 not yet curated into PRACTICE)","WAT-06 Q1":"Let T₁, T₂, T₃ represent the fundamental periods of sin(π[x]/13), |cos(π[x]/5)| and tan(π[x]/3) respectively, where [x] is the GIF. The value of (2T₁ + 3T₂)/(4T₃) ="}},
+  {id:"P4",name:"Inner-Argument Scaling f(ax+b)",trigger:"Constants buried in the trig argument — 4 cos⁴((x−c)/k) − 2 cos((x−c)/(k/2)), cos((x−2025)/(6π³)).",move:"Period of f(ax+b) = T_f / |a|. The additive shift b doesn't affect period. Read |a| carefully — it's the COEFFICIENT of x.",why:"Faster x-velocity through the cycle scales the period inversely.",mini:"cos((x−2025)/(6π³)): |a|=1/(6π³), so T = 2π · 6π³ = 12π⁴.",fails:"Mis-reading |a| as the inverse — gives reciprocal answer. Carry π³ etc. carefully.",src:"WAT-06 Q2, WAT-11 Q53, Ex-IV Q12",srcText:{"WAT-06 Q2":"(text pending — WAT-06 Q2 not yet curated into PRACTICE)","WAT-11 Q53":"If the fundamental period of f(x) = 4 cos⁴((x−π)/(4π²)) − 2 cos((x−π)/(2π²)) is kπ³, then k =","Ex-IV Q12":"(text pending — Ex-IV Q12 not yet curated into PRACTICE)"}},
+  {id:"P5",name:"a sinx + b cosx Bounded",trigger:"Expression contains a sin x + b cos x (or reducible to it) and you want extrema or a bound.",move:"a sin x + b cos x = √(a²+b²) · sin(x+φ). Range: [−√(a²+b²), +√(a²+b²)]. With constant c added, shift by c.",why:"Two perpendicular components combine into one rotated sine — fixed amplitude.",mini:"3 sin x + 4 cos x ∈ [−5, 5]. With +6: [1, 11].",fails:"Forgetting the constant c shift, or misidentifying coefficients after manipulation.",src:"Ex-IV Q4, Ex-V Q37 (matching), WAT-11 Q48",srcText:{"Ex-IV Q4":"(text pending — Ex-IV Q4 not yet curated into PRACTICE)","Ex-V Q37":"(text pending — Ex-V Q37 not yet curated into PRACTICE)","WAT-11 Q48":"(text pending — WAT-11 Q48 not yet curated into PRACTICE)"}},
+  {id:"P6",name:"Reciprocal of Linear-Trig Denom",trigger:"max/min of 2/(p cos x + q sin x + r) or similar reciprocal of a linear-trig + constant expression.",move:"Find the denominator's range via P5 — denom ∈ [r−√(p²+q²), r+√(p²+q²)]. If denom > 0 throughout, max(f) = 2/min(denom), min(f) = 2/max(denom).",why:"Reciprocals flip extremes for monotonic positive functions.",mini:"2/(3 cos x − 5 sin x + 6): denom ∈ [6−√34, 6+√34] (all positive). f ∈ [2/(6+√34), 2/(6−√34)].",fails:"Skipping the sign-check on denom — if it can pass through zero, max is unbounded.",src:"WAT-06 Q3",srcText:{"WAT-06 Q3":"Let x ∈ ℝ and the maximum value of 2/(3 cos x − 5 sin x + 6) is p + √q where p, q ∈ ℚ. Then p + q ="}},
+  {id:"P7",name:"Algebraic Substitution Extrema",trigger:"Symmetric expression in sin²x, cos²x, tan²x, or higher even powers — sin⁴/a + cos⁴/b, sin⁸/a³+cos⁸/b³, (7+6tanθ−tan²θ)/(1+tan²θ).",move:"Substitute t = sin²x (or u = tan²x). Reduce to polynomial in t over [0,1] (or u ∈ ℝ). Find vertex or boundary. For chained powers, use lower-power form as constraint.",why:"Higher even powers of trig ARE algebra — substitution exposes it.",mini:"sin⁴x + cos⁴x = 1 − 2 sin²x cos²x = 1 − ½ sin²(2x). Range [½, 1].",fails:"Carrying sin⁴ separately — gets messy. The substitution is the whole game.",src:"Ex-IV Q19, Ex-IV Q43, WAT-12 Q2",srcText:{"Ex-IV Q19":"(text pending — Ex-IV Q19 not yet curated into PRACTICE)","Ex-IV Q43":"(text pending — Ex-IV Q43 not yet curated into PRACTICE)","WAT-12 Q2":"(text pending — WAT-12 Q2 not yet curated into PRACTICE)"}},
+  {id:"P8",name:"∏cos(2^k θ) Telescoping",trigger:"A product of cosines whose arguments double — cos θ · cos 2θ · cos 4θ · …, or 16 cos(π/17) cos(2π/17) cos(4π/17) cos(8π/17).",move:"Multiply (and divide) by 2 sin θ. Use 2 sin θ cos θ = sin 2θ to collapse pairs. Result: sin(2ⁿ θ) / (2ⁿ sin θ).",why:"Each step doubles the angle inside sin, halving the chain length.",mini:"cos θ · cos 2θ · cos 4θ = sin 8θ / (8 sin θ).",fails:"Mis-counting the power of 2 in the denominator, or forgetting the formula needs sin θ ≠ 0.",src:"Ex-V Q14, Ex-V Q28-30, WAT-06 Q13, WAT-12 Q20-22",srcText:{"Ex-V Q14":"If θ = π/(2ⁿ+1), then cos θ · cos 2θ · cos 2²θ · … · cos 2ⁿ⁻¹θ is equal to","Ex-V Q28":"[Passage: cos 2ᵐθ · cos 2ᵐ⁺¹θ · … · cos 2ⁿθ = sin(2ⁿ⁺¹θ)/(2ⁿ⁻ᵐ⁺¹ sin 2ᵐθ).] sin(9π/14) · sin(11π/14) · sin(13π/14) is equal to","WAT-06 Q13":"(text pending — WAT-06 Q13 not yet curated into PRACTICE)","WAT-12 Q20":"(text pending — WAT-12 Q20 not yet curated into PRACTICE)"}},
+  {id:"P9",name:"Sum-of-Trig in AP",trigger:"Σ sin(α+kβ) or Σ cos(α+kβ); or squared sums like Σ cos²(kπ/(2n+1)), Σ sin²(kπ/n).",move:"For plain: Σ_{k=0}^{n−1} sin(α+kβ) = sin(nβ/2) sin(α+(n−1)β/2) / sin(β/2). For squared: use cos 2x = 1 − 2 sin²x to linearise, then apply.",why:"Geometric-series argument on the unit circle.",mini:"Σ_{k=1}^n cos²(kπ/(2n+1)) = (2n−1)/4.",fails:"Off-by-one on index range. Verify the formula matches your starting index.",src:"Ex-V Q11, Ex-V Q25, WAT-06 Q4",srcText:{"Ex-V Q11":"sin(2π/7) + sin(4π/7) + sin(8π/7) =","Ex-V Q25":"If sin θ + sin 3θ + sin 5θ + … + sin(2n−1)θ = λ · sin²(nθ)/sin θ, then λ =","WAT-06 Q4":"(text pending — WAT-06 Q4 not yet curated into PRACTICE)"}},
+  {id:"P10",name:"Product of sin(kπ/n)",trigger:"A specific product of sines at rational multiples of π/n — sin(π/n)·sin(2π/n)·…·sin((n−1)π/n), or sin(π/18)·sin(5π/18)·sin(7π/18).",move:"Master identity: ∏_{k=1}^{n−1} sin(kπ/n) = n / 2^(n−1). For odd n, half-product: ∏_{k=1}^{(n−1)/2} sin(kπ/n) = √n / 2^((n−1)/2). For sparse indices, combine with multi-angle expansion.",why:"Modulus of the n-th cyclotomic polynomial evaluated on the unit circle.",mini:"sin(π/7)·sin(2π/7)·sin(3π/7) = √7/8.",fails:"Mis-extending the index range — verify exactly n−1 (or (n−1)/2) terms.",src:"Ex-IV Q20, Ex-V Q12, Ex-V Q14",srcText:{"Ex-IV Q20":"sin(π/18) · sin(5π/18) · sin(7π/18) =","Ex-V Q12":"sin(π/7) · sin(2π/7) · sin(4π/7) =","Ex-V Q14":"If θ = π/(2ⁿ+1), then cos θ · cos 2θ · cos 2²θ · … · cos 2ⁿ⁻¹θ is equal to"}},
+  {id:"P11",name:"Triangle Identity Carry-Through",trigger:"A+B+C = π (triangle), and you need an expression in sin/cos/tan of A, B, C — possibly with a side constraint.",move:"Use closure: C = π − (A+B), so sin C = sin(A+B), cos C = −cos(A+B). Then sum-to-product on pairs OR invoke a canonical triangle identity (see F8).",why:"The constraint A+B+C=π is the lever that turns three variables into two and forces specific identity-shapes.",mini:"sin 2A + sin 2B + sin 2C = 4 sin A sin B sin C (any triangle).",fails:"Using the identity outside a triangle context — it doesn't hold without the constraint.",src:"Ex-IV Q29, Ex-IV Q35, Ex-IV Q37-42, Ex-V Q4, WAT-11 Q46",srcText:{"Ex-IV Q29":"(text pending — Ex-IV Q29 not yet curated into PRACTICE)","Ex-IV Q35":"(text pending — Ex-IV Q35 not yet curated into PRACTICE)","Ex-IV Q37":"(text pending — Ex-IV Q37 not yet curated into PRACTICE)","Ex-V Q4":"In ΔABC, if cot θ = cot A + cot B + cot C, sin(A−θ) sin(B−θ) sin(C−θ) = λ sin³ θ, then λ =","WAT-11 Q46":"(text pending — WAT-11 Q46 not yet curated into PRACTICE)"}},
+  {id:"P12",name:"tanA+tanB+tanC = ∏tan (when A+B+C=nπ)",trigger:"A sum of tangents whose arguments add to an integer multiple of π — tan x + tan 2x + tan 3x (since x+2x+3x = 6x = nπ at solutions).",move:"When A+B+C = nπ: tan A + tan B + tan C = tan A · tan B · tan C. Use the identity to convert a sum into a product or vice versa.",why:"Derived from tan(A+B) = tan(nπ − C) = −tan C — algebra closes.",mini:"tan x + tan 2x + tan 3x = tan x · tan 2x · tan 3x when x+2x+3x = nπ.",fails:"Forgetting the constraint — without A+B+C = nπ the identity is false.",src:"Ex-IV Q34, Ex-IV Q38, Ex-V Q1",srcText:{"Ex-IV Q34":"If tan x + tan 2x + tan 3x = tan x · tan 2x · tan 3x, then |sin 3x + cos 3x| =","Ex-IV Q38":"(text pending — Ex-IV Q38 not yet curated into PRACTICE)","Ex-V Q1":"Let A, B, C be three angles such that A = π/4 and tan B · tan C = p. Then all possible values of p such that A, B, C are the angles of a triangle is"}},
+  {id:"P13",name:"Telescoping cosec / cot Sum",trigger:"Series of form 1/(sin α · sin(α+d)) + 1/(sin(α+d) · sin(α+2d)) + …, or Σ csc(2^k θ).",move:"Use 1/(sin α · sin(α+d)) = (1/sin d)[cot α − cot(α+d)] — sum telescopes. For csc(2^k θ): csc(2θ) = cot θ − cot 2θ, so Σ csc(2^k θ) = cot θ − cot(2ⁿ θ).",why:"A clever subtraction turns a product-reciprocal of sines into a difference of cotangents.",mini:"1/(sin 45° sin 46°) = (1/sin 1°)[cot 45° − cot 46°]. Summing k=45 to 134 telescopes.",fails:"Mis-identifying the common difference d, or missing the boundary terms.",src:"Ex-IV Q36, Ex-V Q9, WAT-06 Q6",srcText:{"Ex-IV Q36":"If 1/(sin 45° sin 46°) + 1/(sin 47° sin 48°) + … + 1/(sin 133° sin 134°) = cosec λ°, then λ =","Ex-V Q9":"If the sum of the series cosec θ + cosec 2θ + cosec 4θ + … (n terms) = cot(θ/λ) − cot(2ⁿ⁻¹ θ), then λ =","WAT-06 Q6":"(text pending — WAT-06 Q6 not yet curated into PRACTICE)"}},
+  {id:"P14",name:"Triangle Extrema via Inequality",trigger:"Least/greatest value of Σ sec A, Σ tan² A, Π csc(A/2), Σ csc²A in a triangle (often acute).",move:"Use one of: (i) Jensen on convex/concave trig; (ii) AM-GM on symmetric expression; (iii) canonical inequalities (F10 above). Equality at A=B=C=π/3 (equilateral).",why:"Symmetric trig in a triangle hits extremum at the equilateral by convexity/symmetry.",mini:"Min Σ sec A in acute triangle: at A=B=C=π/3, each sec=2, sum=6.",fails:"Forgetting the equilateral test, or applying Jensen to a function that's not convex/concave on the relevant interval.",src:"Ex-V Q38, Ex-V Q5, WAT-11 Q46",srcText:{"Ex-V Q38":"(text pending — Ex-V Q38 not yet curated into PRACTICE)","Ex-V Q5":"If ABC is a triangle and tan(A/2), tan(B/2), tan(C/2) are in H.P., then the minimum value of cot(B/2) is equal to","WAT-11 Q46":"(text pending — WAT-11 Q46 not yet curated into PRACTICE)"}}
 ];
 
 let PEV_GUIDED = [
-  /* Populated after Pattern Library is set — laddered single-pattern reps. */
+  {id:"G1",tier:2,tax:"P1",pattern:"P1",q:"Find the fundamental period of f(x) = sin(2x) + cos(3x).",
+    opts:["LCM Period Rule","|·| Period Halving","GIF/{x} Inside Trig","Inner-Argument Scaling f(ax+b)"],correct:0,
+    hints:["Each constituent has its own period — what are they?","T(sin 2x) = 2π/2 = π · T(cos 3x) = 2π/3. Take LCM.","LCM(π, 2π/3) = 2π. Verify: f(x+2π) = sin(2x+4π) + cos(3x+6π) = f(x) ✓."],
+    ans:"2π",why:"Trigger = sum of trig terms with different inner scalings → period is LCM of constituents (always verify with f(x+T)=f(x))."},
+  {id:"G2",tier:2,tax:"P2",pattern:"P2",q:"Find the fundamental period of f(x) = |sin x| + |cos x|.",
+    opts:["LCM Period Rule","|·| Period Halving","GIF/{x} Inside Trig","Algebraic Substitution Extrema"],correct:1,
+    hints:["Each |·| individually halves its base period: |sin x| → π, |cos x| → π.","But check f(x+π/2): |sin(x+π/2)| + |cos(x+π/2)| = |cos x| + |sin x| = f(x). It coincides every π/2!","So the true fundamental period is π/2, not π. The sin–cos shift plus |·| folds collapse it further."],
+    ans:"π/2",why:"Trigger = |·| inside trig → halve first, then check for further symmetry that collapses to a divisor."},
+  {id:"G3",tier:2,tax:"P3",pattern:"P3",q:"Find the fundamental period of f(x) = sin(π[x]/6), where [x] is the greatest-integer function.",
+    opts:["Inner-Argument Scaling f(ax+b)","GIF/{x} Inside Trig","LCM Period Rule","|·| Period Halving"],correct:1,
+    hints:["[x] is integer-stepped: as x increases by 1, the argument π[x]/6 jumps by π/6.","Sin returns to the same value after 2π in the argument. So we need k integer steps where kπ/6 = 2π → k = 12.","Period = 12 (units of x)."],
+    ans:"12",why:"Trigger = GIF inside trig → period is purely integer. For sin(π[x]/n): period = 2n; tan(π[x]/n): period = n."},
+  {id:"G4",tier:2,tax:"P4",pattern:"P4",q:"Find the fundamental period of f(x) = cos((x − 5)/3).",
+    opts:["LCM Period Rule","Inner-Argument Scaling f(ax+b)","|·| Period Halving","Sum-of-Trig in AP"],correct:1,
+    hints:["Inside argument is x/3 − 5/3. The constant −5/3 only shifts; doesn't change the period.","Coefficient of x is |a| = 1/3. Apply scaling rule: T = T_cos / |a| = 2π / (1/3).","T = 6π."],
+    ans:"6π",why:"Trigger = constants buried in trig argument → period = T_f / |a|. Shift b is irrelevant."},
+  {id:"G5",tier:2,tax:"P5",pattern:"P5",q:"Find the maximum value of 3 sin x + 4 cos x + 7.",
+    opts:["a sinx + b cosx Bounded","Reciprocal of Linear-Trig Denom","Algebraic Substitution Extrema","Triangle Identity Carry-Through"],correct:0,
+    hints:["3 sin x + 4 cos x has amplitude √(3² + 4²) = 5.","So 3 sin x + 4 cos x ∈ [−5, +5], reached at x = arctan(4/3) etc.","Adding 7: range is [2, 12]. Maximum = 12."],
+    ans:"12",why:"Trigger = a sin x + b cos x in any form → range is ±√(a²+b²); constants shift the range without affecting amplitude."},
+  {id:"G6",tier:2,tax:"P6",pattern:"P6",q:"Find the minimum value of 1/(sin x + cos x + 3).",
+    opts:["a sinx + b cosx Bounded","Reciprocal of Linear-Trig Denom","Triangle Identity Carry-Through","AM-GM Minimum"],correct:1,
+    hints:["First bound the denominator via P5: sin x + cos x has amplitude √2.","Denom ∈ [3 − √2, 3 + √2]. All strictly positive ✓ (no sign worry).","min(1/denom) = 1/max(denom) = 1/(3 + √2). Rationalize: (3 − √2)/7."],
+    ans:"(3 − √2)/7",why:"Trigger = 1/(linear-trig + constant) → bound the denom first via P5, sign-check, then flip extremes for the reciprocal."},
+  {id:"G7",tier:2,tax:"P7",pattern:"P7",q:"Find the maximum value of sin⁴x + cos⁴x.",
+    opts:["Algebraic Substitution Extrema","∏cos(2^k θ) Telescoping","AM-GM Minimum","Triangle Carry-Through"],correct:0,
+    hints:["Substitute t = sin²x. Then cos²x = 1 − t, with t ∈ [0,1].","Expression = t² + (1−t)² = 2t² − 2t + 1. Quadratic in t on [0,1].","Vertex at t = 1/2 gives min 1/2; endpoints t = 0 or 1 give max 1."],
+    ans:"1",why:"Trigger = symmetric even-power trig combo → substitute t = sin²x, reduce to polynomial extrema on [0,1]."},
+  {id:"G8",tier:3,tax:"P8",pattern:"P8",q:"Evaluate cos(π/7) · cos(2π/7) · cos(4π/7).",
+    opts:["Product of sin(kπ/n)","∏cos(2^k θ) Telescoping","Sum-of-Trig in AP","Algebraic Substitution Extrema"],correct:1,
+    hints:["Arguments are π/7, 2π/7, 4π/7 — each is double the previous. Classic telescoping setup.","Apply cos θ · cos 2θ · cos 4θ = sin 8θ / (8 sin θ) with θ = π/7.","sin(8π/7) = sin(π + π/7) = −sin(π/7). So product = −sin(π/7) / (8 sin(π/7)) = −1/8."],
+    ans:"−1/8",why:"Trigger = product of cosines with doubling arguments → multiply-and-divide by 2 sin θ; angle becomes 2ⁿ θ inside sin."},
+  {id:"G9",tier:3,tax:"P9",pattern:"P9",q:"Evaluate sin(π/7) + sin(2π/7) + sin(3π/7) using the AP-sum formula.",
+    opts:["Sum-of-Trig in AP","Product of sin(kπ/n)","Triangle Carry-Through","Allied-Angle"],correct:0,
+    hints:["AP with α = π/7, β = π/7, n = 3 terms.","Σ_{k=0}^{n−1} sin(α + kβ) = sin(nβ/2) · sin(α + (n−1)β/2) / sin(β/2). Here = sin(3π/14) · sin(2π/7) / sin(π/14).","Simplify using sin(3π/14) = cos(π/7) and sin(2π/7) = 2 sin(π/7) cos(π/7); result is cot(π/14) · (1/2). Closed form (standard heptagon): = (1/2) cot(π/14)."],
+    ans:"(1/2) cot(π/14)",why:"Trigger = Σ sin/cos in AP → closed form via sin(nβ/2)·sin(α + (n−1)β/2)/sin(β/2)."},
+  {id:"G10",tier:3,tax:"P10",pattern:"P10",q:"Evaluate sin(π/5) · sin(2π/5).",
+    opts:["Product of sin(kπ/n)","∏cos(2^k θ) Telescoping","Sum-of-Trig in AP","Algebraic Substitution"],correct:0,
+    hints:["n = 5 (odd). Use the half-product identity: ∏_{k=1}^{(n−1)/2} sin(kπ/n) = √n / 2^((n−1)/2).","For n = 5: ∏_{k=1}^{2} sin(kπ/5) = √5 / 2² = √5 / 4.","So sin(π/5) · sin(2π/5) = √5 / 4."],
+    ans:"√5 / 4",why:"Trigger = product of sines at rational multiples of π/n → cyclotomic identity; half-product form for odd n is cleanest."},
+  {id:"G11",tier:3,tax:"P11",pattern:"P11",q:"In ΔABC, evaluate sin 2A + sin 2B + sin 2C.",
+    opts:["Triangle Identity Carry-Through","tanA+tanB+tanC = ∏tan","Telescoping cosec/cot Sum","Sum-of-Trig in AP"],correct:0,
+    hints:["A+B+C=π is the closure. So 2C = 2π − 2A − 2B, giving sin 2C = −sin(2A+2B).","Apply sum-to-product on sin 2A + sin 2B and combine with sin 2C.","Result: 4 sin A · sin B · sin C (canonical triangle identity)."],
+    ans:"4 sin A · sin B · sin C",why:"Trigger = identity in a triangle → use closure A+B+C=π and a canonical sum-to-product identity (see Formula §tri)."},
+  {id:"G12",tier:2,tax:"P12",pattern:"P12",q:"If A + B + C = π and tan A = 1, tan B = 2, find tan C.",
+    opts:["tanA+tanB+tanC = ∏tan (when A+B+C=nπ)","Triangle Identity Carry-Through","a sinx + b cosx Bounded","Reciprocal of Linear-Trig Denom"],correct:0,
+    hints:["When A+B+C = nπ: tan A + tan B + tan C = tan A · tan B · tan C.","1 + 2 + tan C = 1 · 2 · tan C → 3 + tan C = 2 tan C → tan C = 3.","Verify: tan A + tan B + tan C = 6 = 1·2·3 = tan A · tan B · tan C ✓."],
+    ans:"3",why:"Trigger = sum of tangents with angles closing to nπ → use sum = product identity to solve for the missing tangent."},
+  {id:"G13",tier:3,tax:"P13",pattern:"P13",q:"If S = csc θ + csc 2θ + csc 4θ + csc 8θ, express S as cot(θ/2) − cot(?).",
+    opts:["Telescoping cosec/cot Sum","Sum-of-Trig in AP","∏cos(2^k θ) Telescoping","Allied-Angle Reduction"],correct:0,
+    hints:["Use the identity csc(2x) = cot x − cot 2x. Rewrite: csc(x) = cot(x/2) − cot x.","Apply to each term: csc θ = cot(θ/2) − cot θ; csc 2θ = cot θ − cot 2θ; csc 4θ = cot 2θ − cot 4θ; csc 8θ = cot 4θ − cot 8θ.","Sum telescopes: middle terms cancel, leaving cot(θ/2) − cot(8θ)."],
+    ans:"8θ  (i.e., S = cot(θ/2) − cot 8θ)",why:"Trigger = series of cosecants at doubling arguments → telescope via the cot identity. The ? equals the last argument in the sum."},
+  {id:"G14",tier:3,tax:"P14",pattern:"P14",q:"In ΔABC (acute), find the maximum value of cos A · cos B · cos C.",
+    opts:["Triangle Extrema via Inequality","Algebraic Substitution Extrema","AM-GM Minimum","Reciprocal of Linear-Trig Denom"],correct:0,
+    hints:["Symmetric in A, B, C → by Jensen / AM-GM, extremum at the equilateral A = B = C = π/3.","At A = B = C = π/3: each cos = 1/2.","Product = (1/2)³ = 1/8. Verify any deviation (e.g. A=π/2−ε) reduces the product."],
+    ans:"1/8",why:"Trigger = symmetric trig expression in triangle angles → test equilateral first by convexity/Jensen. Almost always the extremum point."}
 ];
 
 let PEV_PRACTICE = [
@@ -569,6 +624,229 @@ let PEV_PRAC_DOCS = [
 
 const PEV_PRAC_TIERS=[{k:"All",l:"All"},{k:"1",l:"Foundation"},{k:"2",l:"JEE Main"},{k:"3",l:"JEE Advanced"},{k:"Flag",l:"\u2605 Flagged"}];
 
+/* =========================================================================
+   CHAPTER: maths/trig/teq — Trigonometric Equations  (grade 11)
+   Sources: Cengage (G. Tewani) Vol-III · Narayana JEE-Adv Maths Vol-III
+            (Ex-III / Ex-IV / Ex-V + Synopsis) · Cengage Archives (real JEE).
+   Append-only. IDs are sacred.
+   ========================================================================= */
+
+let TEQ_TAXA = [
+  {code:"F1",label:"General-solution templates (sin/cos/tan = k)",group:"Foundation methods"},
+  {code:"F2",label:"Allied / multiple-angle reduction before solving",group:"Foundation methods"},
+  {code:"F3",label:"Range & boundedness (|sin|,|cos| ≤ 1; a sinx+b cosx)",group:"Foundation methods"},
+  {code:"F4",label:"Domain hygiene (undefined points, extraneous roots)",group:"Foundation methods"},
+  {code:"P1", label:"General-Solution Template",group:"Patterns"},
+  {code:"P2", label:"Squared-Ratio Family (θ=nπ±α)",group:"Patterns"},
+  {code:"P3", label:"Factor & Split (never cancel)",group:"Patterns"},
+  {code:"P4", label:"Reduce-to-Quadratic & Reject",group:"Patterns"},
+  {code:"P5", label:"a cosx + b sinx = c",group:"Patterns"},
+  {code:"P6", label:"Square → Check → Reject Extraneous",group:"Patterns"},
+  {code:"P7", label:"Boundedness Pinch (LHS=RHS extremes)",group:"Patterns"},
+  {code:"P8", label:"Domain & Undefined-Point Rejection",group:"Patterns"},
+  {code:"P9", label:"Multiply/Divide Lost-Root Trap",group:"Patterns"},
+  {code:"P10",label:"Equations with [x], {x}, |·|",group:"Patterns"},
+  {code:"P11",label:"Counting Roots in an Interval (graphical)",group:"Patterns"},
+  {code:"P12",label:"Principal-Value / Interval Extraction",group:"Patterns"},
+  {code:"P13",label:"Simultaneous Trig System",group:"Patterns"},
+  {code:"P14",label:"Trig Inequations",group:"Patterns"},
+  {code:"P15",label:"Parametric 'Has-a-Solution' Condition",group:"Patterns"}
+];
+
+let TEQ_FORMULAE = [
+  {tag:"templates",title:"The three general-solution templates",rows:[
+    {f:"sin θ = sin α  →  θ = nπ + (−1)ⁿ α"},
+    {f:"cos θ = cos α  →  θ = 2nπ ± α"},
+    {f:"tan θ = tan α  →  θ = nπ + α",k:"trig",note:"First write the RHS constant as sin/cos/tan of a known α, THEN drop into the template. n ∈ ℤ throughout."}]},
+  {tag:"zeros",title:"Standard zeros / units",rows:[
+    {f:"sin θ = 0 → θ = nπ   ·   cos θ = 0 → θ = (2n+1)π/2   ·   tan θ = 0 → θ = nπ"},
+    {f:"sin θ = 1 → θ = (4n+1)π/2   ·   sin θ = −1 → θ = (4n−1)π/2"},
+    {f:"cos θ = 1 → θ = 2nπ   ·   cos θ = −1 → θ = (2n+1)π",k:"trig",note:"These are the most-tested base cases — recognise them instantly so you don't run the full template."}]},
+  {tag:"squared",title:"Squared-ratio family",rows:[
+    {f:"sin²θ = sin²α  →  θ = nπ ± α"},
+    {f:"cos²θ = cos²α  →  θ = nπ ± α"},
+    {f:"tan²θ = tan²α  →  θ = nπ ± α",k:"trig",note:"Squaring merges the (−1)ⁿ and ± forms into a single nπ ± α. Appears whenever an equation is even in the ratio."}]},
+  {tag:"linear",title:"a cos x + b sin x = c",rows:[
+    {f:"Divide by √(a²+b²): the equation has a solution ⟺ |c| ≤ √(a²+b²)"},
+    {f:"a cos x + b sin x = √(a²+b²) cos(x − φ),  tan φ = b/a"},
+    {f:"No solution if |c| > √(a²+b²)",k:"trap",note:"The single most common 'does a solution exist?' lever in the chapter. Memorise the |c| ≤ √(a²+b²) gate."}]},
+  {tag:"cautions",title:"The four root-hygiene cautions (Narayana)",rows:[
+    {f:"(i) For sin θ = k or cos θ = k, demand |k| ≤ 1 before solving."},
+    {f:"(ii) Avoid squaring when possible — it breeds extraneous roots; verify every root afterward."},
+    {f:"(iii) Never cancel a common trig factor across the equation — you lose the roots it kills."},
+    {f:"(iv) The answer must not contain θ that make any term undefined or infinite (check denominators, tan/sec/cot/csc).",k:"trap",note:"Most 'wrong by one option' mistakes in this chapter trace to (ii), (iii) or (iv)."}]},
+  {tag:"important",title:"Important angle values (from synopsis)",rows:[
+    {f:"tan 15° = 2 − √3   ·   tan 75° = 2 + √3   ·   cot 15° = 2 + √3"},
+    {f:"tan 22½° = √2 − 1   ·   cot 22½° = √2 + 1"},
+    {f:"sin 18° = (√5 − 1)/4   ·   cos 36° = (√5 + 1)/4",k:"trig",note:"These surface whenever the answer angle isn't a standard 30/45/60. Keep them handy for parametric and counting problems."}]},
+  {tag:"product",title:"Triple-angle product shortcuts",rows:[
+    {f:"sin θ · sin(60°−θ) · sin(60°+θ) = ¼ sin 3θ"},
+    {f:"cos θ · cos(60°−θ) · cos(60°+θ) = ¼ cos 3θ"},
+    {f:"tan θ · tan(60°−θ) · tan(60°+θ) = tan 3θ",k:"trig",note:"Collapse a 3-factor product into a single 3θ ratio, then solve with a template. Big time-saver on Ex-III Q12/Q15."}]},
+  {tag:"telescope",title:"tan–cot telescoping ladder",rows:[
+    {f:"cot θ − tan θ = 2 cot 2θ   ⟹   tan θ = cot θ − 2 cot 2θ"},
+    {f:"tan x + 2 tan 2x + 4 tan 4x + 8 cot 8x = cot x",k:"trig",note:"The chain cot − 2cot collapses a whole tan-ladder to a single cot. Spot it when coefficients double (1,2,4,8…)."}]},
+  {tag:"graph",title:"Counting via graphs / inequations",rows:[
+    {f:"# solutions of f(x)=g(x) in [a,b] = # intersections of y=f(x), y=g(x) there."},
+    {f:"If curves meet at n points x₁…xₙ, the equation has n distinct real roots."},
+    {f:"Inequations: (x−a)(x−b)<0 ⟹ a<x<b ; solve on one period, then add the period.",k:"trig",note:"For sin/cos LHS vs a line/parabola RHS, sketch both — counting beats algebra."}]},
+  {tag:"simul",title:"Simultaneous equations",rows:[
+    {f:"If sin θ = sin α AND cos θ = cos α together, the common solution is θ = 2nπ + α."},
+    {f:"Two equations in θ: find the single α satisfying both, then add 2nπ.",k:"trig",note:"A value satisfying one equation's family need not satisfy the other — only the shared α survives."}]}
+];
+
+let TEQ_PATTERNS = [
+  {id:"P1",name:"General-Solution Template",trigger:"After isolating, a bare sin θ = k, cos θ = k, or tan θ = k. The 'write the general solution' cue.",move:"Express k as sin/cos/tan of a known α, then drop into the matching template: sinθ=sinα → nπ+(−1)ⁿα; cosθ=cosα → 2nπ±α; tanθ=tanα → nπ+α.",why:"Every solvable trig equation collapses to one of three template families once a single ratio is isolated.",mini:"sin θ = −1/2 = sin(−π/6) → θ = nπ + (−1)ⁿ(−π/6).",fails:"When two DIFFERENT ratios remain (tan θ and sec θ): their periodicities differ, you cannot merge templates — reduce to one ratio first.",src:"Synopsis, Ex-III Q11, Ex-III Q13",srcText:{"Synopsis":"sinθ=k→θ=nπ+(−1)ⁿα; cosθ=k→θ=2nπ±α; tanθ=k→θ=nπ+α (principal α from the standard intervals).","Ex-III Q11":"If tan x + 2 tan 2x + 4 tan 4x + 8 cot 8x = √3 then the general solution of x is —","Ex-III Q13":"If tan mθ = cot nθ then the general solution of θ is —"}},
+  {id:"P2",name:"Squared-Ratio Family (θ=nπ±α)",trigger:"The equation is EVEN in one ratio — sin²θ = sin²α, cos²θ = cos²α, tan²θ = tan²α (or reduces to that after a manipulation).",move:"Use the merged template θ = nπ ± α. Reach it by writing both sides as the same squared ratio.",why:"Squaring fuses the (−1)ⁿ and ± branches into a single nπ ± α — fewer cases, no sign bookkeeping.",mini:"4 cos²x = 3 ⟹ cos²x = cos²(π/6) ⟹ x = nπ ± π/6.",fails:"Treating a squared equation as linear (you'd miss half the roots) — or squaring a non-even equation and importing extraneous roots (that's P6, not P2).",src:"Synopsis, Ex-III Q12",srcText:{"Synopsis":"General solution of sin²θ=sin²α (or cos²θ=cos²α or tan²θ=tan²α) is θ=nπ±α.","Ex-III Q12":"tan θ · tan(120°+θ) · tan(120°−θ) = 1/√3 → general solution of θ (collapses via the triple-angle product to tan 3θ = 1/√3)."}},
+  {id:"P3",name:"Factor & Split (never cancel)",trigger:"After moving everything to one side it factors into a PRODUCT of trig pieces equal to zero; or a common trig factor is tempting you to divide.",move:"Set each factor to zero and solve separately; union the solution sets. NEVER divide out a common factor — that silently deletes the roots that factor would have given.",why:"A product is zero iff some factor is zero. Cancelling a factor throws away its zeros.",mini:"sin x + sin 3x = sin 2x ⟹ sin 2x(2cos x − 1)=0 ⟹ sin 2x = 0 OR cos x = ½ (keep both).",fails:"Cancelling sin x or cos x 'to simplify' — caution (iii). Always factor, never cancel.",src:"Cautions(iii), Ex-III Q17, Ex-III Q03, Ex-IV Q1",srcText:{"Cautions(iii)":"Do not cancel the common variable factor from the two sides of the equation, because we may lose some solutions.","Ex-III Q17":"General solution of sin x − 3 sin 2x + sin 3x = cos x − 3 cos 2x + cos 3x (factors to (2cos x−3)(sin 2x − cos 2x)=0).","Ex-III Q03":"Number of distinct real roots of |sin x, cos x, cos x; cos x, sin x, cos x; cos x, cos x, sin x| = 0 in [−π/4, π/4] (the determinant factors to (sin x − cos x)²(sin x + 2cos x)=0).","Ex-IV Q1":"The number of distinct real roots of sin³x + sin²x + sin x − sin x·sin 2x − sin 2x − 2 cos x = 0 belonging to (−π/2, π/2)."}},
+  {id:"P4",name:"Reduce-to-Quadratic & Reject",trigger:"A single ratio appears to powers 2 and 1 (a sin²x + b sin x + c = 0), possibly after using sin²+cos²=1 to eliminate the other ratio.",move:"Substitute t = sin x (or cos x / tan x). Solve the quadratic in t. REJECT any root with |t|>1 for sin/cos. Then template each surviving t.",why:"Polynomial machinery solves it once it's a quadratic in one ratio — but the range constraint is what trips people.",mini:"2 sin²x − 3 sin x + 1 = 0 ⟹ sin x = 1 or ½ (both valid) ⟹ x = (4n+1)π/2 or nπ+(−1)ⁿπ/6.",fails:"Forgetting |t| ≤ 1, so you template a root like sin x = 2 that has no solution.",src:"Ex-III Q16, Ex-III Q02",srcText:{"Ex-III Q16":"General solution of (1−sin x)/(1+sin x) = (1−cos 2x)/(1+cos 2x)-type identity → reduces to 2 sin²x + sin x − 1 = 0 → sin x = ½.","Ex-III Q02":"If 1 + sin²θ = 3 sin θ cos θ, the solution set in (0, π/2) (divide by cos²θ → 2 tan²θ − 3 tan θ + 1 = 0 → tan θ = 1 or ½)."}},
+  {id:"P5",name:"a cosx + b sinx = c",trigger:"A first-degree combination a cos x + b sin x set equal to a constant c.",move:"A solution exists iff |c| ≤ √(a²+b²). If so, write a cos x + b sin x = √(a²+b²) cos(x−φ) and template. If |c| > √(a²+b²): NO solution.",why:"The LHS is a single rotated cosine of amplitude √(a²+b²); it can only reach values within [−amp, +amp].",mini:"(√3−1)cos θ + (√3+1)sin θ = 2: amp = √8 = 2√2 ≥ 2 ✓ → 2√2 sin(θ+φ)=2.",fails:"Skipping the |c| ≤ amplitude gate, then 'solving' an impossible equation. Also: misreading a,b after manipulation.",src:"Synopsis, Ex-III Q18, Cengage Arch NV-1 (2018)",srcText:{"Synopsis":"a cos θ + b sin θ = c has a solution iff |c| ≤ √(a²+b²); no solution if |c| > √(a²+b²).","Ex-III Q18":"General solution of (√3−1)cos θ + (√3+1)sin θ = 2.","Cengage Arch NV-1":"(JEE-Adv 2018) a,b,c nonzero with √3 a cos x + 2b sin x = c, x ∈ [−π/2, π/2], two distinct roots α,β with α+β = π/3; find b/a."}},
+  {id:"P6",name:"Square → Check → Reject Extraneous",trigger:"A radical √(…), or you squared/cross-multiplied to clear a root or a ± ambiguity.",move:"Square only when forced. Solve. Then SUBSTITUTE every candidate back into the ORIGINAL equation and discard the ones that don't satisfy it.",why:"Squaring is not reversible — it can create roots of (LHS)²=(RHS)² that fail LHS=RHS.",mini:"√(1−sin x) = 1 − sin x ⟹ sin x = 0 or 1; check both in the original (1−sinx ≥ 0 and sign of RHS).",fails:"Reporting all algebraic roots without the back-check — the classic extraneous-root error (caution ii).",src:"Cautions(ii), Cengage SC §3.5 (squaring class)",srcText:{"Cautions(ii)":"Avoid squaring the equation if possible, because it may lead to extraneous solutions.","Cengage SC §3.5":"(text pending — upload Cengage page 3.5 illustration set on squaring)"}},
+  {id:"P7",name:"Boundedness Pinch (LHS=RHS extremes)",trigger:"LHS ≤ k and RHS ≥ k are forced (or 'sum of bounded terms = its max'); also 'sum of squares = 0'.",move:"Equality can hold ONLY when both sides simultaneously hit k. Set each bounded term to its extreme and solve the resulting simple equations together.",why:"If LHS can't exceed k and RHS can't fall below k, the only way they're equal is at k for both.",mini:"cos⁵x = 1 + sin⁴x: LHS ≤ 1, RHS ≥ 1 ⟹ cos⁵x=1 AND sin⁴x=0 ⟹ x = 2nπ.",fails:"Trying to solve algebraically instead of reading the bounds — you'll drown. The pinch is the whole trick.",src:"Ex-III Q04, Ex-III Q20, Ex-III Q21, Cengage Arch NV-2 (2020)",srcText:{"Ex-III Q04":"A = {θ ∈ [0,2π] : (cos x)⁵ + (sin x)³ = 1}; the number of elements in A (each term ≤ its square ⟹ pinch ⟹ x = 0, π/2, 2π).","Ex-III Q20":"The solution set of cos⁵x = 1 + sin⁴x (LHS ≤ 1 ≤ RHS forces cos x = 1).","Ex-III Q21":"sin θ = ½(√(x/y) + √(y/x)) ⟹ RHS ≥ 1 by AM-GM and sin θ ≤ 1 ⟹ x = y.","Cengage Arch NV-2":"(JEE-Adv 2020) f(θ)=(sin θ+cos θ)²+(sin θ−cos θ)⁴, local minima locations; sum of the λ's."}},
+  {id:"P8",name:"Domain & Undefined-Point Rejection",trigger:"tan, sec, cot, csc, logs, or denominators appear — i.e. the equation has forbidden points.",move:"Before reporting, list where each term is undefined (cos x = 0 for tan/sec; sin x = 0 for cot/csc; base/argument limits for logs). Strike any candidate landing there.",why:"A root that makes a term infinite/undefined isn't a root of the equation as written (caution iv).",mini:"log_{sin θ}(cos 2θ) = 2 needs sin θ ∈ (0,1)\\{…} AND cos 2θ > 0 — those gates leave a single valid θ.",fails:"Quoting the full template family and forgetting tan x is undefined at (2n+1)π/2, etc.",src:"Cautions(iv), Ex-III Q05",srcText:{"Cautions(iv)":"The answer should not contain values of θ which make any of the terms undefined or infinite; check denominators are nonzero at every stage.","Ex-III Q05":"In (−π/2, π/2), log_{sin θ}(cos 2θ) = 2 has — (base constraints force a unique solution)."}},
+  {id:"P9",name:"Multiply/Divide Lost-Root Trap",trigger:"You multiplied through by sin x / cos x (or a half-angle factor), or divided to simplify.",move:"Track what you multiplied/divided by. Roots of THAT factor are either spuriously gained (if multiplied) or lost (if divided) — re-introduce or discard them explicitly.",why:"Multiplying introduces the multiplier's zeros; dividing removes them. Either way the solution set shifts.",mini:"Multiplying csc-equation by sin x can add x = nπ; check whether the original allowed it.",fails:"Treating multiply/divide as harmless. It's the silent cousin of squaring.",src:"Cautions(iii), Synopsis(half-angle)",srcText:{"Cautions(iii)":"Do not cancel/divide by a common trig factor; track multiplications too.","Synopsis(half-angle)":"(text pending — upload the half-angle / t = tan(x/2) substitution worked example page)"}},
+  {id:"P10",name:"Equations with [x], {x}, |·|",trigger:"Greatest-integer [x], fractional part {x}, or modulus |x| appears inside or around the trig.",move:"Split into cases on the integer/fractional/sign structure. For tan|x| = tan x compare on x ≥ 0 vs x < 0; for [x] inside trig the argument is integer-stepped (a lattice).",why:"These operators are piecewise — the equation is really several equations, one per piece.",mini:"tan|x| = tan x holds for all x ≥ 0; for x < 0 it needs tan(−x)=tan x ⟹ tan x = 0.",fails:"Treating |x| or [x] as ordinary x and getting one clean template — you'll miss the case structure.",src:"Cengage Arch SC-4 (2024), Cengage SC §3.7 (|x| class)",srcText:{"Cengage Arch SC-4":"(JEE-Adv 2024) f(x)=x² sin(π/x²) for x≠0, f(0)=0; which statement is TRUE about the number/locations of zeros (e.g. > 25 zeros in (1/π², 1/π)).","Cengage SC §3.7":"(text pending — upload Cengage page with the tan|x| = tan x and |·| equation illustrations)"}},
+  {id:"P11",name:"Counting Roots in an Interval (graphical)",trigger:"'Number of solutions in [a,b]', or LHS is trig while RHS is a line/parabola/other curve.",move:"Sketch y = LHS and y = RHS on the interval; count intersections. For pure-trig, reduce to one template and count which n land inside.",why:"Counting intersections is far faster and safer than solving when the equation is transcendental.",mini:"sin x = x/10 on ℝ: draw the line through the sine humps — count crossings on each side.",fails:"Trying to solve transcendental equations exactly. Count, don't solve.",src:"Cengage Arch SC-2 (2014), Cengage Arch Int-4 (2020), Synopsis(graphical)",srcText:{"Cengage Arch SC-2":"(JEE-Adv 2014) For x ∈ (0, π), sin x + 2 sin 2x − sin 3x = 3 has how many solutions? (bound the LHS — it never reaches 3).","Cengage Arch Int-4":"(JEE-Adv 2020) f(x)=(3−sin 2πx)sin(πx−π/4) − sin(3πx+π/4) on [0,2]; {x: f(x)≥0} = [α,β], find β−α.","Synopsis(graphical)":"If y=f(x) and y=g(x) meet in n points x₁…xₙ, then f(x)=g(x) has n distinct real solutions."}},
+  {id:"P12",name:"Principal-Value / Interval Extraction",trigger:"'Find the solutions / their sum in (−π, π)' (or any bounded interval) — not the general family.",move:"Write the general solution, then plug n = …,−1,0,1,… and keep only members inside the interval. Sum/count those.",why:"The interval selects a finite slice of the infinite family; enumerate n carefully near the endpoints.",mini:"From x = nπ ± π/6 keep those in (−π,π): π/6, −π/6, 5π/6, −5π/6.",fails:"Off-by-one at the endpoints, or forgetting excluded points inside the interval (combine with P8).",src:"Cengage Arch SC-3 (2016), Cengage Arch Int-1 (2010)",srcText:{"Cengage Arch SC-3":"(JEE-Adv 2016) S = {x ∈ (−π, π) : x ≠ 0, ±π/2}; the SUM of all distinct solutions of √3 sec x + csc x + 2(tan x − cot x) = 0 in S.","Cengage Arch Int-1":"(IIT-JEE 2010) number of values of θ in (−π/2, π/2), θ ≠ nπ/5, with tan θ = cot 5θ and sin 2θ = cos 4θ."}},
+  {id:"P13",name:"Simultaneous Trig System",trigger:"Two trig conditions on the same angle (e.g. sin given AND cos given), or a system in x and y.",move:"Find the single α satisfying BOTH equations; the common solution is θ = 2nπ + α. For x,y systems, solve the symmetric/quadratic structure then template each.",why:"Each equation gives a family; only their intersection (the shared α, then +2nπ) solves the system.",mini:"sin θ = ½ and cos θ = √3/2 together ⟹ θ = 2nπ + π/6 (only that branch, not 5π/6).",fails:"Taking the union of the two families instead of the intersection.",src:"Synopsis(simultaneous), Ex-III Q14",srcText:{"Synopsis(simultaneous)":"For sin θ = sin α and cos θ = cos α simultaneously, the general solution is θ = 2nπ + α (α the common angle).","Ex-III Q14":"cos x + cos y = 1 and cos x · cos y = ¼ ⟹ cos x = cos y = ½ ⟹ x = 2nπ ± π/3, y = 2mπ ± π/3."}},
+  {id:"P14",name:"Trig Inequations",trigger:"An INEQUALITY in a trig function — sin x ≥ k, |…| < …, a product/quotient of trig factors > 0.",move:"Solve on one period using the unit circle or graph to get the base interval(s); then add the period (2π or π). For products use the sign-chart rules (x−a)(x−b)<0 ⟹ a<x<b.",why:"Inequations describe arcs/intervals, not points — find them on one period, then translate periodically.",mini:"sin x ≥ ½ on [0,2π]: x ∈ [π/6, 5π/6], then + 2nπ.",fails:"Solving the equality and forgetting the inequality describes a whole interval, or mishandling where the function is decreasing.",src:"Synopsis(inequations)",srcText:{"Synopsis(inequations)":"If a<b then (x−a)(x−b)<0 ⟹ a<x<b; (x−a)(x−b)>0 ⟹ x<a or x>b. Apply after reducing the trig inequation to factored form on one period."}},
+  {id:"P15",name:"Parametric 'Has-a-Solution' Condition",trigger:"The equation carries a parameter a; you're asked for which a a solution exists, or how many a, or how many solutions.",move:"Isolate the parameter or use a range/bound condition: |c| ≤ √(a²+b²) (P5), discriminant ≥ 0 (P4), or a boundedness pinch (P7). Solve the resulting inequality in a.",why:"Existence is governed by whether the constant lands inside the reachable range of the trig side.",mini:"4 csc²{π(a+x)} + a² − 4a = 0: LHS-csc² ≥ 4 ⟹ a²−4a ≤ −4 ⟹ (a−2)² ≤ 0 ⟹ a = 2.",fails:"Trying to solve for x first. Existence is a RANGE question about a, not a root-finding question.",src:"Ex-V Q3, Cengage SC §3.8 (parametric class)",srcText:{"Ex-V Q3":"The value of a for which 4 cosec²{π(a+x)} + a² − 4a = 0 has a real solution (csc² ≥ 1 ⟹ 4·1 + a²−4a ≤ 0-type gate ⟹ a = 2).","Cengage SC §3.8":"For any real b, the number of real solutions of (b cos x)/(2cos2x−1) = (b+sin x)/((cos²x−3sin²x)tan x) for x ∈ (0, 2π) (parametric count, answer per Cengage key)."}}
+];
+
+let TEQ_GUIDED = [
+  {id:"G1",tier:3,tax:"P1",pattern:"P1",q:"Find the general solution of tan x + 2 tan 2x + 4 tan 4x + 8 cot 8x = √3.",
+    opts:["General-Solution Template","Reduce-to-Quadratic & Reject","a cosx + b sinx = c","Factor & Split"],correct:0,
+    hints:["Don't expand. Use the ladder identity cot θ − tan θ = 2 cot 2θ, i.e. tan θ = cot θ − 2 cot 2θ, repeatedly.","tan x = cot x − 2cot 2x; 2tan 2x = 2cot 2x − 4cot 4x; 4tan 4x = 4cot 4x − 8cot 8x. Add the +8cot 8x — everything telescopes to cot x.","So cot x = √3 ⟹ tan x = 1/√3 = tan(π/6) ⟹ template."],
+    ans:"x = nπ + π/6,  n ∈ ℤ",why:"Coefficients 1,2,4,8 scream the tan–cot telescoping ladder; once it collapses to cot x = √3 it's a one-line P1 template."},
+  {id:"G2",tier:3,tax:"P2",pattern:"P2",q:"Find the general solution of tan θ · tan(120° + θ) · tan(120° − θ) = 1/√3.",
+    opts:["Squared-Ratio Family (θ=nπ±α)","Boundedness Pinch","Domain & Undefined-Point Rejection","Simultaneous Trig System"],correct:0,
+    hints:["Recall the triple-angle product: tan θ · tan(60°−θ) · tan(60°+θ) = tan 3θ. Here 120°±θ = 60°±θ shifted by 60°, and the identity still collapses the product to tan 3θ.","So tan 3θ = 1/√3 = tan(π/6).","3θ = nπ + π/6 ⟹ θ = nπ/3 + π/18 = (6n+1)π/18."],
+    ans:"θ = (6n+1)π/18,  n ∈ ℤ",why:"A 3-factor tangent product reduces to a single tan 3θ; then the squared/linear template lands the family."},
+  {id:"G3",tier:3,tax:"P3",pattern:"P3",q:"Find the general solution of sin x − 3 sin 2x + sin 3x = cos x − 3 cos 2x + cos 3x.",
+    opts:["Factor & Split (never cancel)","a cosx + b sinx = c","Reduce-to-Quadratic & Reject","Trig Inequations"],correct:0,
+    hints:["Group sin x + sin 3x = 2 sin 2x cos x, and cos x + cos 3x = 2 cos 2x cos x.","LHS = sin 2x(2cos x − 3); RHS = cos 2x(2cos x − 3). Bring together: (2cos x − 3)(sin 2x − cos 2x) = 0.","2cos x − 3 ≠ 0 ever, so tan 2x = 1 ⟹ 2x = nπ + π/4."],
+    ans:"x = nπ/2 + π/8,  n ∈ ℤ",why:"Sum-to-product exposes a shared factor (2cos x − 3); factor and split, and discard the impossible factor instead of cancelling it."},
+  {id:"G4",tier:3,tax:"P4",pattern:"P4",q:"Solve, in (0, π/2), the equation 1 + sin²θ = 3 sin θ cos θ.",
+    opts:["Reduce-to-Quadratic & Reject","General-Solution Template","Boundedness Pinch","Principal-Value / Interval Extraction"],correct:0,
+    hints:["Divide both sides by cos²θ (valid since cos θ ≠ 0 in (0,π/2)): sec²θ + tan²θ = 3 tan θ.","Use sec²θ = 1 + tan²θ: 1 + 2 tan²θ = 3 tan θ ⟹ 2 tan²θ − 3 tan θ + 1 = 0.","Factor: (2 tan θ − 1)(tan θ − 1) = 0 ⟹ tan θ = ½ or 1; both lie in (0,π/2)."],
+    ans:"θ = π/4  or  θ = tan⁻¹(½)",why:"Even-power structure in one ratio → quadratic in tan θ; solve and keep the roots inside the stated interval."},
+  {id:"G5",tier:3,tax:"P5",pattern:"P5",q:"Find the general solution of (√3 − 1)cos θ + (√3 + 1)sin θ = 2.",
+    opts:["a cosx + b sinx = c","Factor & Split","Squared-Ratio Family","Multiply/Divide Lost-Root Trap"],correct:0,
+    hints:["Amplitude = √((√3−1)² + (√3+1)²) = √(4 + 4) = 2√2. Since |2| ≤ 2√2, a solution exists.","Divide through by 2√2 and recognise the coefficients as sin(π/12), cos(π/12) (since tan(π/12)=2−√3): the LHS becomes 2√2 sin(θ + π/12)... set equal to 2.","sin(θ + π/12) = 1/√2 ⟹ θ + π/12 = nπ + (−1)ⁿ π/4."],
+    ans:"θ = nπ + (−1)ⁿ π/4 − π/12,  n ∈ ℤ",why:"Linear sin–cos combo: check |c| ≤ amplitude, fold into one sine, template; the awkward angle π/12 comes from tan φ = (√3−1)/(√3+1)."},
+  {id:"G6",tier:3,tax:"P7",pattern:"P7",q:"Find all x in [0, 2π] satisfying (cos x)⁵ + (sin x)³ = 1.",
+    opts:["Boundedness Pinch (LHS=RHS extremes)","Reduce-to-Quadratic & Reject","a cosx + b sinx = c","Counting Roots in an Interval"],correct:0,
+    hints:["On [0,2π] note cos⁵x ≤ cos²x and sin³x ≤ sin²x wherever the bases are in [0,1]; and cos²x + sin²x = 1. So cos⁵x + sin³x ≤ 1, equality only at the extremes.","Equality forces each power to equal its square: cos x ∈ {0,1} and sin x ∈ {0,1} simultaneously with cos²x+sin²x=1.","That gives (cos x, sin x) = (1,0) or (0,1): x = 0, π/2, 2π."],
+    ans:"x = 0,  π/2,  2π  (3 solutions)",why:"LHS pinned at its maximum 1 = RHS — read the bounds, set each term to its extreme, don't grind algebra."},
+  {id:"G7",tier:3,tax:"P8",pattern:"P8",q:"How many solutions does log_{sin θ}(cos 2θ) = 2 have in (−π/2, π/2)?",
+    opts:["Domain & Undefined-Point Rejection","General-Solution Template","Factor & Split","Trig Inequations"],correct:0,
+    hints:["Domain first: the base sin θ must be > 0 and ≠ 1, and the argument cos 2θ must be > 0. So θ ∈ (0, π/2) with cos 2θ > 0 ⟹ θ ∈ (0, π/4).","Rewrite: cos 2θ = (sin θ)² ⟹ 1 − 2 sin²θ = sin²θ ⟹ sin²θ = 1/3 ⟹ sin θ = 1/√3.","θ = sin⁻¹(1/√3) lies in (0, π/4)? sin(π/4)=1/√2 > 1/√3, so yes — exactly one valid θ."],
+    ans:"Exactly one solution",why:"The log's base/argument constraints kill most candidates; only the θ surviving the domain gate counts."},
+  {id:"G8",tier:3,tax:"P3",pattern:"P3",q:"Find the number of distinct real roots of sin³x + sin²x + sin x − sin x·sin 2x − sin 2x − 2 cos x = 0 in (−π/2, π/2).",
+    opts:["Factor & Split (never cancel)","Boundedness Pinch","Reduce-to-Quadratic & Reject","Domain & Undefined-Point Rejection"],correct:0,
+    hints:["Group cleverly: sin x(sin²x + sin x + 1) − sin 2x(sin x + 1) − 2 cos x, and use sin 2x = 2 sin x cos x to pull out common pieces.","After factoring you reach a product like (sin x + 1)(…) with a quadratic-type factor in sin x; set each to zero.","Keep only roots in (−π/2, π/2): two distinct roots survive."],
+    ans:"2 distinct roots",why:"Messy but factorable — the discipline is to factor into pieces and count roots in-range, never to cancel."},
+  {id:"G9",tier:3,tax:"P13",pattern:"P13",q:"Solve the system cos x + cos y = 1 and cos x · cos y = 1/4 for the general solution (x, y).",
+    opts:["Simultaneous Trig System","a cosx + b sinx = c","Squared-Ratio Family","Parametric 'Has-a-Solution' Condition"],correct:0,
+    hints:["Treat cos x and cos y as the two roots of t² − (sum)t + (product) = 0, i.e. t² − t + 1/4 = 0.","That's (t − ½)² = 0 ⟹ cos x = cos y = ½.","Template each: x = 2nπ ± π/3 and y = 2mπ ± π/3."],
+    ans:"x = 2nπ ± π/3,  y = 2mπ ± π/3,  n,m ∈ ℤ",why:"Sum and product of two cosines → quadratic whose roots are the cosines; then template each independently."},
+  {id:"G10",tier:3,tax:"P12",pattern:"P12",q:"Find the SUM of all distinct solutions of √3 sec x + csc x + 2(tan x − cot x) = 0 in S = {x ∈ (−π, π) : x ≠ 0, ±π/2}.",
+    opts:["Principal-Value / Interval Extraction","Counting Roots in an Interval","Reduce-to-Quadratic & Reject","Multiply/Divide Lost-Root Trap"],correct:0,
+    hints:["Multiply through by sin x cos x (allowed since x ≠ 0, ±π/2) to clear denominators; simplify to a single trig equation.","You reach √3 sin x + cos x + 2(sin²x − cos²x) = 0 ⟹ 2 sin(x + π/6) = 2 cos 2x-type relation; solve for the residues in (−π, π).","Enumerate the valid solutions in S and add them — the symmetric ones cancel."],
+    ans:"0",why:"(JEE-Adv 2016) After clearing the domain-forbidden points, the valid roots in (−π,π) are symmetric about 0, so their sum is 0."},
+  {id:"G11",tier:3,tax:"P5",pattern:"P5",q:"a, b, c are nonzero reals with √3·a·cos x + 2b·sin x = c, x ∈ [−π/2, π/2], having two distinct roots α, β with α + β = π/3. Find b/a.",
+    opts:["a cosx + b sinx = c","Boundedness Pinch","Factor & Split","Counting Roots in an Interval"],correct:0,
+    hints:["Write √3 a cos x + 2b sin x = R cos(x − φ) with tan φ = 2b/(√3 a). Two roots of R cos(x−φ)=c are symmetric about x = φ.","Symmetry of the two roots ⟹ α + β = 2φ. Given α+β = π/3 ⟹ φ = π/6.","So tan(π/6) = 2b/(√3 a) ⟹ 1/√3 = 2b/(√3 a) ⟹ b/a = 1/2."],
+    ans:"b/a = 0.5",why:"(JEE-Adv 2018) The two roots of a single-cosine equation straddle its phase φ; α+β = 2φ pins φ, and tan φ delivers b/a."},
+  {id:"G12",tier:3,tax:"P15",pattern:"P15",q:"Find the value of a for which 4 csc²{π(a + x)} + a² − 4a = 0 has a real solution.",
+    opts:["Parametric 'Has-a-Solution' Condition","Reduce-to-Quadratic & Reject","Domain & Undefined-Point Rejection","Trig Inequations"],correct:0,
+    hints:["csc² of anything is ≥ 1, so 4 csc²{…} ≥ 4. For the sum to be zero you need a² − 4a ≤ −4.","a² − 4a + 4 ≤ 0 ⟹ (a − 2)² ≤ 0.","A square is ≤ 0 only when it's 0 ⟹ a = 2 (and then csc² = 1 is attainable)."],
+    ans:"a = 2",why:"Existence is a range question: the csc² floor forces a²−4a into a tiny window, collapsing to a single a."},
+  {id:"G13",tier:3,tax:"P11",pattern:"P11",q:"For x ∈ (0, π), how many solutions does sin x + 2 sin 2x − sin 3x = 3 have?",
+    opts:["Counting Roots in an Interval (graphical)","General-Solution Template","Factor & Split","a cosx + b sinx = c"],correct:0,
+    hints:["Don't solve — bound the LHS. Rewrite sin 3x = 3 sin x − 4 sin³x and simplify the LHS to 2 sin x(1 + 2 cos x − 2 cos²x).","Maximise on (0,π): test x = π/3 → 2·(√3/2)·(1 + 1 − ½) = √3·(3/2) ≈ 2.6 < 3. The LHS never reaches 3.","Since max LHS < 3, the equation cannot hold."],
+    ans:"No solution",why:"(JEE-Adv 2014) A bound on the LHS settles the count instantly — the RHS 3 sits above the LHS's reach."},
+  {id:"G14",tier:3,tax:"P10",pattern:"P10",q:"f(x) = x² sin(π/x²) for x ≠ 0 (f(0)=0). Roughly how many zeros does f have in the interval (1/π², 1/π)?",
+    opts:["Equations with [x], {x}, |·|","Boundedness Pinch","Principal-Value / Interval Extraction","Simultaneous Trig System"],correct:0,
+    hints:["f(x) = 0 (for x ≠ 0) ⟺ sin(π/x²) = 0 ⟺ π/x² = kπ ⟺ x² = 1/k ⟺ x = 1/√k, k ∈ ℕ.","Need 1/π² < 1/√k < 1/π ⟹ π < √k < π² ⟹ π² < k < π⁴, i.e. about 9.87 < k < 97.4.","Integer k = 10, 11, …, 97 ⟹ 88 values ⟹ far more than 25 zeros."],
+    ans:"More than 25 (precisely 88) zeros",why:"(JEE-Adv 2024) The 'inside' argument π/x² turns zero-counting into counting integers in a band — a discrete-sampling move."},
+  {id:"G15",tier:3,tax:"P6",pattern:"P6",q:"Solve √(3) sin x − √(1 + sin 2x) = 0 and explain which roots survive the squaring.",
+    opts:["Square → Check → Reject Extraneous","a cosx + b sinx = c","Factor & Split","Domain & Undefined-Point Rejection"],correct:0,
+    hints:["Note √(1 + sin 2x) = √((sin x + cos x)²) = |sin x + cos x|. So the equation is √3 sin x = |sin x + cos x| — needs √3 sin x ≥ 0 first.","Square: 3 sin²x = (sin x + cos x)² = 1 + sin 2x ⟹ 3 sin²x − 2 sin x cos x − 1 = 0 ⟹ (after using sin²+cos²) factor for tan x.","Solve, then REJECT any root with sin x < 0 (the original needs LHS ≥ 0) — those are the extraneous ones squaring introduced."],
+    ans:"Only roots with sin x ≥ 0 and sin x + cos x = √3 sin x survive (e.g. x = π/3 + 2nπ); the sign-violating roots are extraneous.",why:"Squaring a √ equation breeds sign-wrong roots; the back-check on √3 sin x ≥ 0 is mandatory."}
+];
+
+let TEQ_PRACTICE = [
+  /* ============ Foundation templates — Narayana Synopsis general-solution table ============ */
+  {src:"Fund T1", type:"NV", tier:1, tax:"P1", pat:"P1", q:"General solution of sin x = 1/2.", ans:"x = nπ + (−1)ⁿ π/6,  n ∈ ℤ", note:"1/2 = sin(π/6); apply the sine template.", doc:"fund"},
+  {src:"Fund T2", type:"NV", tier:1, tax:"P1", pat:"P1", q:"General solution of cos x = −1/2.", ans:"x = 2nπ ± 2π/3,  n ∈ ℤ", note:"−1/2 = cos(2π/3); cosine template uses 2nπ ± α.", doc:"fund"},
+  {src:"Fund T3", type:"NV", tier:1, tax:"P1", pat:"P1", q:"General solution of tan x = √3.", ans:"x = nπ + π/3,  n ∈ ℤ", note:"√3 = tan(π/3); tangent template is nπ + α.", doc:"fund"},
+  {src:"Fund T4", type:"NV", tier:1, tax:"P1", pat:"P1", q:"General solution of sin x = −1.", ans:"x = (4n − 1)π/2,  n ∈ ℤ", note:"Standard extreme: sin x = −1 ⟹ x = 2nπ − π/2.", doc:"fund"},
+  {src:"Fund T5", type:"NV", tier:1, tax:"P1", pat:"P1", q:"General solution of cos x = 1.", ans:"x = 2nπ,  n ∈ ℤ", note:"Standard extreme: cosine equals its max only at multiples of 2π.", doc:"fund"},
+  {src:"Fund T6", type:"NV", tier:1, tax:"P1", pat:"P1", q:"General solution of tan x = 0.", ans:"x = nπ,  n ∈ ℤ", note:"tan x = 0 at integer multiples of π.", doc:"fund"},
+  {src:"Fund T7", type:"NV", tier:1, tax:"P1", pat:"P1", q:"General solution of sin 2x = √3/2.", ans:"2x = nπ + (−1)ⁿ π/3 ⟹ x = nπ/2 + (−1)ⁿ π/6", note:"Template the inner angle 2x, then divide through.", doc:"fund"},
+  {src:"Fund T8", type:"NV", tier:1, tax:"P2", pat:"P2", q:"General solution of cos²x = 3/4.", ans:"x = nπ ± π/6,  n ∈ ℤ", note:"cos²x = cos²(π/6) ⟹ squared-ratio template nπ ± α.", doc:"fund"},
+  {src:"Fund T9", type:"NV", tier:1, tax:"P8", pat:"P8", q:"General solution of sec x = √2.", ans:"x = 2nπ ± π/4,  n ∈ ℤ", note:"cos x = 1/√2; sec is defined (cos ≠ 0) so no rejection needed here.", doc:"fund"},
+  {src:"Fund T10", type:"NV", tier:1, tax:"P1", pat:"P1", q:"General solution of √3 csc x = 2.", ans:"x = nπ + (−1)ⁿ π/3,  n ∈ ℤ", note:"csc x = 2/√3 ⟹ sin x = √3/2 = sin(π/3).", doc:"fund"},
+
+  /* ============ JEE-Main tier — standard forms + Narayana Ex-III (verified by key/hints) ============ */
+  {src:"Fund Q1", type:"SC", tier:2, tax:"P4", pat:"P4", q:"General solution of 2 sin²x − 3 sin x + 1 = 0.", choices:["x = (4n+1)π/2 or nπ+(−1)ⁿπ/6","x = nπ or 2nπ","x = nπ ± π/6","x = (2n+1)π/2"], correct:0, ans:"x = (4n+1)π/2 or nπ+(−1)ⁿπ/6", note:"Quadratic in sin x: (2 sin x − 1)(sin x − 1)=0 ⟹ sin x = 1 (x=(4n+1)π/2) or ½ (x=nπ+(−1)ⁿπ/6). Both valid (|t|≤1).", doc:"fund"},
+  {src:"Fund Q2", type:"SC", tier:2, tax:"P3", pat:"P3", q:"General solution of cos x + cos 3x = 0.", choices:["x = (2n+1)π/4 or (2n+1)π/2","x = nπ","x = 2nπ ± π/3","x = nπ/2"], correct:0, ans:"x = (2n+1)π/4 or (2n+1)π/2", note:"2 cos 2x cos x = 0 ⟹ cos 2x = 0 (x=(2n+1)π/4) or cos x = 0 (x=(2n+1)π/2). Factor, never cancel cos x.", doc:"fund"},
+  {src:"Fund Q3", type:"SC", tier:2, tax:"P3", pat:"P3", q:"General solution of tan x + cot x = 2.", choices:["x = nπ + π/4","x = nπ","x = 2nπ ± π/4","x = nπ/2 + π/4"], correct:0, ans:"x = nπ + π/4", note:"tan x + 1/tan x = 2 ⟹ tan²x − 2 tan x + 1 = 0 ⟹ (tan x − 1)²=0 ⟹ tan x = 1.", doc:"fund"},
+  {src:"Fund Q4", type:"SC", tier:2, tax:"P5", pat:"P5", q:"General solution of sin x + √3 cos x = 1.", choices:["x + π/3 = nπ + (−1)ⁿ π/6","x = 2nπ","x = nπ ± π/3","x = nπ + π/6"], correct:0, ans:"x + π/3 = nπ + (−1)ⁿ π/6", note:"2 sin(x + π/3) = 1 ⟹ sin(x+π/3) = ½. Amplitude 2 ≥ |1| so it solves.", doc:"fund"},
+  {src:"Fund Q5", type:"SC", tier:2, tax:"P4", pat:"P4", q:"General solution of 2 cos²x + sin x − 1 = 0.", choices:["x = (4n+1)π/2 or nπ+(−1)ⁿ(−π/6)","x = nπ","x = 2nπ ± π/3","x = nπ/2"], correct:0, ans:"x = (4n+1)π/2 or nπ+(−1)ⁿ(−π/6)", note:"Replace cos²x = 1−sin²x: 2−2sin²x+sin x−1=0 ⟹ 2sin²x−sin x−1=0 ⟹ (2sin x+1)(sin x−1)=0.", doc:"fund"},
+  {src:"Fund Q6", type:"SC", tier:2, tax:"P3", pat:"P3", q:"General solution of sin 2x = cos 3x.", choices:["x = (4n+1)π/10 or (4n−1)π/2","x = nπ","x = 2nπ ± π/3","x = nπ/2"], correct:0, ans:"x = (4n+1)π/10 or (4n−1)π/2", note:"cos 3x = cos(π/2 − 2x) ⟹ 3x = 2nπ ± (π/2 − 2x): + gives x=(4n+1)π/10, − gives x=(4n−1)π/2.", doc:"fund"},
+  {src:"Ex-III Q1", type:"SC", tier:2, tax:"P3", pat:"P3", q:"A = {θ ∈ (0, π/2) : sin 7θ = sin 4θ − sin θ}. The number of elements in A is", choices:["2","3","1","4"], correct:0, ans:"2", note:"sin 7θ + sin θ = sin 4θ ⟹ 2 sin 4θ cos 3θ = sin 4θ ⟹ sin 4θ(2cos 3θ − 1)=0. In (0,π/2): sin 4θ=0 → θ=π/4; cos 3θ=½ → θ=π/9. Two elements. (Narayana Ex-III, key Q1)", doc:"narEx3"},
+  {src:"Ex-III Q2", type:"SC", tier:2, tax:"P4", pat:"P4", q:"If 1 + sin²θ = 3 sin θ cos θ, then the solution set in (0, π/2) is", choices:["{π/4, tan⁻¹(1/2)}","{π/4}","{π/6, π/3}","{tan⁻¹(2)}"], correct:0, ans:"{π/4, tan⁻¹(1/2)}", note:"÷cos²θ ⟹ 2tan²θ−3tanθ+1=0 ⟹ tanθ = 1 or ½. (Narayana Ex-III, key Q2)", doc:"narEx3"},
+  {src:"Ex-III Q12", type:"SC", tier:2, tax:"P2", pat:"P2", q:"General solution of tan θ · tan(120° + θ) · tan(120° − θ) = 1/√3.", choices:["θ = (6n+1)π/18","θ = nπ + π/6","θ = nπ/3","θ = (2n+1)π/18"], correct:0, ans:"θ = (6n+1)π/18", note:"Triple-angle product ⟹ tan 3θ = 1/√3 ⟹ 3θ = nπ + π/6. (Narayana Ex-III, key Q12)", doc:"narEx3"},
+  {src:"Ex-III Q13", type:"SC", tier:2, tax:"P1", pat:"P1", q:"If tan mθ = cot nθ, then the general solution of θ is", choices:["(2k+1)π / [2(m+n)]","kπ/(m+n)","(2k+1)π/(m−n)","kπ/(m−n)"], correct:0, ans:"(2k+1)π / [2(m+n)]", note:"cot nθ = tan(π/2 − nθ) ⟹ mθ = kπ + π/2 − nθ ⟹ (m+n)θ = kπ + π/2. (Narayana Ex-III, key Q13)", doc:"narEx3"},
+  {src:"Ex-III Q15", type:"SC", tier:2, tax:"P2", pat:"P2", q:"If sin x · sin(60° + x) · sin(60° − x) = 1/8, then x =", choices:["nπ/3 + (−1)ⁿ π/18","nπ + π/6","2nπ ± π/3","nπ/3"], correct:0, ans:"nπ/3 + (−1)ⁿ π/18", note:"Product = ¼ sin 3x = 1/8 ⟹ sin 3x = ½ ⟹ 3x = nπ + (−1)ⁿπ/6. (Narayana Ex-III, key Q15)", doc:"narEx3"},
+  {src:"Ex-III Q9", type:"SC", tier:2, tax:"P13", pat:"P13", q:"If tan(A − B) = 1 and sec(A + B) = 2/√3, the least positive values of A and B are respectively", choices:["25π/24, 19π/24","π/4, π/6","19π/24, 25π/24","13π/24, 7π/24"], correct:0, ans:"25π/24, 19π/24", note:"A−B = nπ+π/4 and A+B = 2mπ ± π/6; solve the simultaneous system for least positive A,B. (Narayana Ex-III, key Q9)", doc:"narEx3"},
+
+  /* ============ JEE-Advanced tier — Narayana Ex-III (key + worked hints verified) ============ */
+  {src:"Ex-III Q3", type:"SC", tier:3, tax:"P3", pat:"P3", q:"The number of distinct real roots of the determinant |sin x, cos x, cos x; cos x, sin x, cos x; cos x, cos x, sin x| = 0 in [−π/4, π/4] is", choices:["0","2","1","3"], correct:2, ans:"1", note:"Row operations factor it to (sin x − cos x)²(sin x + 2 cos x)=0. In [−π/4,π/4]: sin x = cos x ⟹ x = π/4 (one root); tan x = −2 lies outside. (Narayana Ex-III, key Q3)", doc:"narEx3"},
+  {src:"Ex-III Q4", type:"SC", tier:3, tax:"P7", pat:"P7", q:"Let A = {θ ∈ [0, 2π] : (cos x)⁵ + (sin x)³ = 1}. The number of elements in A is", choices:["1","3","2","0"], correct:1, ans:"3", note:"Boundedness pinch: cos⁵x ≤ cos²x, sin³x ≤ sin²x; equality needs (cos x,sin x) ∈ {(1,0),(0,1)} ⟹ x = 0, π/2, 2π. (Narayana Ex-III, key Q4)", doc:"narEx3"},
+  {src:"Ex-III Q5", type:"SC", tier:3, tax:"P8", pat:"P8", q:"In (−π/2, π/2), the equation log_{sin θ}(cos 2θ) = 2 has", choices:["no solution","a unique solution","two solutions","infinitely many solutions"], correct:1, ans:"a unique solution", note:"Base needs sin θ ∈ (0,1)\\{…}; argument cos 2θ > 0. cos 2θ = sin²θ ⟹ sin²θ = 1/3 ⟹ single valid θ. (Narayana Ex-III, key Q5)", doc:"narEx3"},
+  {src:"Ex-III Q7", type:"SC", tier:3, tax:"P3", pat:"P3", q:"The least difference between the roots, in the first quadrant (0 ≤ x ≤ π/2), of 4 cos x(2 − 3 sin²x) + (cos 2x + 1) = 0 is", choices:["π/6","π/4","π/3","π/2"], correct:0, ans:"π/6", note:"Reduces to 2 cos x(6 cos²x + cos x − 2)=0 ⟹ cos x = 0, ½, −2/3. In Q1: x = π/2, π/3 ⟹ least difference π/6. (Narayana Ex-III, key Q7)", doc:"narEx3"},
+  {src:"Ex-III Q14", type:"SC", tier:3, tax:"P13", pat:"P13", q:"If cos x + cos y = 1 and cos x · cos y = 1/4, then the general solution (x, y) is", choices:["x = 2nπ ± π/3, y = 2mπ ± π/3","x = nπ, y = mπ","x = 2nπ ± π/6, y = 2mπ ± π/6","x = nπ ± π/3, y = mπ ± π/3"], correct:0, ans:"x = 2nπ ± π/3, y = 2mπ ± π/3", note:"cos x, cos y are roots of t²−t+¼=0 ⟹ both = ½. (Narayana Ex-III, key Q14)", doc:"narEx3"},
+  {src:"Ex-III Q16", type:"SC", tier:3, tax:"P4", pat:"P4", q:"General solution of the equation reducing to 2 sin²x + sin x − 1 = 0 (with sin x ≠ −1) is", choices:["x = nπ + (−1)ⁿ π/6","x = 2nπ ± π/3","x = nπ","x = (4n−1)π/2"], correct:0, ans:"x = nπ + (−1)ⁿ π/6", note:"(2 sin x − 1)(sin x + 1)=0; reject sin x = −1, keep sin x = ½. (Narayana Ex-III, key Q16)", doc:"narEx3"},
+  {src:"Ex-III Q17", type:"SC", tier:3, tax:"P3", pat:"P3", q:"General solution of sin x − 3 sin 2x + sin 3x = cos x − 3 cos 2x + cos 3x is", choices:["x = nπ/2 + π/8","x = nπ + π/4","x = 2nπ ± π/8","x = nπ/4"], correct:0, ans:"x = nπ/2 + π/8", note:"Both sides factor through (2cos x − 3); divide that out (never zero) ⟹ tan 2x = 1. (Narayana Ex-III, key Q17)", doc:"narEx3"},
+  {src:"Ex-III Q18", type:"SC", tier:3, tax:"P5", pat:"P5", q:"General solution of (√3 − 1)cos θ + (√3 + 1)sin θ = 2 is", choices:["θ = nπ + (−1)ⁿ π/4 − π/12","θ = 2nπ ± π/12","θ = nπ + π/12","θ = nπ − (−1)ⁿ π/4"], correct:0, ans:"θ = nπ + (−1)ⁿ π/4 − π/12", note:"Amplitude 2√2 ≥ 2 ✓; fold to 2√2 sin(θ + π/12)=2. (Narayana Ex-III, key Q18)", doc:"narEx3"},
+  {src:"Ex-III Q20", type:"SC", tier:3, tax:"P7", pat:"P7", q:"The solution set of cos⁵x = 1 + sin⁴x (n ∈ ℤ) is", choices:["x = 2nπ","x = nπ","x = (2n+1)π","x = nπ/2"], correct:0, ans:"x = 2nπ", note:"cos⁵x ≤ 1 ≤ 1 + sin⁴x; equality ⟹ cos x = 1 and sin x = 0 ⟹ x = 2nπ. (Narayana Ex-III, key Q20)", doc:"narEx3"},
+  {src:"Ex-III Q21", type:"SC", tier:3, tax:"P7", pat:"P7", q:"sin θ = ½(√(x/y) + √(y/x)) necessarily implies", choices:["x > y","x < y","x = y","x and y purely imaginary"], correct:2, ans:"x = y", note:"RHS ≥ 1 by AM-GM, while sin θ ≤ 1 ⟹ both = 1 ⟹ √(x/y)=√(y/x) ⟹ x = y. (Narayana Ex-III, key Q21)", doc:"narEx3"},
+  {src:"Ex-III Q11", type:"SC", tier:3, tax:"P1", pat:"P1", q:"If tan x + 2 tan 2x + 4 tan 4x + 8 cot 8x = √3, then the general solution of x is", choices:["nπ + π/3","nπ + π/6","nπ + π/4","nπ"], correct:1, ans:"nπ + π/6", note:"tan–cot ladder collapses the LHS to cot x ⟹ cot x = √3 ⟹ tan x = 1/√3. (Narayana Ex-III, key Q11)", doc:"narEx3"},
+
+  /* ============ JEE-Advanced tier — Narayana Ex-IV (single-answer, key verified) ============ */
+  {src:"Ex-IV Q1", type:"SC", tier:3, tax:"P3", pat:"P3", q:"The number of distinct real roots of sin³x + sin²x + sin x − sin x·sin 2x − sin 2x − 2 cos x = 0 belonging to (−π/2, π/2) is", choices:["0","1","2","3"], correct:2, ans:"2", note:"Factor the cubic-in-sin/cos structure and split; two roots fall inside (−π/2, π/2). (Narayana Ex-IV, key Q1 = C)", doc:"narEx4"},
+  {src:"Ex-IV Q2", type:"Int", tier:3, tax:"P3", pat:"P3", q:"The number of distinct solutions of (5/4)cos²2x + cos⁴x + sin⁴x + cos⁶x + sin⁶x = 2 in [0, 2π] is", ans:"8", note:"cos⁴+sin⁴ = 1−½sin²2x; cos⁶+sin⁶ = 1−¾sin²2x. Sum = 2 + (5/4)cos 4x = 2 ⟹ cos 4x = 0 ⟹ x = π/8 + nπ/4 ⟹ 8 solutions in [0,2π].", doc:"narEx4"},
+
+  /* ============ JEE-Advanced tier — Narayana Ex-V (single-answer, key + hints) ============ */
+  {src:"Ex-V Q1", type:"SC", tier:3, tax:"P7", pat:"P7", q:"The number of solutions of the equation cos θ · cos(πθ) = 1 is", choices:["0","2","1","infinite"], correct:2, ans:"1", note:"Product of two cosines = 1 ⟹ both equal 1 (or both −1) simultaneously; only θ = 0 works. (Narayana Ex-V, key Q1)", doc:"narEx5"},
+  {src:"Ex-V Q2", type:"NV", tier:3, tax:"P10", pat:"P10", q:"For y = (1/3)[sin x + [sin x + [sin x]]] and [y + [y]] = 2 cos x (where [·] is GIF), the number of solutions is", ans:"0 (no solution)", note:"Inner GIF nesting forces y to take integer-linked values; [y+[y]] = 2[y] = 2cos x has no consistent solution. (Narayana Ex-V, key Q2)", doc:"narEx5"},
+  {src:"Ex-V Q3", type:"NV", tier:3, tax:"P15", pat:"P15", q:"The value of a for which 4 cosec²{π(a + x)} + a² − 4a = 0 has a real solution is", ans:"a = 2", note:"csc² ≥ 1 ⟹ a²−4a ≤ −4 ⟹ (a−2)² ≤ 0 ⟹ a = 2. (Narayana Ex-V, key Q3)", doc:"narEx5"},
+
+  /* ============ JEE-Advanced tier — Cengage Archives (real IIT-JEE / JEE-Adv, answer-key verified) ============ */
+  {src:"Arch SC1", type:"Arch", tier:3, tax:"P1", pat:"P1", q:"(IIT-JEE 2011) Let f(x)=x² and g(x)=sin x for all x ∈ ℝ. The set of all x satisfying (f∘g∘g∘f)(x) = (g∘g∘f)(x), where (f∘g)(x)=f(g(x)), is", choices:["±√(nπ), n ∈ {0,1,2,…}","±√(nπ), n ∈ {1,2,…}","π/2 + 2nπ, n ∈ {0,1,2,…}","2nπ, n ∈ {0,1,2,…}"], correct:0, ans:"±√(nπ), n ∈ {0,1,2,…}", note:"sin(sin x²) = sin x² type reduction forces sin x² = nπ images; works out to x = ±√(nπ). (Cengage Archives SC, key 1)", doc:"cengArch"},
+  {src:"Arch SC2", type:"Arch", tier:3, tax:"P11", pat:"P11", q:"(JEE-Adv 2014) For x ∈ (0, π), the equation sin x + 2 sin 2x − sin 3x = 3 has", choices:["infinitely many solutions","three solutions","one solution","no solution"], correct:3, ans:"no solution", note:"LHS = 2 sin x(1 + 2cos x − 2cos²x); its maximum on (0,π) is ≈ 2.6 < 3. (Cengage Archives SC, key 2)", doc:"cengArch"},
+  {src:"Arch SC3", type:"Arch", tier:3, tax:"P12", pat:"P12", q:"(JEE-Adv 2016) Let S = {x ∈ (−π, π) : x ≠ 0, ±π/2}. The sum of all distinct solutions of √3 sec x + csc x + 2(tan x − cot x) = 0 in S is", choices:["−7π/9","−2π/9","0","5π/9"], correct:2, ans:"0", note:"Clear denominators (x ≠ 0, ±π/2); the valid roots in (−π,π) are symmetric about 0. (Cengage Archives SC, key 3)", doc:"cengArch"},
+  {src:"Arch SC4", type:"Arch", tier:3, tax:"P10", pat:"P10", q:"(JEE-Adv 2024) f(x)=x² sin(π/x²) for x ≠ 0 and f(0)=0. Which is TRUE?", choices:["f(x)=0 has infinitely many solutions in [1/10¹⁰, ∞)","f(x)=0 has no solution in [1/π, ∞)","the set of solutions of f(x)=0 in (0, 1/10¹⁰) is finite","f(x)=0 has more than 25 solutions in (1/π², 1/π)"], correct:3, ans:"f(x)=0 has more than 25 solutions in (1/π², 1/π)", note:"Zeros at x = 1/√k; in (1/π², 1/π) that means π² < k < π⁴ ⟹ k = 10…97 ⟹ 88 zeros. (Cengage Archives SC, key 4)", doc:"cengArch"},
+  {src:"Arch Int1", type:"Int", tier:3, tax:"P13", pat:"P13", q:"(IIT-JEE 2010) The number of values of θ in (−π/2, π/2), with θ ≠ nπ/5 (n = 0, ±1, ±2), such that tan θ = cot 5θ AND sin 2θ = cos 4θ, is", ans:"3", note:"tan θ = cot 5θ ⟹ 6θ = (2k+1)π/2; intersect with sin 2θ = cos 4θ; three common θ survive in range. (Cengage Archives Integer, key 1)", doc:"cengArch"},
+  {src:"Arch Int3", type:"Int", tier:3, tax:"P3", pat:"P3", q:"(JEE-Adv 2015) The number of distinct solutions of (5/4)cos²2x + cos⁴x + sin⁴x + cos⁶x + sin⁶x = 2 in [0, 2π] is", ans:"8", note:"Collapses to 2 + (5/4)cos 4x = 2 ⟹ cos 4x = 0 ⟹ x = π/8 + nπ/4 ⟹ 8 roots. (Cengage Archives Integer, key 3)", doc:"cengArch"},
+  {src:"Arch Int4", type:"Int", tier:3, tax:"P14", pat:"P14", q:"(JEE-Adv 2020) f:[0,2]→ℝ, f(x)=(3 − sin 2πx)·sin(πx − π/4) − sin(3πx + π/4). If {x ∈ [0,2] : f(x) ≥ 0} = [α, β], then β − α =", ans:"1", note:"Expand and analyse sign over [0,2]; the non-negative set is an interval of length 1. (Cengage Archives Integer, key 4)", doc:"cengArch"},
+  {src:"Arch NV1", type:"NV", tier:3, tax:"P5", pat:"P5", q:"(JEE-Adv 2018) Let a, b, c be nonzero reals such that √3 a cos x + 2b sin x = c, x ∈ [−π/2, π/2], has two distinct real roots α, β with α + β = π/3. Then b/a =", ans:"0.5", note:"The two roots straddle the phase φ; α+β = 2φ = π/3 ⟹ φ = π/6 ⟹ tan φ = 2b/(√3 a) ⟹ b/a = ½. (Cengage Archives NV, key 1)", doc:"cengArch"},
+  {src:"Arch NV2", type:"NV", tier:3, tax:"P7", pat:"P7", q:"(JEE-Adv 2020) f:(0,π)→ℝ, f(θ)=(sin θ + cos θ)² + (sin θ − cos θ)⁴ has a local minimum at θ ∈ {λ₁π, …, λᵣπ}. Then λ₁ + … + λᵣ =", ans:"0.5", note:"Expand to a quartic in (sin θ − cos θ); locate minima; the λ's sum to 0.5. (Cengage Archives NV, key 2)", doc:"cengArch"}
+];
+
+let TEQ_PRAC_DOCS = [
+  {id:"fund",     label:"Fundamentals \u00b7 templates & standard forms", date:"Jun 2026", note:"General-solution table (Narayana synopsis) + canonical quadratic/factor forms"},
+  {id:"narEx3",   label:"Narayana Module Vol-III \u00b7 Exercise-III", date:"Jun 2026", note:"Principal-domain, general-solution, comparing-range & graphs; key + worked hints"},
+  {id:"narEx4",   label:"Narayana Module Vol-III \u00b7 Exercise-IV", date:"Jun 2026", note:"JEE-Adv single-answer; key verified"},
+  {id:"narEx5",   label:"Narayana Module Vol-III \u00b7 Exercise-V", date:"Jun 2026", note:"JEE-Adv mix; key + worked solutions"},
+  {id:"cengArch", label:"Cengage (Tewani) \u00b7 Archives (real IIT-JEE / JEE-Adv)", date:"Jun 2026", note:"2010\u20132024 past papers; Cengage answer key verified"}
+];
+
+const TEQ_PRAC_TIERS=[{k:"All",l:"All"},{k:"1",l:"Foundation"},{k:"2",l:"JEE Main"},{k:"3",l:"JEE Advanced"},{k:"Flag",l:"\u2605 Flagged"}];
+
 /* ===== CURRICULUM TREE  (Subjects > Subsections > Chapters) ===== */
 const CURRICULUM=[
   {id:"maths",name:"Mathematics",sym:"\u2211",subs:[
@@ -607,6 +885,7 @@ const CURRICULUM=[
 const CONTENT={
   "maths/trig/fg":{key:"trigfg",taxa:TAXA,formulae:FORMULAE,patterns:PATTERNS,guided:GUIDED,practice:PRACTICE,pracTiers:PRAC_TIERS},
   "maths/trig/pev":{key:"pev",taxa:PEV_TAXA,formulae:PEV_FORMULAE,patterns:PEV_PATTERNS,guided:PEV_GUIDED,practice:PEV_PRACTICE,pracDocs:PEV_PRAC_DOCS,pracTiers:PEV_PRAC_TIERS},
+  "maths/trig/teq":{key:"teq",taxa:TEQ_TAXA,formulae:TEQ_FORMULAE,patterns:TEQ_PATTERNS,guided:TEQ_GUIDED,practice:TEQ_PRACTICE,pracDocs:TEQ_PRAC_DOCS,pracTiers:TEQ_PRAC_TIERS},
   "phys/mech/wpe":{key:"wpe",taxa:WPE_TAXA,formulae:WPE_FORMULAE,patterns:WPE_PATTERNS,guided:WPE_GUIDED,practice:WPE_PRACTICE,figs:WPE_FIG,pracDocs:WPE_PRAC_DOCS,pracTiers:WPE_PRAC_TIERS}
 };
 function chapPath(a,b,c){return a+"/"+b+"/"+c;}
@@ -649,6 +928,284 @@ const CHAPTER_META = [
     chapter: "Periodicity & Extreme Values",
     sources: ["Narayana JEE-Adv Maths Vol-III", "Narayana JR.IIT WAT papers"],
     created: "Jun 2026"
+  },
+  {
+    id:      "maths/trig/teq",
+    grade:   "11th",
+    subject: "Maths",
+    topic:   "Trigonometry",
+    chapter: "Trigonometric Equations",
+    sources: ["Cengage (G. Tewani) Vol-III", "Narayana JEE-Adv Maths Vol-III", "Cengage Archives (IIT-JEE / JEE-Adv)"],
+    created: "Jun 2026"
   }
 ];
 
+
+/* =========================================================================
+   GAP LOG — weekly test misses, diagnosed against the relevant chapter.
+   Each entry: where it came from · which chapter it belongs to · whether it
+   maps to an EXISTING pattern (and why Aarav didn't reach for it) or is a
+   NEW/emerging pattern the build missed · a Guided-style hint ladder.
+   Append-only. New tests append new entries with a fresh `date`.
+   Engine: gaplog.js (self-contained; localStorage-backed ladder state).
+   ========================================================================= */
+
+let GAPLOG = [
+  {
+    id:"WTA6-Q1", date:"28 Jun 2026", test:"Narayana JR.IIT WTA-6 (Model-A) · JEE-Adv", qno:"Q1",
+    grade:"11th", chapter:"Periodicity & Extreme Values", type:"NV",
+    qtext:"If u = √(a²cos²θ + b²sin²θ) + √(a²sin²θ + b²cos²θ), the difference between max and min of u² is (a−b)^(k/9). Find k.",
+    diagnosis:"existing", pat:"pev · P7 (Algebraic Substitution Extrema)",
+    whyMissed:"P7 exists, but the disguised variant — square the SUM of two radicals, then collapse the cross-radical with cos²+sin²=1 — wasn't drilled. Aarav didn't see that squaring u was the unlock.",
+    ladder:{
+      chip:["Algebraic Substitution Extrema (square & reduce)","a sinx+b cosx Bounded","LCM Period Rule","Triangle Extrema via Inequality"], correct:0,
+      hints:[
+        "Square u: u² = (a²+b²) + 2√[(a²cos²θ+b²sin²θ)(a²sin²θ+b²cos²θ)]. The whole problem is the product under the root.",
+        "Let c=cos²θ, s=sin²θ (c+s=1). The product = a²b² + cs(a²−b²)², and cs = ¼sin²2θ ∈ [0, ¼].",
+        "Min u² at cs=0: a²+b²+2ab = (a+b)². Max u² at cs=¼: a²+b²+(a²+b²) = 2(a²+b²)."],
+      solution:"Difference = 2(a²+b²) − (a+b)² = (a−b)². So (a−b)^(k/9) = (a−b)² ⟹ k/9 = 2 ⟹ k = 18."},
+    redoCold:true
+  },
+  {
+    id:"WTA6-Q2", date:"28 Jun 2026", test:"Narayana JR.IIT WTA-6 (Model-A) · JEE-Adv", qno:"Q2",
+    grade:"11th", chapter:"Periodicity & Extreme Values", type:"NV",
+    qtext:"The maximum value of |√(sin²x + 2a²) − √(2a² − 1 − cos²x)| is m (a, x real, a ≥ 1). Find m².",
+    diagnosis:"new", pat:"— (no pev card covers it)",
+    newPattern:{
+      name:"Difference-of-Radicals → Rationalize to 2/(sum)",
+      trigger:"|√A − √B| where the radicands differ by a CONSTANT (here A − B = 2).",
+      move:"Write |√A − √B| = (A−B)/(√A + √B). With A−B constant, the expression is largest when √A+√B is SMALLEST, i.e. at the boundary of the inner variable.",
+      why:"Rationalizing turns a hard difference into a constant over a monotone sum — the extremum is then a boundary read, not calculus.",
+      fails:"When the radicands' difference is not constant (then the numerator varies too and the boundary trick fails)."},
+    whyMissed:"Genuinely missing move. Aarav tried to maximize the difference directly instead of rationalizing; never spotted that 2a²−1−cos²x = (sin²x+2a²) − 2.",
+    ladder:{
+      chip:["Difference-of-Radicals → Rationalize","a sinx+b cosx Bounded","Reduce-to-Quadratic","Reciprocal of Linear-Trig Denom"], correct:0,
+      hints:[
+        "Simplify the second radicand: 2a²−1−cos²x = 2a²−1−(1−sin²x) = (sin²x+2a²) − 2. Let t = sin²x+2a².",
+        "Expression = |√t − √(t−2)| = 2/(√t + √(t−2)) — decreasing in t. So maximize by MINIMIZING t.",
+        "t is smallest when sin²x = 0 ⟹ t = 2a². So m = 2/(√(2a²)+√(2a²−2)) = √2·(a − √(a²−1))."],
+      solution:"m = √2(a − √(a²−1)), so m² = 2(a − √(a²−1))². (Boundary extremum via rationalization.)"},
+    redoCold:true
+  },
+  {
+    id:"WTA6-Q3", date:"28 Jun 2026", test:"Narayana JR.IIT WTA-6 (Model-A) · JEE-Adv", qno:"Q3",
+    grade:"11th", chapter:"Periodicity & Extreme Values", type:"NV",
+    qtext:"If x²+y²=9 and 4a²+9b²=16, then the maximum value of 4a²x² + 9b²y² − 12abxy is —.",
+    diagnosis:"new", pat:"— (no pev card covers it)",
+    newPattern:{
+      name:"Perfect-Square Form → Cauchy–Schwarz Bound",
+      trigger:"A quadratic form that is secretly a perfect square: A²X² + B²Y² − 2ABXY = (AX − BY)², with separate sum-of-squares constraints on the variables.",
+      move:"Recognise the square, then bound (AX − BY)² ≤ (A²+B²)(X²+Y²) by Cauchy–Schwarz; multiply the two given constraint-constants.",
+      why:"Cauchy–Schwarz is exactly the tool for 'dot product squared ≤ product of norms', and a perfect square IS a dot product squared.",
+      fails:"If the middle coefficient isn't 2·(the two square roots), it's not a perfect square — don't force it."},
+    whyMissed:"Genuinely missing move. Aarav didn't recognise 4a²x²+9b²y²−12abxy = (2ax − 3by)², so the Cauchy–Schwarz bound never came to mind.",
+    ladder:{
+      chip:["Perfect-Square → Cauchy–Schwarz","Reduce-to-Quadratic","a sinx+b cosx Bounded","Algebraic Substitution Extrema"], correct:0,
+      hints:[
+        "Spot the square: 4a²x² = (2ax)², 9b²y² = (3by)², and 12abxy = 2·(2ax)(3by). So the expression = (2ax − 3by)².",
+        "By Cauchy–Schwarz, (2ax − 3by)² ≤ ((2a)² + (3b)²)(x² + y²) = (4a²+9b²)(x²+y²).",
+        "Substitute the constraints: = 16 · 9 = 144."],
+      solution:"Maximum = 144 (a perfect-square form capped by Cauchy–Schwarz on the two constraints)."},
+    redoCold:true
+  },
+  {
+    id:"WTA6-Q6", date:"28 Jun 2026", test:"Narayana JR.IIT WTA-6 (Model-A) · JEE-Adv", qno:"Q6",
+    grade:"11th", chapter:"Periodicity & Extreme Values", type:"NV",
+    qtext:"If α+β+γ=π and tan((β+γ−α)/4)·tan((γ+α−β)/4)·tan((α+β−γ)/4)=1 (α,β,γ ≠ nπ±π/2, 2nπ±π), and a + cosα + cosβ + cosγ = 0, find a.",
+    diagnosis:"existing", pat:"pev · P11 (Triangle Identity Carry-Through)",
+    whyMissed:"P11 exists, but this conditional chain — rewrite each quarter-angle as π/4 − α/2, apply the product-of-tangents condition, then convert to cos via cosα=(1−tan²(α/2))/(1+tan²(α/2)) — is several identity-steps deep and wasn't laddered.",
+    ladder:{
+      chip:["Triangle Identity Carry-Through","Algebraic Substitution Extrema","Difference-of-Radicals","LCM Period Rule"], correct:0,
+      hints:[
+        "Since β+γ−α = π−2α, the first argument is (π−2α)/4 = π/4 − α/2 (similarly the others). The condition becomes ∏ tan(π/4 − α/2) = 1.",
+        "Let p=tan(α/2), q=tan(β/2), r=tan(γ/2). tan(π/4−α/2)=(1−p)/(1+p); the product = 1 gives (after cross-multiplying) p+q+r+pqr = 0. The half-angle identity also gives pq+qr+rp = 1.",
+        "Use cosα = (1−p²)/(1+p²). Evaluating cosα+cosβ+cosγ under these two symmetric constraints gives −1 (test α=β to confirm: it lands exactly on −1)."],
+      solution:"cosα+cosβ+cosγ = −1, so a = −(−1) = 1."},
+    redoCold:true
+  },
+  {
+    id:"WTA6-Q8", date:"28 Jun 2026", test:"Narayana JR.IIT WTA-6 (Model-A) · JEE-Adv", qno:"Q8",
+    grade:"11th", chapter:"Periodicity & Extreme Values", type:"NV",
+    qtext:"The value of tan²(π/16) + tan²(2π/16) + tan²(3π/16) + … + tan²(7π/16) is —.",
+    diagnosis:"new", pat:"— (P10 covers PRODUCTS of sin, not SUMS of tan²)",
+    newPattern:{
+      name:"Σ tan²(kπ/2n) via Roots of a Polynomial",
+      trigger:"A sum of tan² (or cot², sec²) over equally-spaced special angles kπ/(2n), k=1…n−1.",
+      move:"tan(kπ/2n) are roots of a Chebyshev-type polynomial; by Vieta, Σ tan²(kπ/2n) = (n−1)(2n−1). (Companion: Σ cot²(kπ/2n) = (n−1)(2n−2)/3? — derive from the same polynomial.)",
+      why:"Special-angle tangents are algebraic numbers — roots of a known polynomial — so symmetric sums come straight from Vieta, no angle-by-angle work.",
+      fails:"If the angles aren't the full equally-spaced set kπ/(2n), the polynomial/Vieta shortcut doesn't apply."},
+    whyMissed:"Adjacent to P10 (special-angle products) but P10 is products of sines; the tan²-SUM-via-roots identity is a distinct, uncovered move.",
+    ladder:{
+      chip:["Σ tan²(kπ/2n) via Roots of a Polynomial","Product of sin(kπ/n)","Sum-of-Trig in AP","∏cos(2ᵏθ) Telescoping"], correct:0,
+      hints:[
+        "Here kπ/16 = kπ/(2·8), so n = 8 and you're summing k = 1…7.",
+        "tan(kπ/2n) for k=1…n−1 are the roots of a degree-(n−1) polynomial; the sum of squares of the roots = (n−1)(2n−1).",
+        "Plug n = 8: (8−1)(2·8−1) = 7 · 15."],
+      solution:"Σ tan²(kπ/16), k=1…7 = (n−1)(2n−1) with n=8 = 7·15 = 105."},
+    redoCold:true
+  },
+  {
+    id:"WTA6-Q9", date:"28 Jun 2026", test:"Narayana JR.IIT WTA-6 (Model-A) · JEE-Adv", qno:"Q9",
+    grade:"11th", chapter:"Periodicity & Extreme Values", type:"MC",
+    qtext:"If α+β=c (constant), α,β ∈ (0, π/2): (A) max of sinα+sinβ = 2sin(c/2)  (B) max of tanα+tanβ = 2tan(c/2)  (C) max sinα+sinβ = 4sin(c/2)  (D) max tanα+tanβ = 4tan(c/2).",
+    diagnosis:"existing", pat:"pev · P5 + concavity (Jensen direction)",
+    whyMissed:"The fixed-sum extremum move (concavity ⟹ max at α=β for sin; convexity ⟹ that point is a MIN for tan) wasn't drilled. Aarav couldn't tell which way each inequality pointed.",
+    ladder:{
+      chip:["Fixed-sum extremum via concavity (Jensen)","Reciprocal of Linear-Trig Denom","∏cos(2ᵏθ) Telescoping","Triangle Identity Carry-Through"], correct:0,
+      hints:[
+        "sinα+sinβ = 2 sin(c/2) cos((α−β)/2). Since cos((α−β)/2) ≤ 1, this is MAXIMISED at α=β ⟹ max = 2sin(c/2).",
+        "tanα+tanβ = sin c / (cosα cosβ), and cosα cosβ = ½[cos(α−β)+cos c] is largest at α=β. Largest denominator ⟹ tanα+tanβ is MINIMISED at α=β (= 2tan(c/2)) — that's a minimum, not a maximum.",
+        "So (A) is correct; (B) misnames a minimum as a maximum; (C),(D) have wrong constants."],
+      solution:"Correct: (A) only. (sin is concave → endpoint α=β gives the max; tan is convex → α=β gives the min, so 'max = 2tan(c/2)' is false.)"},
+    redoCold:true
+  },
+  {
+    id:"WTA6-Q10", date:"28 Jun 2026", test:"Narayana JR.IIT WTA-6 (Model-A) · JEE-Adv", qno:"Q10",
+    grade:"11th", chapter:"Periodicity & Extreme Values", type:"MC",
+    qtext:"y = (sin(π/4+x) − sin(π/4−x))·sin(π/3+x). Find its max and min. (A) max 3√2/4 (B) max 3/√2 (C) min −1/(2√2) (D) min −3/√2.",
+    diagnosis:"existing", pat:"pev · P5 (reduce to a sin2x + b cos2x + c)",
+    whyMissed:"P5 exists, but the REDUCTION that leads into it — difference-of-sines sin(A+x)−sin(A−x)=2cosA·sinx, then product-to-sum — wasn't drilled as an on-ramp. Aarav stalled before reaching the amplitude step.",
+    ladder:{
+      chip:["Reduce to a sin2x+b cos2x+c, then amplitude","Reciprocal of Linear-Trig Denom","Algebraic Substitution Extrema","Sum-of-Trig in AP"], correct:0,
+      hints:[
+        "Difference of sines: sin(π/4+x) − sin(π/4−x) = 2 cos(π/4) sin x = √2 sin x. So y = √2 sin x · sin(π/3+x).",
+        "Expand and use product-to-sum: y = √2[(√3/4)sin2x − (¼)cos2x + ¼].",
+        "Amplitude of (√3/4)sin2x − (¼)cos2x = √(3/16+1/16) = ½. So y = √2[½·sin(2x−φ) + ¼]."],
+      solution:"Max = √2(½+¼) = 3√2/4 (A); Min = √2(−½+¼) = −√2/4 = −1/(2√2) (C). Correct: (A) and (C)."},
+    redoCold:true
+  },
+  {
+    id:"WTA6-Q11", date:"28 Jun 2026", test:"Narayana JR.IIT WTA-6 (Model-A) · JEE-Adv", qno:"Q11",
+    grade:"11th", chapter:"Periodicity & Extreme Values", type:"MC",
+    qtext:"Which are true: (i) 0<A<π/6 ⟹ A secA < π/(3√3); (ii) 0<A,B<π/4 ⟹ A cosecA + B cosecB < π/√2; (iii) 0<A,B,C<π/3 ⟹ A cotA + B cotB + C cotC < π/√3.",
+    diagnosis:"new", pat:"— (P14 is partial; the x·f(x) convexity tool isn't an explicit card)",
+    newPattern:{
+      name:"Monotonicity / Jensen for x·f(x)",
+      trigger:"An inequality bounding A·secA, A·cosecA, A·cotA, … on an interval, often summed over angles with a fixed cap.",
+      move:"Decide whether g(A)=A·f(A) is increasing or decreasing on the interval (sign of g′). If increasing, g(A) < g(endpoint); if decreasing, g(A) > g(endpoint). For sums, evaluate at the symmetric/equal point.",
+      why:"These are extremum-on-an-interval statements; the derivative's sign (or Jensen, for sums) fixes which side the bound falls.",
+      fails:"Guessing the inequality direction without checking g′ — A·cotA is DECREASING (so the bound flips), unlike A·secA and A·cosecA which increase."},
+    whyMissed:"P14 covers symmetric triangle extrema, but not the general 'is A·f(A) increasing or decreasing?' decision. Aarav couldn't tell that (iii) flips.",
+    ladder:{
+      chip:["Monotonicity / Jensen for x·f(x)","Triangle Extrema via Inequality","a sinx+b cosx Bounded","Reciprocal of Linear-Trig Denom"], correct:0,
+      hints:[
+        "(i) g(A)=A secA, g′=secA(1+A tanA) > 0 → increasing → A secA < (π/6)sec(π/6) = π/(3√3). TRUE.",
+        "(ii) g(A)=A cosecA = A/sinA, g′=(sinA−A cosA)/sin²A > 0 (since tanA>A) → increasing → sum < 2·(π/4)cosec(π/4) = π/√2. TRUE.",
+        "(iii) g(A)=A cotA, g′=cotA − A cosec²A = (½sin2A − A)/sin²A < 0 → DECREASING → A cotA > (π/3)cot(π/3) = π/(3√3) → sum > π/√3, NOT <. FALSE."],
+      solution:"(i) and (ii) true, (iii) false → answer (C). Direction of each bound comes from the sign of g′(A)."},
+    redoCold:true
+  },
+  {
+    id:"WTA6-Q12", date:"28 Jun 2026", test:"Narayana JR.IIT WTA-6 (Model-A) · JEE-Adv", qno:"Q12",
+    grade:"11th", chapter:"Trigonometric Identities (chapter not yet built)", type:"MC",
+    qtext:"Which are INCORRECT (when defined): (A) tan x − 3tan3x = −8tanx/(1−3tan²x); (B) 3tan9°/(1−3tan²9°) + 9tan27°/(1−3tan²27°) = 12tan9°; (C) tan x − 2tan2x = −3tanx/(1−tan²x); (D) the chained 3ⁿ-tan sum = 30tan9°.",
+    diagnosis:"new", pat:"— belongs to a future Trigonometric Identities chapter",
+    newPattern:{
+      name:"Multiple-Angle tan(nx) Expansion & Telescoping",
+      trigger:"Statements built from tan2x, tan3x formulas, or 3ⁿ-weighted tan chains to be verified/telescoped.",
+      move:"Expand each via tan2x=2t/(1−t²) and tan3x=(3t−t³)/(1−3t²) and simplify; for the 3ⁿ chains, use the telescoping form 3ⁿtan(3ⁿθ) chains collapse via cot−tan ladders.",
+      why:"Every statement is an algebraic identity in t=tanx; expanding settles 'correct vs incorrect' deterministically.",
+      fails:"Eyeballing — small coefficient slips (the −3 vs −(3+t²) below) are exactly what these traps exploit."},
+    whyMissed:"This is identity-manipulation, a chapter we haven't built yet — Aarav had no pattern to anchor to.",
+    ladder:{
+      chip:["Multiple-Angle tan(nx) Expansion","a sinx+b cosx Bounded","LCM Period Rule","Reduce-to-Quadratic"], correct:0,
+      hints:[
+        "(A) tan x − 3tan3x with tan3x=(3t−t³)/(1−3t²): numerator t(1−3t²)−3(3t−t³) = −8t ⟹ = −8t/(1−3t²). So (A) is CORRECT.",
+        "(C) tan x − 2tan2x with tan2x=2t/(1−t²): = (t(1−t²)−4t)/(1−t²) = −t(3+t²)/(1−t²), NOT −3t/(1−t²). So (C) is INCORRECT.",
+        "(B),(D) are constructed sums; expand each term the same way and compare to the claimed value."],
+      solution:"Verified: (A) correct, (C) incorrect. (B) and (D) resolve by the same tan(nx) expansion — this is the cue to build a Trigonometric Identities chapter next."},
+    redoCold:true
+  },
+  {
+    id:"WTA6-Q13", date:"28 Jun 2026", test:"Narayana JR.IIT WTA-6 (Model-A) · JEE-Adv", qno:"Q13",
+    grade:"11th", chapter:"Periodicity & Extreme Values", type:"MC",
+    qtext:"Which is periodic: (A) sin x + cos(√2 x); (B) sin((√2+1)x)+cos(√(3/4+1/√2)·x); (C) sin(22x/7)+cos(πx); (D) sin(((1+√3)/(1−√2))x) + cos((1+√2+√3+√6)x).",
+    diagnosis:"existing", pat:"pev · P1 (LCM / rational period-ratio test)",
+    whyMissed:"P1's rule (sum is periodic ⟺ ratio of periods is RATIONAL) exists, but the surd-disguise version — where you must rationalize a frequency to see the ratio is 1 — wasn't drilled.",
+    ladder:{
+      chip:["Rational period-ratio test (LCM)","|·| Period Halving","∏cos(2ᵏθ) Telescoping","Sum-of-Trig in AP"], correct:0,
+      hints:[
+        "Sum of two sinusoids is periodic ⟺ the ratio of their frequencies (equivalently periods) is rational. Check each.",
+        "(A) frequencies 1, √2 → ratio √2 irrational → NOT periodic. (C) 22/7 vs π → irrational ratio → NOT periodic.",
+        "(D) Rationalize (1+√3)/(1−√2): ×(1+√2) ⟹ −(1+√2+√3+√6). Same magnitude as the second frequency ⟹ ratio = 1 → PERIODIC."],
+      solution:"(D) is periodic — the rationalized first frequency equals the second, giving a rational (=1) ratio."},
+    redoCold:true
+  },
+  {
+    id:"WTA6-Q14", date:"28 Jun 2026", test:"Narayana JR.IIT WTA-6 (Model-A) · JEE-Adv", qno:"Q14",
+    grade:"11th", chapter:"Periodicity & Extreme Values", type:"MC",
+    qtext:"Which are correct: (A) fundamental period of cos(|sinx|−|cosx|) is π/2; (B) of cos(cosx)+cos(sinx) is π/2; (C) of cosx·cos2x·cos3x is π; (D) of (tanx−cotx)/(|sinx|−|cosx|) is π/2.",
+    diagnosis:"existing", pat:"pev · P1 + P2 (period of |·| / composite functions)",
+    whyMissed:"P1/P2 cover the rules, but nested compositions (cos of |·|, cos∘cos, product of three cosines, a ratio with an anti-period) weren't drilled — especially the anti-period trap in (D).",
+    ladder:{
+      chip:["Period of |·| / composite (P1+P2)","a sinx+b cosx Bounded","Reduce-to-Quadratic","Triangle Identity Carry-Through"], correct:0,
+      hints:[
+        "(A) replacing x→x+π/2 swaps |sinx|↔|cosx|, flipping the inside's sign; cos is even ⟹ period π/2. TRUE. (B) same swap gives cos(sinx)+cos(cosx)=itself ⟹ π/2. TRUE.",
+        "(C) f(x+π)=(−cosx)(cos2x)(−cos3x)=f(x) ⟹ period π. TRUE.",
+        "(D) numerator tanx−cotx=−2cot2x (period π/2), but the denominator picks up a SIGN under x→x+π/2, so f(x+π/2)=−f(x): π/2 is only an anti-period; true period is π. So (D) is FALSE."],
+      solution:"Correct: (A), (B), (C). (D) is false — its fundamental period is π, not π/2 (anti-period trap)."},
+    redoCold:true
+  },
+  {
+    id:"WTA6-Q15", date:"28 Jun 2026", test:"Narayana JR.IIT WTA-6 (Model-A) · JEE-Adv", qno:"Q15",
+    grade:"11th", chapter:"Periodicity & Extreme Values", type:"MM",
+    qtext:"Match max/min: (A) max of (1−tan²(π/4−x))/(1+tan²(π/4−x)); (B) min of log₃((5sinx−12cosx+26)/13); (C) min of −2sin²x+cosx+3; (D) max of 4sin²θ+4sinθcosθ+cos²θ. Targets: 1, 0, 7/8, 5.",
+    diagnosis:"existing", pat:"pev · P5 + P7 (amplitude + quadratic-in-cos)",
+    whyMissed:"Each cell needs a different reduction (double-angle, a sinx+b cosx range, quadratic-in-cos with vertex check). Aarav could do one or two but not switch reductions fluently across the match.",
+    ladder:{
+      chip:["Pick the right reduction per cell (P5/P7)","LCM Period Rule","Difference-of-Radicals","Telescoping cosec/cot Sum"], correct:0,
+      hints:[
+        "(A) the form (1−tan²u)/(1+tan²u) = cos2u with u=π/4−x ⟹ sin2x, max 1.  (B) 5sinx−12cosx ∈ [−13,13] ⟹ argument ∈ [1,3] ⟹ log₃ ∈ [0,1], min 0.",
+        "(C) −2sin²x+cosx+3 = 2cos²x+cosx+1; let t=cosx∈[−1,1], vertex t=−¼ ⟹ min 7/8.",
+        "(D) = 5/2 + 2sin2θ − (3/2)cos2θ; amplitude √(4+9/4)=5/2 ⟹ max 5."],
+      solution:"A→1, B→0, C→7/8, D→5. The skill is matching each cell to its reduction, not one global trick."},
+    redoCold:true
+  },
+  {
+    id:"WTA6-Q16", date:"28 Jun 2026", test:"Narayana JR.IIT WTA-6 (Model-A) · JEE-Adv", qno:"Q16",
+    grade:"11th", chapter:"Periodicity & Extreme Values", type:"MM",
+    qtext:"For the max (λ) and min (μ) of (7 + 6tanθ − tan²θ)/(1 + tan²θ) over real θ, match λ+μ and λ−μ.",
+    diagnosis:"existing", pat:"pev · P5 / P7 (rational-in-tanθ → ×cos²θ → amplitude)",
+    whyMissed:"The specific MOVE — multiply a rational-in-tanθ by cos²θ to linearize into a·sin2θ + b·cos2θ + c — wasn't an explicit rep. Aarav tried calculus on t=tanθ and bogged down.",
+    ladder:{
+      chip:["Rational-in-tanθ → ×cos²θ → amplitude","Reduce-to-Quadratic","Triangle Extrema via Inequality","Sum-of-Trig in AP"], correct:0,
+      hints:[
+        "Multiply top and bottom by cos²θ (since 1+tan²θ=sec²θ): expression = 7cos²θ + 6sinθcosθ − sin²θ.",
+        "Double-angle it: = 7(1+cos2θ)/2 − (1−cos2θ)/2 + 3sin2θ = 3 + 4cos2θ + 3sin2θ.",
+        "Amplitude √(4²+3²)=5 ⟹ range [3−5, 3+5] = [−2, 8]. So λ=8, μ=−2."],
+      solution:"λ+μ = 6 and λ−μ = 10. The unlock is ×cos²θ to linearize, then read the amplitude."},
+    redoCold:true
+  },
+  {
+    id:"WTA6-Q17", date:"28 Jun 2026", test:"Narayana JR.IIT WTA-6 (Model-A) · JEE-Adv", qno:"Q17",
+    grade:"11th", chapter:"Periodicity & Extreme Values", type:"MM",
+    qtext:"Match fundamental periods / counts, incl. (D) number of integer a for which f(x)=sin x + cos(√(4−a²)·x) is periodic.",
+    diagnosis:"existing", pat:"pev · P1 + P4 (composite period + count-parameters variant)",
+    whyMissed:"P1/P4 cover periods, but the 'count the integer parameters that make the period-ratio rational' twist (cell D) wasn't drilled.",
+    ladder:{
+      chip:["Composite period + rational-ratio count (P1/P4)","|·| Period Halving","Reciprocal of Linear-Trig Denom","Algebraic Substitution Extrema"], correct:0,
+      hints:[
+        "For f(x)=sin x + cos(√(4−a²)·x) to be periodic, the frequency ratio 1 : √(4−a²) must be rational ⟹ √(4−a²) rational.",
+        "a integer ⟹ 4−a² ≥ 0 ⟹ a ∈ {−2,−1,0,1,2}. √(4−a²): a=0→2 (ok), a=±1→√3 (irrational, NO), a=±2→0 (cos→constant, periodic).",
+        "Valid a: {−2, 0, 2} ⟹ 3 values."],
+      solution:"Cell (D) = 3. (Other cells use the same f(ax+b)→T/|a| and LCM rules.)"},
+    redoCold:true
+  },
+  {
+    id:"WTA6-Q18", date:"28 Jun 2026", test:"Narayana JR.IIT WTA-6 (Model-A) · JEE-Adv", qno:"Q18",
+    grade:"11th", chapter:"Periodicity & Extreme Values", type:"MM",
+    qtext:"Match minimum-value bounds: (A) min of √((3sinx−4cosx−10)(3sinx+4cosx−10)); (B) min of g(x)=a cos²x − b sec²x + 2c given a²+b²+c²−2a+6b−4c+14=0; (C) values sin²A+sin²B+sin²C cannot take in a triangle; (D) min of x²+y² given xy(x²−y²)=x²+y².",
+    diagnosis:"existing", pat:"pev · P7 + P14 (quadratic/AM-GM extrema + triangle range)",
+    whyMissed:"Four different extremum tools in one match (expand-to-quadratic, complete-the-square to pin constants then AM-GM, triangle range, parametrize x=r cosθ). Aarav lacked fluency switching between them.",
+    ladder:{
+      chip:["Switch extremum tool per cell (P7/P14)","a sinx+b cosx Bounded","LCM Period Rule","Difference-of-Radicals"], correct:0,
+      hints:[
+        "(A) product = (3sinx−10)² − 16cos²x = 25sin²x − 60sinx + 84; on t=sinx∈[−1,1] min at t=1 ⟹ 49 ⟹ √ = 7.  (B) the relation is (a−1)²+(b+3)²+(c−2)²=0 ⟹ a=1,b=−3,c=2 ⟹ g=cos²x+3sec²x+4, AM-GM aspires to 4+2√3 but cos²x≤1 forces the boundary min 8.",
+        "(C) in any triangle sin²A+sin²B+sin²C ≤ 9/4 (equilateral) and > 2 (acute); so it CANNOT take values above 9/4 (e.g. 10, 5, 3).",
+        "(D) put x=r cosθ, y=r sinθ: xy(x²−y²)= r⁴·¼ sin4θ = r² ⟹ r² = 4/sin4θ ≥ 4 ⟹ min x²+y² = 4."],
+      solution:"(A) 7, (B) 8, (C) cannot exceed 9/4, (D) 4. Each cell is a different extremum tool — recognise which, then apply."},
+    redoCold:true
+  }
+];
+
+/* === end Pattern Lab curriculum data === */
