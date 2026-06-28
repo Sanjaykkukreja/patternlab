@@ -462,20 +462,30 @@ entry carries a proposed pattern card to fold into that chapter later).
 }
 ```
 
-**Engine.** `gaplog.js` is self-contained: reads `GAPLOG`, injects CSS,
-persists `{oi,h,s,done}` per entry in `localStorage` (`pl.gaplog.<id>`). It does
-NOT touch app.js state or Supabase by design — so it can't break the main app.
+**Engine.** `gaplog.js` is self-contained: reads `GAPLOG`, injects CSS (uses the
+app's light-theme CSS tokens), persists `{oi,h,s,done}` per entry in
+`localStorage` (`pl.gaplog.<id>`). It does NOT touch app.js state or Supabase by
+design — so it can't break the main app.
 
-**Wiring (one line).** In `index.html`, after curriculum.js:
+**UI.** Opens as a **full opaque page** (not a modal): a sticky app-bar with a
+**‹ Back** button (returns to the app) and the page title, a **Test-date filter**
+row (`All dates` + one chip per distinct `date`, newest first), and a secondary
+status row (`All` / `⚑ Redo-cold` / `New patterns`). Entries flow under each
+**date section header** (showing the test name + count), then grouped by
+**chapter**. As new tests are logged, each becomes a new date chip / section —
+that's the intended scaling path. Each entry keeps the chip→hints→solution
+ladder. `DATEF`/`STATUSF` reset to `all` on every open.
+
+**Wiring.** In `index.html`, load it after curriculum.js and before app.js:
 ```html
 <script src="curriculum.js"></script>
-<script src="gaplog.js"></script>   <!-- add this -->
+<script src="gaplog.js"></script>
+<script src="app.js"></script>
 ```
-A floating `⚑ Gaps` button appears automatically. To use a nav button instead,
-call `window.GapLog.open()` from its click handler (the auto-launcher can be
-left as-is or removed by deleting the `addLauncher()` call at the bottom of the
-file). **Verify on device** — localStorage persistence and the modal can't be
-exercised in the build container.
+No floating button. The left drawer's **Gap Analysis** item calls
+`window.GapLog.open()` (wired in app.js `bindOnce()`); `window.GapLog.close()`
+also exists. **Verify on device** — localStorage persistence and the sticky
+app-bar can't be exercised in the build container.
 
 **Next:** when the `pev` retrofit runs, promote the 5 `new` Gap Log pattern
 cards into PEV_PATTERNS (and the identities one into a new Trig Identities
