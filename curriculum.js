@@ -847,6 +847,341 @@ let TEQ_PRAC_DOCS = [
 
 const TEQ_PRAC_TIERS=[{k:"All",l:"All"},{k:"1",l:"Foundation"},{k:"2",l:"JEE Main"},{k:"3",l:"JEE Advanced"},{k:"Flag",l:"\u2605 Flagged"}];
 
+/* =========================================================================
+   Chapter: States of Matter  (chem/phys/som)
+   Source: Narayana JEE-Adv Chemistry Vol-II, pp.307-364
+           (theory + W.E-1..34 + Exercise-I/II/III/IV, all answer-keys verified)
+   L2 fill convention (physical chem): the engine's pattern fields are reused
+   with tilted meaning -> trigger = the TELL, move = the FORK (decide+equation),
+   why = the MODEL stated precisely, mini = a predict/decide check,
+   fails = the TRAP.  Engine code is unchanged; only the data semantics shift.
+   Assertion/Reason items are encoded as type "SC" with the four printed
+   Statement/Explanation options (single-correct, key-verified).
+   ========================================================================= */
+let CHEM_SOM_FIG = {
+  z_vs_p: `<svg viewBox="0 0 220 130" class="fig"><line x1="28" y1="110" x2="208" y2="110" stroke="currentColor" stroke-width="1.2"/><line x1="28" y1="110" x2="28" y2="14" stroke="currentColor" stroke-width="1.2"/><line x1="28" y1="60" x2="208" y2="60" stroke="currentColor" stroke-width="1" stroke-dasharray="3 3"/><text x="4" y="63" font-size="9" fill="currentColor">Z=1</text><path d="M28,60 C70,86 110,92 150,80 C175,72 195,58 206,40" fill="none" stroke="var(--coral)" stroke-width="2"/><path d="M28,60 C70,46 130,34 206,20" fill="none" stroke="var(--teal)" stroke-width="2"/><text x="150" y="98" font-size="9" fill="var(--coral)">CO\u2082 (Z&lt;1)</text><text x="116" y="32" font-size="9" fill="var(--teal)">H\u2082,He (Z&gt;1)</text><text x="8" y="16" font-size="11" fill="currentColor">Z</text><text x="196" y="124" font-size="11" fill="currentColor">P</text></svg>`,
+  maxwell: `<svg viewBox="0 0 220 130" class="fig"><line x1="22" y1="110" x2="210" y2="110" stroke="currentColor" stroke-width="1.2"/><line x1="22" y1="110" x2="22" y2="12" stroke="currentColor" stroke-width="1.2"/><path d="M22,110 C50,110 58,24 78,24 C98,24 120,110 205,110" fill="none" stroke="var(--teal)" stroke-width="2"/><path d="M22,110 C58,110 78,44 104,44 C130,44 150,110 205,110" fill="none" stroke="var(--amber)" stroke-width="1.8"/><path d="M22,110 C66,110 100,64 132,64 C162,64 178,110 205,110" fill="none" stroke="var(--coral)" stroke-width="1.8"/><text x="60" y="20" font-size="9" fill="var(--teal)">T\u2081</text><text x="108" y="40" font-size="9" fill="var(--amber)">T\u2082</text><text x="136" y="60" font-size="9" fill="var(--coral)">T\u2083</text><text x="150" y="74" font-size="8" fill="currentColor">T\u2081&lt;T\u2082&lt;T\u2083</text><text x="150" y="124" font-size="10" fill="currentColor">speed \u2192</text></svg>`,
+  vt_isobars: `<svg viewBox="0 0 220 130" class="fig"><line x1="26" y1="110" x2="208" y2="110" stroke="currentColor" stroke-width="1.2"/><line x1="26" y1="110" x2="26" y2="12" stroke="currentColor" stroke-width="1.2"/><line x1="26" y1="110" x2="200" y2="26" stroke="var(--teal)" stroke-width="1.8"/><line x1="26" y1="110" x2="200" y2="54" stroke="var(--amber)" stroke-width="1.8"/><line x1="26" y1="110" x2="200" y2="80" stroke="var(--coral)" stroke-width="1.8"/><text x="202" y="30" font-size="9" fill="var(--teal)">P\u2081</text><text x="202" y="58" font-size="9" fill="var(--amber)">P\u2082</text><text x="202" y="84" font-size="9" fill="var(--coral)">P\u2083</text><text x="56" y="22" font-size="8" fill="currentColor">steeper = lower P</text><text x="8" y="16" font-size="11" fill="currentColor">V</text><text x="196" y="124" font-size="11" fill="currentColor">T</text></svg>`,
+  pv_vs_p: `<svg viewBox="0 0 220 120" class="fig"><line x1="28" y1="100" x2="208" y2="100" stroke="currentColor" stroke-width="1.2"/><line x1="28" y1="100" x2="28" y2="12" stroke="currentColor" stroke-width="1.2"/><line x1="34" y1="40" x2="200" y2="40" stroke="var(--coral)" stroke-width="1.8"/><line x1="34" y1="66" x2="200" y2="66" stroke="var(--teal)" stroke-width="1.8"/><text x="202" y="43" font-size="9" fill="var(--coral)">T\u2082</text><text x="202" y="69" font-size="9" fill="var(--teal)">T\u2081</text><text x="54" y="32" font-size="8" fill="currentColor">higher line = higher T</text><text x="4" y="16" font-size="10" fill="currentColor">PV</text><text x="196" y="114" font-size="11" fill="currentColor">P</text></svg>`,
+  manometer: `<svg viewBox="0 0 200 140" class="fig"><rect x="24" y="20" width="62" height="46" fill="none" stroke="currentColor" stroke-width="1.3"/><text x="34" y="46" font-size="9" fill="currentColor">gas P</text><path d="M86,52 H120 V120 H150 V40" fill="none" stroke="var(--teal)" stroke-width="1.6"/><rect x="113" y="86" width="14" height="34" fill="var(--coral)" opacity=".5"/><rect x="143" y="70" width="14" height="50" fill="var(--coral)" opacity=".5"/><line x1="120" y1="86" x2="150" y2="70" stroke="currentColor" stroke-width="0.8" stroke-dasharray="2 2"/><text x="158" y="40" font-size="8" fill="currentColor">open</text><text x="92" y="135" font-size="8" fill="currentColor">P = P_atm \u00b1 h (open-end)</text></svg>`
+};
+
+/* ===== TAXONOMY (drives the coverage map) ===== */
+let CHEM_SOM_TAXA = [
+  {code:"C1",label:"Ideal-gas baseline & the R-value fork",group:"Gaseous state"},
+  {code:"C2",label:"Dalton: partial pressure & mole fraction",group:"Gaseous state"},
+  {code:"C3",label:"Which molecular speed (rms / avg / mp)",group:"Kinetic theory"},
+  {code:"C4",label:"Kinetic energy \u2194 temperature",group:"Kinetic theory"},
+  {code:"C5",label:"Graham's law of diffusion / effusion",group:"Kinetic theory"},
+  {code:"C11",label:"Maxwell\u2013Boltzmann distribution",group:"Kinetic theory"},
+  {code:"C13",label:"Intermolecular forces \u2014 distance laws",group:"Forces & deviations"},
+  {code:"C6",label:"Compressibility factor Z (the spine)",group:"Real gases"},
+  {code:"C7",label:"van der Waals: a vs b",group:"Real gases"},
+  {code:"C8",label:"Critical constants \u2194 vdW constants",group:"Real gases"},
+  {code:"C9",label:"Boyle / Inversion / Critical temperature",group:"Real gases"},
+  {code:"C10",label:"Joule\u2013Thomson effect & inversion",group:"Real gases"},
+  {code:"C12",label:"Liquefaction & critical phenomena",group:"Real gases"},
+  {code:"C14",label:"Manometer fork (open / closed end)",group:"Pressure measurement"},
+  {code:"C15",label:"Open-vessel  nT = constant",group:"Pressure measurement"},
+  {code:"C16",label:"Vapour pressure & boiling",group:"Liquid state"},
+  {code:"C17",label:"Surface tension & viscosity",group:"Liquid state"}
+];
+
+/* ===== L1 FORMULAE ===== */
+let CHEM_SOM_FORMULAE = [
+  {tag:"ideal",title:"Ideal-gas equation & the R-value fork",rows:[
+    {f:"PV = nRT = (w/M)RT   \u00b7   PM = dRT   (d = density)"},
+    {f:"R = 0.0821 L\u00b7atm\u00b7K\u207b\u00b9\u00b7mol\u207b\u00b9 = 0.083 L\u00b7bar = 8.314 J\u00b7K\u207b\u00b9\u00b7mol\u207b\u00b9 = 2 cal\u00b7K\u207b\u00b9\u00b7mol\u207b\u00b9",k:"chem",note:"Pick R to match the pressure / energy UNITS in the problem. Wrong R is the #1 numerical slip in this chapter."},
+    {f:"Combined: P\u2081V\u2081/T\u2081 = P\u2082V\u2082/T\u2082   (T always in KELVIN)",k:"trap",note:"\u201cDoubling T\u201d doubles V only if T is in kelvin. 0\u00b0C \u2192 27\u00b0C is NOT a doubling."}]},
+  {tag:"laws",title:"The gas laws (special cases)",rows:[
+    {f:"Boyle: PV = const (T,n fixed)  \u00b7  Charles: V \u221d T (P,n fixed)  \u00b7  Gay-Lussac: P \u221d T (V,n fixed)"},
+    {f:"Avogadro: V \u221d n (P,T fixed)  \u2192 equal volumes, equal moles"},
+    {f:"V\u2013T plot at constant P = straight line through origin (isobar)",k:"chem",note:"On a V-vs-T fan the steeper line is the LOWER pressure; the flattest line is the highest P."}]},
+  {tag:"dalton",title:"Dalton & partial pressure",rows:[
+    {f:"P_total = \u03a3 P\u1d62   \u00b7   P\u1d62 = x\u1d62 \u00b7 P_total   (x\u1d62 = n\u1d62 / n_total = mole fraction)"},
+    {f:"Gas collected over water: P_dry = P_total \u2212 (aqueous tension)",k:"trap",note:"The \u201cdry gas\u201d pressure is below the wet total by exactly the aqueous tension."}]},
+  {tag:"speeds",title:"Molecular speeds (the three)",rows:[
+    {f:"u_rms = \u221a(3RT/M) = \u221a(3PV/M) = \u221a(3P/d)  \u00b7  u_avg = \u221a(8RT/\u03c0M)  \u00b7  u_mp = \u221a(2RT/M)"},
+    {f:"u_rms : u_avg : u_mp = \u221a3 : \u221a(8/\u03c0) : \u221a2 = 1 : 0.9213 : 0.8166",k:"chem",note:"All \u221d \u221a(T/M). Heavier gas \u2192 slower; hotter \u2192 faster."}]},
+  {tag:"ke",title:"Kinetic energy",rows:[
+    {f:"Avg KE per molecule = (3/2)kT   \u00b7   KE per mole = (3/2)RT  (\u2248 3T cal)"},
+    {f:"PV = (1/3) m N u\u00b2 = (2/3) \u00d7 (total translational KE)",k:"chem",note:"KE depends ONLY on T \u2014 not on P, V, or which gas. Same T \u21d2 same average KE."}]},
+  {tag:"graham",title:"Graham's law (diffusion / effusion)",rows:[
+    {f:"rate \u221d 1/\u221aM \u221d 1/\u221ad   \u2234   r\u2081/r\u2082 = \u221a(M\u2082/M\u2081) = \u221a(d\u2082/d\u2081)"},
+    {f:"rate also \u221d orifice area  \u00b7  volume effused \u221d rate \u00d7 time",k:"chem",note:"The LIGHTER gas is the faster one. Use \u221aM, never M."}]},
+  {tag:"z",title:"Compressibility factor Z (the spine)",rows:[
+    {f:"Z = PV/nRT = V_real / V_ideal"},
+    {f:"Z < 1 \u21d2 attractions dominate (Vm < 22.4 L)  \u00b7  Z > 1 \u21d2 size/repulsion dominates  \u00b7  Z = 1 \u21d2 ideal (or Boyle T)",k:"chem",note:"One dial for the whole real-gas story. Z>1 is NOT \u201cmore ideal\u201d."}]},
+  {tag:"vdw",title:"van der Waals equation",rows:[
+    {f:"(P + an\u00b2/V\u00b2)(V \u2212 nb) = nRT"},
+    {f:"a = attraction (units atm\u00b7L\u00b2\u00b7mol\u207b\u00b2)  \u00b7  b = co-volume / size (units L\u00b7mol\u207b\u00b9)"},
+    {f:"b = 4 \u00d7 (actual molar volume of molecules) = 4 \u00b7 N_A \u00b7 (4/3)\u03c0r\u00b3",k:"trap",note:"a is NOT size and b is NOT attraction. Keep their units straight."}]},
+  {tag:"crit",title:"Critical constants \u2194 vdW",rows:[
+    {f:"V_c = 3b   \u00b7   P_c = a/27b\u00b2   \u00b7   T_c = 8a/27Rb"},
+    {f:"Z_c = P_c V_c / RT_c = 3/8 = 0.375   (every vdW gas)",k:"trap",note:"It is 3/8, not 8/3."},
+    {f:"Reduced form: (\u03c0 + 3/\u03c6\u00b2)(3\u03c6 \u2212 1) = 8\u03b8   (\u03c0=P/P_c, \u03c6=V/V_c, \u03b8=T/T_c)",k:"chem",note:"Law of corresponding states \u2014 one universal equation, no a,b needed."}]},
+  {tag:"temps",title:"Boyle / Inversion / Critical temperatures",rows:[
+    {f:"Boyle T_B = a/bR   \u00b7   Inversion T_i = 2a/bR = 2T_B   \u00b7   Critical T_c = 8a/27Rb"},
+    {f:"Order always  T_i > T_B > T_c",k:"chem",note:"All set by the a/b ratio; only the numerical coefficient differs."}]},
+  {tag:"jt",title:"Joule\u2013Thomson effect",rows:[
+    {f:"\u03bc_JT = (\u2202T/\u2202P)_H ;  cooling on throttling only when T < T_i"},
+    {f:"Ideal gas: (\u2202U/\u2202V)_T = 0 and \u03bc_JT = 0  \u2192 no cooling, cannot be liquefied this way",k:"trap",note:"Not every gas cools on expansion \u2014 only below its inversion temperature."}]},
+  {tag:"liquid",title:"Liquid state",rows:[
+    {f:"Boiling: vapour pressure = external pressure (lower P \u21d2 lower b.p.)"},
+    {f:"Surface tension \u03b3 \u2193 with T, \u2192 0 at T_c  \u00b7  drops are spherical (min surface)"},
+    {f:"Viscosity \u03b7 \u2193 with T ;  \u03b7 = A\u00b7e^(E_a/RT)  \u21d2  ln\u03b7 vs 1/T is linear",k:"chem",note:"Both \u03b3 and \u03b7 come from attraction; heating weakens it, so both fall."}]}
+];
+
+/* ===== L2 CONCEPT CARDS (17) \u2014 Concept / Fork / Trap ===== */
+let CHEM_SOM_PATTERNS = [
+  {id:"C1",name:"Ideal-gas baseline & the R-value fork",
+   trigger:"One gas (or one sample changing state) described by P, V, T, n \u2014 mass or density may stand in \u2014 with NO mention of \u2018real\u2019, \u2018van der Waals\u2019, \u2018high pressure\u2019, or \u2018critical\u2019.",
+   move:"Reach for PV = nRT. Same sample, two states \u2192 P\u2081V\u2081/T\u2081 = P\u2082V\u2082/T\u2082 and cancel whatever is held constant. Density/mass involved \u2192 PM = dRT. Choose R to match the pressure unit (0.0821 atm\u00b7L, 0.083 bar\u00b7L, 8.314 SI).",
+   why:"An ideal gas has point molecules and no attractions, so P, V, T and n are locked by a single equation of state; every \u2018gas law\u2019 is PV=nRT with three quantities fixed.",
+   mini:"28 g N\u2082 in 10 L at 2.46 atm \u2192 T? n=1, T = PV/nR = 2.46\u00b710/0.0821 = 300 K.",
+   fails:"Leaving T in \u00b0C, or using the wrong R for the pressure unit. 0\u00b0C\u219227\u00b0C is not a doubling of T.",
+   src:"W.E-1..12 \u00b7 Ex-I Q11,Q19,Q21,Q24 \u00b7 Ex-IV Q2,Q3,Q4,Q6",
+   srcText:{"Ex-IV Q6":"An ideal gas has a volume of 30 L at 20\u00b0C; it is compressed at constant T until the pressure doubles, then heated to 100\u00b0C at constant pressure. Find the final volume."}},
+  {id:"C2",name:"Dalton: partial pressure & mole fraction",
+   trigger:"A MIXTURE of non-reacting gases, or one gas collected over water, asking for a partial pressure, total pressure, or composition.",
+   move:"P_total = \u03a3P\u1d62; each P\u1d62 = x\u1d62\u00b7P_total with x\u1d62 = n\u1d62/n_total. Over water: P_dry = P_total \u2212 aqueous tension.",
+   why:"Each gas fills the whole volume independently and exerts the pressure it would alone, so pressures add; mole fraction is the common currency linking moles, pressure and volume.",
+   mini:"Over water at 40\u00b0C, total 760 torr, aqueous tension 55 torr \u2192 P_dry = 705 torr.",
+   fails:"Forgetting to subtract aqueous tension, or using mass fraction instead of MOLE fraction.",
+   src:"W.E \u00b7 Ex-I Q44 \u00b7 Ex-III Q9,Q23 \u00b7 Ex-IV (moist-air passage)",
+   srcText:{"Ex-III Q23":"1 L flask holds nitrogen with a drop of water at 40\u00b0C, total 760 torr; all contents are moved to a 0.5 L flask at the same temperature (aqueous tension 55 torr). Find the new total pressure of nitrogen."}},
+  {id:"C3",name:"Which molecular speed (rms / avg / mp)",
+   trigger:"A speed is asked and the word is \u2018root-mean-square\u2019, \u2018average / mean\u2019, or \u2018most probable\u2019 (peak of the distribution).",
+   move:"u_rms=\u221a(3RT/M), u_avg=\u221a(8RT/\u03c0M), u_mp=\u221a(2RT/M). Fixed ratio 1 : 0.9213 : 0.8166. To compare two gases use the \u221a(T/M) scaling directly.",
+   why:"All three come from the one Maxwell distribution \u2014 rms from \u27e8v\u00b2\u27e9, mean from the first moment, most-probable from the peak \u2014 so they differ only by constants and keep their ratio.",
+   mini:"Same gas, T doubled \u2192 every speed scales by \u221a2.",
+   fails:"Mixing the formulae (using \u221a3 when \u2018most probable\u2019 was asked), or forgetting M in kg/mol for SI R.",
+   src:"W.E \u00b7 Ex-I Q73,Q74,Q75 \u00b7 Ex-III Q72",
+   srcText:{"Ex-I Q75":"At STP, arrange the rms velocities of H\u2082, N\u2082, O\u2082 and HBr in order."}},
+  {id:"C4",name:"Kinetic energy \u2194 temperature",
+   trigger:"Anything about the ENERGY of molecules, or a claim that KE depends on pressure or on the identity of the gas.",
+   move:"Average KE per molecule = (3/2)kT; per mole = (3/2)RT (\u2248 3T cal). It depends ONLY on temperature \u2014 not on P, V, or the gas.",
+   why:"Temperature IS mean molecular kinetic energy: at the same T every gas has the same average translational KE (heavier ones simply move slower).",
+   mini:"Three different gases at the same T \u2192 identical average KE.",
+   fails:"Claiming KE depends on pressure, or that a heavier/denser gas has more KE at the same T.",
+   src:"W.E \u00b7 Ex-I Q64,Q66 \u00b7 Ex-III Q8 \u00b7 Ex-IV Q1",
+   srcText:{"Ex-I Q64":"Which one of the following is NOT a postulate of the kinetic theory of gases?"}},
+  {id:"C5",name:"Graham's law of diffusion / effusion",
+   trigger:"Rates of effusion/diffusion compared, \u2018n times faster/slower\u2019, or a molar mass found from a rate.",
+   move:"rate \u221d 1/\u221aM \u221d 1/\u221ad, so r\u2081/r\u2082 = \u221a(M\u2082/M\u2081) = \u221a(d\u2082/d\u2081). Rate also scales with orifice area and with 1/\u221a(time).",
+   why:"Lighter molecules move faster at the same KE, so they stream through a hole more often; effusion rate tracks the mean speed \u221d 1/\u221aM.",
+   mini:"H\u2082 effuses 4\u00d7 faster than X \u2192 M_X = 16\u00b7M_H\u2082 = 32.",
+   fails:"Inverting the ratio (the faster gas is LIGHTER), or using M instead of \u221aM.",
+   src:"W.E \u00b7 Ex-III Q27,Q28 \u00b7 Ex-IV Q8,Q33",
+   srcText:{"Ex-III Q27":"At 1200\u00b0C a mixture of Cl\u2082 and Cl atoms effuses 1.16\u00d7 as fast as krypton; find the fraction of Cl\u2082 dissociated."}},
+  {id:"C6",name:"Compressibility factor Z (the spine)",
+   trigger:"The words \u2018compressibility\u2019, \u2018Z\u2019, \u2018deviation from ideal\u2019, \u2018real gas at high P\u2019, or \u2018Vm vs 22.4 L\u2019.",
+   move:"Z = PV/nRT = V_real/V_ideal. Read it: Z<1 \u21d2 attractions dominate (Vm<22.4); Z>1 \u21d2 size/repulsion dominates; Z=1 \u21d2 ideal (or at the Boyle temperature).",
+   why:"Z is the single dial that says how and in which direction a real gas departs from PV=nRT; the whole real-gas story is Z drifting from 1 and back.",
+   mini:"1 mol SO\u2082, 350 mL, 300 K, 50 atm \u2192 Z = 50\u00b70.35/(0.0821\u00b7300) = 0.711 (<1).",
+   fails:"Reading Z>1 as \u2018more ideal\u2019, or forgetting Vm<22.4 L whenever Z<1.",
+   src:"Ex-I Q85,Q94 \u00b7 Ex-III Q3,Q33 \u00b7 Ex-IV Q35,Q42",
+   fig:"z_vs_p",
+   srcText:{"Ex-IV Q42":"1 mol of SO\u2082 occupies 350 mL at 300 K and 50 atm; find the compressibility factor."}},
+  {id:"C7",name:"van der Waals: a vs b",
+   trigger:"The van der Waals equation, its constants a or b, \u2018internal pressure\u2019, \u2018co-volume\u2019, or comparing two gases\u2019 a/b values.",
+   move:"(P + an\u00b2/V\u00b2)(V \u2212 nb) = nRT. a = attraction (the +an\u00b2/V\u00b2 term; atm\u00b7L\u00b2\u00b7mol\u207b\u00b2). b = co-volume/size (L\u00b7mol\u207b\u00b9), with b = 4\u00d7(molar volume of molecules) = 4\u00b7N_A\u00b7(4/3)\u03c0r\u00b3.",
+   why:"Real molecules attract (lowering wall pressure \u2192 +a/V\u00b2) and occupy space (reducing free volume \u2192 \u2212nb); stickier \u21d2 larger a, bigger \u21d2 larger b.",
+   mini:"Of O\u2082, N\u2082, NH\u2083, CH\u2084 (a = 1.36, 1.39, 4.17, 2.25), NH\u2083 has the largest a \u21d2 liquefies most easily.",
+   fails:"Swapping the roles (a is NOT size; b is NOT attraction), or muddling their units.",
+   src:"Ex-I Q100 \u00b7 Ex-III Q31,Q38 \u00b7 Ex-IV Q32,Q40,Q41,Q43",
+   srcText:{"Ex-IV Q43":"Find the pressure exerted by 8.5 g NH\u2083 in a 0.5 L vessel at 300 K (a=4.0, b=0.036)."}},
+  {id:"C8",name:"Critical constants \u2194 vdW constants",
+   trigger:"Critical temperature/pressure/volume given or asked, or a problem mixing T_c/P_c/V_c with a, b.",
+   move:"V_c = 3b, P_c = a/27b\u00b2, T_c = 8a/27Rb, and Z_c = P_cV_c/RT_c = 3/8. Use any two relations to back out a and b.",
+   why:"At the critical point \u2202P/\u2202V and \u2202\u00b2P/\u2202V\u00b2 both vanish; solving these on the vdW equation pins the critical constants to a and b.",
+   mini:"T_c=303 K, P_c=73 atm \u2192 b = RT_c/8P_c = 0.0821\u00b7303/(8\u00b773) \u2248 0.0426 L/mol.",
+   fails:"Using Z_c = 8/3 instead of 3/8, or leaving T_c in \u00b0C.",
+   src:"W.E-34 \u00b7 Ex-III Q38 \u00b7 Ex-IV Q35,Q40",
+   srcText:{"Ex-III Q38":"The critical temperature and pressure of a van der Waals gas are 30\u00b0C and 73 atm; find b."}},
+  {id:"C9",name:"Boyle / Inversion / Critical temperature",
+   trigger:"The names \u2018Boyle temperature\u2019, \u2018inversion temperature\u2019, or an ordering of these characteristic temperatures.",
+   move:"T_B = a/bR; T_i = 2a/bR = 2T_B; T_c = 8a/27Rb. The order is always T_i > T_B > T_c.",
+   why:"All three are set by the same a/b ratio (attraction vs size): T_B is where attractions and size cancel (Z=1), T_i is twice that, T_c is the smaller 8a/27Rb.",
+   mini:"H\u2082 with a=0.244, b=0.027 \u2192 T_i = 2a/Rb = 2\u00b70.244/(0.0821\u00b70.027) \u2248 220 K.",
+   fails:"Mixing the formulae, or ranking T_c > T_B (it is the reverse).",
+   src:"Ex-III Q39,Q40 \u00b7 Ex-IV Q49",
+   srcText:{"Ex-III Q39":"Give the correct order of the Boyle, critical and inversion temperatures of a gas."}},
+  {id:"C10",name:"Joule\u2013Thomson effect & inversion",
+   trigger:"A gas expanding through a throttle / porous plug, \u2018cooling on expansion\u2019, or the Joule\u2013Thomson coefficient \u03bc_JT.",
+   move:"\u03bc_JT = (\u2202T/\u2202P)_H. A real gas cools on throttling only when T < T_i; above T_i it warms. For an IDEAL gas \u03bc_JT = 0.",
+   why:"On expansion real molecules spend kinetic energy pulling against their mutual attraction \u2192 cooling \u2014 but only while attractions matter (below T_i). Ideal gas: (\u2202U/\u2202V)_T = 0, so \u03bc_JT = 0.",
+   mini:"Why can\u2019t an ideal gas be liquefied by JT cooling? \u03bc_JT = 0 \u2014 it neither cools nor warms on expansion.",
+   fails:"Claiming every gas cools on expansion, or that an ideal gas shows a JT effect.",
+   src:"Ex-III Q41 (A/R) \u00b7 Ex-IV Q49,Q51 (A/R)",
+   srcText:{"Ex-IV Q51":"Statement: the Joule\u2013Thomson coefficient of an ideal gas is zero. Explanation: an ideal gas has no intermolecular attractions."}},
+  {id:"C11",name:"Maxwell\u2013Boltzmann distribution",
+   trigger:"A speed-distribution curve (fraction of molecules vs speed), or how that curve changes with temperature.",
+   move:"Area under the curve is constant (= total molecules). Raising T flattens and broadens the curve and pushes the peak (u_mp) RIGHT and DOWN; the lowest, sharpest, left-most peak is the LOWEST temperature.",
+   why:"Heating gives more molecules high speeds, spreading the distribution; the peak must drop because the enclosed area (number of molecules) is fixed.",
+   mini:"Three curves, peaks shifting right and lowering \u2192 temperature order = (tallest/leftmost) < \u2026 < (flattest/rightmost).",
+   fails:"Thinking the area changes with T, or reading the tallest peak as the hottest gas.",
+   src:"Ex-III Q21 \u00b7 Ex-IV (Maxwell statements)",
+   fig:"maxwell",
+   srcText:{"Ex-III Q21":"Three Maxwell\u2013Boltzmann curves are drawn for T\u2081,T\u2082,T\u2083; give the correct order of temperature."}},
+  {id:"C12",name:"Liquefaction & critical phenomena",
+   trigger:"Liquefying a gas, Andrews isotherms, the critical point, or a meniscus / surface-tension statement at T_c.",
+   move:"A gas can be liquefied only BELOW its critical temperature (no pressure liquefies it above T_c). At T_c the liquid and vapour densities become equal, the meniscus vanishes, and surface tension \u2192 0. Higher T_c (larger a) \u21d2 easier to liquefy.",
+   why:"Above T_c thermal energy beats the intermolecular attraction, so no distinct liquid forms; T_c measures the strength of those attractions.",
+   mini:"CO\u2082 has a higher T_c than CH\u2084 \u21d2 stronger forces \u21d2 liquefies more easily.",
+   fails:"Believing enough pressure can liquefy any gas at any temperature (false above T_c).",
+   src:"Ex-I Q97,Q98,Q99 \u00b7 Ex-III statements \u00b7 Ex-IV Q52 (A/R)",
+   srcText:{"Ex-IV Q52":"Statement: CO\u2082 has stronger intermolecular forces than CH\u2084. Explanation: the critical temperature of CO\u2082 is higher."}},
+  {id:"C13",name:"Intermolecular forces \u2014 distance laws",
+   trigger:"Identifying or ranking an intermolecular force, or its dependence on separation r.",
+   move:"Match force \u2194 distance law: ion\u2013dipole \u221d 1/r\u00b2; dipole\u2013dipole stationary \u221d 1/r\u00b3; dipole\u2013dipole rotating \u221d 1/r\u2076; ion\u2013induced-dipole \u221d 1/r\u2074; London / dispersion \u221d 1/r\u2076. London grows with size/polarizability (HI > HBr > HCl).",
+   why:"Higher-order multipole interactions fall off faster with distance; the steep 1/r\u2076 laws (rotating dipole\u2013dipole and London) are the weak short-range glue behind most condensation.",
+   mini:"Among HCl, HBr, HI, London forces are largest in HI (most polarizable).",
+   fails:"Confusing the exponents \u2014 especially rotating dipole\u2013dipole (1/r\u2076) vs stationary (1/r\u00b3).",
+   src:"Ex-I Q2,Q3,Q4,Q5 \u00b7 Ex-IV three-column matrix Q101-104",
+   srcText:{"Ex-I Q3":"The dipole\u2013dipole interaction energy between rotating polar molecules is proportional to which power of r?"}},
+  {id:"C14",name:"Manometer fork (open / closed end)",
+   trigger:"A mercury U-tube manometer attached to a gas bulb, with a height difference h between the two columns.",
+   move:"Decide the fork. OPEN-end: P_gas = P_atm \u00b1 h \u2014 ADD h if the gas column is pushed DOWN (gas above atmospheric), SUBTRACT if pushed up. CLOSED-end: P = h directly. After a reaction changes moles, recompute P and read the new h.",
+   why:"The mercury height difference measures the pressure imbalance; which arm is higher tells you whether the gas is above or below atmospheric.",
+   mini:"Open-end manometer, gas-side mercury LOWER by h \u2192 P_gas = P_atm + h.",
+   fails:"Getting the \u00b1 sign wrong, or treating an open-end tube like a closed one.",
+   src:"Ex-I Q9 (NH\u2083 dissociation) \u00b7 Ex-III Q5 \u00b7 Ex-IV manometer items",
+   fig:"manometer",
+   srcText:{"Ex-I Q9":"After sparking, NH\u2083 in a manometer dissociates and the two mercury columns differ by 12 cm; find the partial pressures of H\u2082 and N\u2082."}},
+  {id:"C15",name:"Open-vessel  nT = constant",
+   trigger:"A vessel OPEN to the atmosphere (pressure fixed) that is heated, with gas escaping.",
+   move:"Open vessel at fixed P and V \u21d2 nT = constant \u21d2 n\u2081T\u2081 = n\u2082T\u2082. Moles left at T\u2082 = n\u2081(T\u2081/T\u2082); fraction expelled = 1 \u2212 T\u2081/T\u2082.",
+   why:"With P and V pinned, PV=nRT forces the product nT to stay constant, so heating pushes moles out.",
+   mini:"Air at 300 K heated until \u00bc of the mass is expelled (n\u2192\u00ben) \u2192 T\u2082 = 300/(3/4) = 400 K.",
+   fails:"Holding n fixed in an open vessel (gas leaves), or leaving T in \u00b0C.",
+   src:"Ex-I Q13 (flask, 25% air expelled) \u00b7 Ex-IV open-vessel items",
+   srcText:{"Ex-I Q13":"A flask of air at 27\u00b0C is heated until 25% of the air by mass is expelled; find the final temperature."}},
+  {id:"C16",name:"Vapour pressure & boiling",
+   trigger:"Vapour pressure, boiling point, altitude / pressure-cooker effects, or \u2018dry vs wet gas\u2019.",
+   move:"A liquid boils when its vapour pressure equals the external pressure. Lower external pressure (high altitude) \u21d2 lower boiling point \u21d2 slower cooking. Vapour pressure rises with T. Wet-gas pressure = dry-gas pressure + aqueous tension.",
+   why:"Boiling is bulk vaporisation, needing VP to reach the surrounding pressure; less atmospheric push-back means boiling starts at a lower temperature.",
+   mini:"On a mountain the pressure is lower, so water boils below 100\u00b0C and food cooks slowly.",
+   fails:"Thinking altitude RAISES the boiling point, or forgetting aqueous tension for a gas over water.",
+   src:"Ex-I Q53,Q101 \u00b7 Ex-III Q23 (aqueous tension)",
+   srcText:{"Ex-I Q101":"In Shimla, cooking without a pressure cooker takes longer because at high altitude the pressure does what?"}},
+  {id:"C17",name:"Surface tension & viscosity",
+   trigger:"Surface tension or viscosity of a liquid, its trend with temperature, or \u2018which liquid flows slowest\u2019.",
+   move:"Both surface tension (\u03b3) and viscosity (\u03b7) DECREASE as T rises; \u03b3 \u2192 0 at T_c. Higher \u03b7 \u21d2 flows more slowly. \u03b7 = A\u00b7e^(E_a/RT), so ln\u03b7 vs 1/T is linear.",
+   why:"Surface tension and viscosity both arise from intermolecular attraction; heating weakens it, so both fall. Drops are spherical because surface tension minimises surface area.",
+   mini:"Of liquids with \u03b7 = 85, 11.4, 18, 12.3 mP, the one with \u03b7=85 flows the slowest.",
+   fails:"Saying viscosity rises with T, or that \u03b7 (not ln\u03b7) vs 1/T is the linear plot.",
+   src:"Ex-I Q105,Q106,Q108,Q109",
+   srcText:{"Ex-I Q109":"Which behaviour of the coefficient of viscosity of a liquid is correct (which plot is linear)?"}}
+];
+
+/* ===== L3 GUIDED (12, laddered; opts = which concept to apply) ===== */
+let CHEM_SOM_GUIDED = [
+  /* TIER 1 */
+  {id:"G1",tier:1,tax:"C1",pattern:"C1",q:"28 g of N\u2082 gas occupies 10 L at 2.46 atm. Find the temperature of the gas.",opts:["Ideal-gas baseline (PV = nRT)","Dalton partial pressure","Graham's law of effusion","van der Waals correction"],correct:0,
+   hints:["28 g N\u2082 = 1 mol; you have P, V, n and want T \u2192 straight PV = nRT.","T = PV/nR.","T = 2.46\u00b710/(1\u00b70.0821)."],ans:"300 K",why:"One gas, ideal conditions, three of P,V,T,n known \u21d2 PV = nRT."},
+  {id:"G2",tier:1,tax:"C2",pattern:"C2",q:"A vessel holds 4 g of O\u2082 and 4 g of He. Find the mole fraction of He and say which gas has the larger partial pressure.",opts:["Dalton: mole fractions","Graham's law","Kinetic energy \u2194 T","van der Waals"],correct:0,
+   hints:["Moles: O\u2082 = 4/32 = 0.125; He = 4/4 = 1.0.","x_He = 1.0/(1.0 + 0.125) = 8/9.","Partial pressure \u221d moles."],ans:"x_He = 8/9 \u2248 0.89; He has the larger partial pressure",why:"Partial pressure tracks MOLE fraction, not mass \u2014 He's tiny molar mass gives it most of the moles."},
+  {id:"G3",tier:1,tax:"C5",pattern:"C5",q:"Hydrogen effuses 4 times faster than an unknown gas X under identical conditions. Find the molar mass of X.",opts:["Graham's law (rate \u221d 1/\u221aM)","Ideal-gas baseline","Dalton partial pressure","Maxwell\u2013Boltzmann"],correct:0,
+   hints:["r_H/r_X = \u221a(M_X/M_H).","4 = \u221a(M_X/2) \u21d2 16 = M_X/2.","M_X = 32."],ans:"32 g/mol",why:"Rate ratio squared gives the molar-mass ratio; the slower gas is heavier."},
+  /* TIER 2 */
+  {id:"G4",tier:2,tax:"C3",pattern:"C3",q:"At 300 K, which is larger for O\u2082 \u2014 its rms speed or its most-probable speed \u2014 and by what factor?",opts:["Molecular-speed selection (rms vs mp)","Kinetic energy \u2194 T","Graham's law","Compressibility Z"],correct:0,
+   hints:["u_rms = \u221a(3RT/M), u_mp = \u221a(2RT/M).","Ratio u_rms/u_mp = \u221a(3/2) = \u221a1.5.","Independent of the gas and of T."],ans:"u_rms is larger, by \u221a1.5 \u2248 1.22",why:"The three speeds keep the fixed ratio 1 : 0.921 : 0.816 (rms : avg : mp)."},
+  {id:"G5",tier:2,tax:"C6",pattern:"C6",q:"1 mole of SO\u2082 occupies 350 mL at 300 K and 50 atm. Find its compressibility factor and interpret it.",opts:["Compressibility factor Z = PV/nRT","Critical constants","Graham's law","Ideal-gas baseline only"],correct:0,
+   hints:["Z = PV/nRT with V = 0.350 L.","Z = 50\u00b70.350/(1\u00b70.0821\u00b7300).","Z \u2248 0.711."],ans:"Z \u2248 0.711 (<1 \u21d2 attractive forces dominate)",why:"Z<1 means the real volume is smaller than ideal \u2014 attractions pull the molecules together."},
+  {id:"G6",tier:2,tax:"C7",pattern:"C7",q:"Calculate the pressure exerted by 8.5 g of NH\u2083 in a 0.5 L vessel at 300 K (a = 4.0 atm L\u00b2 mol\u207b\u00b2, b = 0.036 L mol\u207b\u00b9).",opts:["van der Waals equation","Ideal-gas baseline","Critical constants","Dalton partial pressure"],correct:0,
+   hints:["n = 8.5/17 = 0.5 mol.","P = nRT/(V \u2212 nb) \u2212 an\u00b2/V\u00b2.","= (0.5\u00b70.0821\u00b7300)/(0.5 \u2212 0.5\u00b70.036) \u2212 4\u00b70.5\u00b2/0.5\u00b2."],ans:"\u2248 21.51 atm",why:"With real-gas constants supplied, use the full vdW equation, not PV = nRT."},
+  {id:"G7",tier:2,tax:"C1",pattern:"C1",q:"At 0\u00b0C the density of a gaseous oxide at 2 bar equals the density of N\u2082 at 5 bar. Find the molar mass of the oxide.",opts:["Density relation d = PM/RT","Graham's law","Dalton partial pressure","Compressibility Z"],correct:0,
+   hints:["d = PM/RT, so equal densities \u21d2 P\u00b7M is equal for both.","2\u00b7M_oxide = 5\u00b728.","M_oxide = 140/2."],ans:"70 g/mol",why:"Density ties P and M together at fixed T; equate the two PM products."},
+  /* TIER 3 */
+  {id:"G8",tier:3,tax:"C8",pattern:"C8",q:"The critical temperature and pressure of a van der Waals gas are 30\u00b0C and 73 atm. Find its constant b.",opts:["Critical constants \u2194 vdW","van der Waals pressure","Boyle / inversion temperatures","Ideal-gas baseline"],correct:0,
+   hints:["T_c = 303 K, P_c = 73 atm.","b = RT_c/(8P_c) (from T_c = 8a/27Rb and P_c = a/27b\u00b2).","b = 0.0821\u00b7303/(8\u00b773)."],ans:"b \u2248 0.0426 L/mol",why:"Two critical relations let you eliminate a and solve for b directly."},
+  {id:"G9",tier:3,tax:"C8",pattern:"C8",q:"A gas has reduced volume \u03c6 = 10 and reduced temperature \u03b8 = 0.725. If its critical pressure is 50 atm, find the actual pressure.",opts:["Law of corresponding states (reduced vdW)","Compressibility Z","Critical constants only","van der Waals with a,b"],correct:0,
+   hints:["Use (\u03c0 + 3/\u03c6\u00b2)(3\u03c6 \u2212 1) = 8\u03b8 with \u03c6 = 10, \u03b8 = 0.725.","(\u03c0 + 0.03)(29) = 5.8 \u21d2 \u03c0 + 0.03 = 0.2 \u21d2 \u03c0 = 0.17.","P = \u03c0\u00b7P_c = 0.17\u00b750."],ans:"\u2248 8.5 atm",why:"In reduced variables every gas obeys one universal equation \u2014 no a, b needed."},
+  {id:"G10",tier:3,tax:"C9",pattern:"C9",q:"List the Boyle (T_B), critical (T_c) and inversion (T_i) temperatures of a gas in increasing order.",opts:["Boyle / Inversion / Critical relations","Joule\u2013Thomson coefficient","Maxwell\u2013Boltzmann","Critical constants"],correct:0,
+   hints:["T_B = a/bR, T_i = 2a/bR, T_c = 8a/27Rb.","As coefficients of a/bR: T_c = 8/27 \u2248 0.30, T_B = 1, T_i = 2.","So T_c < T_B < T_i."],ans:"T_c < T_B < T_i  (i.e. T_i > T_B > T_c)",why:"All three scale with a/bR; only the numerical coefficient differs."},
+  {id:"G11",tier:3,tax:"C10",pattern:"C10",q:"The van der Waals constants of H\u2082 are a = 0.244, b = 0.027. Find its inversion temperature and say whether throttling at 300 K cools or warms it.",opts:["Joule\u2013Thomson & inversion temperature","Critical constants","Graham's law","Boyle temperature only"],correct:0,
+   hints:["T_i = 2a/Rb.","= 2\u00b70.244/(0.0821\u00b70.027) \u2248 220 K.","300 K > T_i."],ans:"T_i \u2248 220 K; at 300 K (> T_i) H\u2082 WARMS on throttling",why:"A gas cools on Joule\u2013Thomson expansion only below its inversion temperature."},
+  {id:"G12",tier:3,tax:"C5",pattern:"C5",q:"At 1200\u00b0C a mixture of Cl\u2082 and Cl atoms effuses 1.16 times as fast as krypton (M = 84). What fraction of Cl\u2082 has dissociated into atoms?",opts:["Graham's law + dissociation (mean molar mass)","Ideal-gas baseline","Compressibility Z","Maxwell\u2013Boltzmann"],correct:0,
+   hints:["Mean molar mass from rate: \u221a(84/M_mix) = 1.16 \u21d2 M_mix \u2248 62.4.","Cl\u2082 \u21cc 2Cl with degree \u03b1 \u21d2 mean M = 71/(1 + \u03b1).","71/(1 + \u03b1) = 62.4 \u21d2 \u03b1 \u2248 0.14."],ans:"\u2248 14 %",why:"Dissociation lowers the average molar mass; Graham's law reads that off the effusion rate."}
+];
+
+/* ===== L4 PRACTICE (curated, MCQ with printed options; verified vs Exercise keys) ===== */
+let CHEM_SOM_PRACTICE = [
+  /* ---------- Exercise-I (Foundation / Main) ---------- */
+  {src:"Ex-I Q1",doc:"exI",type:"SC",tier:1,tax:"C4",q:"With regard to the gaseous state, which statements are correct? (i) complete order of molecules (ii) complete disorder of molecules (iii) random motion of molecules (iv) fixed positions of molecules",choices:["i, iv","ii, iii","ii, iv","iii, iv"],correct:1,pat:"C4 \u00b7 kinetic picture of a gas",ans:"ii, iii"},
+  {src:"Ex-I Q3",doc:"exI",type:"SC",tier:2,tax:"C13",q:"The dipole\u2013dipole interaction energy between rotating polar molecules is proportional to:",choices:["r\u00b3","1/r\u00b3","1/r\u2076","r\u2076"],correct:2,pat:"C13 \u00b7 rotating dipole\u2013dipole \u221d 1/r\u2076",ans:"1/r\u2076",nudge:"Rotation averages out the 1/r\u00b3 term, leaving the steeper 1/r\u2076."},
+  {src:"Ex-I Q4",doc:"exI",type:"SC",tier:1,tax:"C13",q:"Ion\u2013dipole attractions are present in:",choices:["Water","NaCl in water","Benzene","All of these"],correct:1,pat:"C13 \u00b7 ion\u2013dipole",ans:"NaCl in water"},
+  {src:"Ex-I Q5",doc:"exI",type:"SC",tier:2,tax:"C13",q:"Among the following, London (dispersion) forces are maximum in:",choices:["HCl","HBr","HI","All are equal"],correct:2,pat:"C13 \u00b7 London \u221d polarizability",ans:"HI",nudge:"Largest, most polarizable electron cloud \u21d2 strongest dispersion."},
+  {src:"Ex-I Q11",doc:"exI",type:"SC",tier:1,tax:"C1",q:"For a given mass of gas at constant temperature, if the volume V becomes three times, the pressure P becomes:",choices:["3P","P/3","3P/T","9P\u00b2"],correct:1,pat:"C1 \u00b7 Boyle's law",ans:"P/3"},
+  {src:"Ex-I Q19",doc:"exI",type:"SC",tier:2,tax:"C1",q:"Which of the following statements is NOT correct?",choices:["Volume of a gas is zero at absolute zero","The ratio of volumes of a gas at 0\u00b0C and 273\u00b0C is 1:2","At constant volume, P plotted against absolute temperature gives isochores","If the temperature is doubled, the volume of the gas is doubled"],correct:3,pat:"C1 \u00b7 the kelvin trap",ans:"If the temperature is doubled, the volume is doubled",nudge:"True only if T is in kelvin; doubling \u00b0C is not doubling T."},
+  {src:"Ex-I Q21",doc:"exI",type:"SC",tier:2,tax:"C1",q:"The temperature at which the volume of a gas at 0\u00b0C is doubled at constant P and n is:",choices:["273 K","273 \u00b0C","546 \u00b0C","127 \u00b0C"],correct:1,pat:"C1 \u00b7 Charles' law",ans:"273 \u00b0C",nudge:"V doubles \u21d2 T = 546 K = 273 \u00b0C."},
+  {src:"Ex-I Q24",doc:"exI",type:"SC",tier:2,tax:"C1",q:"The incorrect relationship according to Charles' law is:",choices:["V \u221d 1/T","(dV/dT)_P = K","(dT/dV)_P = K","Both 2 and 3"],correct:0,pat:"C1 \u00b7 Charles V \u221d T",ans:"V \u221d 1/T"},
+  {src:"Ex-I Q28",doc:"exI",type:"SC",tier:2,tax:"C1",q:"V-versus-T plots for a gas at constant pressure are straight lines through the origin, drawn for four pressures P\u2081..P\u2084 (see figure). The correct order of pressure is:",choices:["P\u2081 > P\u2082 > P\u2083 > P\u2084","P\u2081 = P\u2082 = P\u2083 = P\u2084","P\u2081 < P\u2082 < P\u2083 < P\u2084","P\u2081 < P\u2082 = P\u2083 < P\u2084"],correct:2,pat:"C1 \u00b7 isobars: steeper = lower P",ans:"P\u2081 < P\u2082 < P\u2083 < P\u2084",fig:"vt_isobars",nudge:"Steeper V\u2013T line \u21d2 lower pressure."},
+  {src:"Ex-I Q32",doc:"exI",type:"SC",tier:2,tax:"C1",q:"Which of the following correctly relates the density of an ideal gas to its conditions in two states?",choices:["P\u2081d\u2081T\u2081 = P\u2082d\u2082T\u2082","d\u2081P\u2081/T\u2081 = d\u2082P\u2082/T\u2082","P\u2081/(d\u2081T\u2081) = P\u2082/(d\u2082T\u2082)","P\u2081T\u2081/d\u2081 = P\u2082T\u2082/d\u2082"],correct:2,pat:"C1 \u00b7 d = PM/RT \u21d2 P/(dT)=const",ans:"P\u2081/(d\u2081T\u2081) = P\u2082/(d\u2082T\u2082)"},
+  {src:"Ex-I Q33",doc:"exI",type:"SC",tier:2,tax:"C1",q:"If m is the mass of one molecule, k the Boltzmann constant, P the pressure and T the absolute temperature, the density of the gas is:",choices:["kT/Pm","P\u00b7T/(k\u00b7m)","P\u00b7m/(k\u00b7T)","P\u00b7k/(T\u00b7m)"],correct:2,pat:"C1 \u00b7 d = Pm/kT",ans:"P\u00b7m/(k\u00b7T)"},
+  {src:"Ex-I Q44",doc:"exI",type:"SC",tier:1,tax:"C2",q:"In a mixture of non-reacting gases, the ratio of the partial pressure of each component equals its:",choices:["Weight percent","Volume percent","Mole fraction","Critical pressure"],correct:2,pat:"C2 \u00b7 partial pressure \u221d mole fraction",ans:"Mole fraction"},
+  {src:"Ex-I Q53",doc:"exI",type:"SC",tier:2,tax:"C16",q:"The vapour pressure of a dry gas, compared with the same gas saturated with water vapour (wet gas), is:",choices:["Less than that of the wet gas","Greater than that of the wet gas","Equal to that of the wet gas","Double that of the wet gas"],correct:0,pat:"C16 \u00b7 P_dry = P_wet \u2212 aqueous tension",ans:"Less than that of the wet gas"},
+  {src:"Ex-I Q64",doc:"exI",type:"SC",tier:2,tax:"C4",q:"Which one of the following is NOT a postulate of the kinetic theory of gases?",choices:["The K.E. depends on the temperature of the gas","The K.E. depends on the pressure of the gas","The collisions are perfectly elastic","Gas pressure is due to molecular collisions on the walls"],correct:1,pat:"C4 \u00b7 KE depends only on T",ans:"The K.E. depends on the pressure of the gas"},
+  {src:"Ex-I Q66",doc:"exI",type:"SC",tier:1,tax:"C4",q:"When two molecules of an ideal gas collide:",choices:["Heat is liberated","No heat is liberated","Heat is absorbed","The total kinetic energy decreases"],correct:1,pat:"C4 \u00b7 elastic collisions",ans:"No heat is liberated"},
+  {src:"Ex-I Q73",doc:"exI",type:"SC",tier:2,tax:"C3",q:"The rms velocity is \u221a(3PV/M). If the volume is increased three-fold at constant temperature, the rms velocity:",choices:["Increases 3 times","Decreases 9 times","Increases \u221a3 times","Does not change"],correct:3,pat:"C3 \u00b7 rms depends on T, not V",ans:"Does not change",nudge:"At constant T, PV is constant, so 3PV/M is unchanged."},
+  {src:"Ex-I Q74",doc:"exI",type:"SC",tier:2,tax:"C3",q:"At a given temperature the rms velocity is minimum for:",choices:["N\u2082","SO\u2082","CO\u2082","SO\u2083"],correct:3,pat:"C3 \u00b7 rms \u221d 1/\u221aM",ans:"SO\u2083",nudge:"Heaviest molar mass (80) \u21d2 slowest."},
+  {src:"Ex-I Q75",doc:"exI",type:"SC",tier:2,tax:"C3",q:"At STP the order of rms velocities of H\u2082, N\u2082, O\u2082 and HBr is:",choices:["H\u2082 > N\u2082 > O\u2082 > HBr","HBr > O\u2082 > N\u2082 > H\u2082","HBr > H\u2082 > N\u2082 > O\u2082","N\u2082 > O\u2082 > H\u2082 > HBr"],correct:0,pat:"C3 \u00b7 lighter is faster",ans:"H\u2082 > N\u2082 > O\u2082 > HBr"},
+  {src:"Ex-I Q85",doc:"exI",type:"SC",tier:1,tax:"C6",q:"The most ideal gas among the following is:",choices:["H\u2082","He","CO\u2082","N\u2082"],correct:1,pat:"C6 \u00b7 weakest forces, smallest a",ans:"He"},
+  {src:"Ex-I Q94",doc:"exI",type:"SC",tier:2,tax:"C6",q:"The compressibility factor of a gas is less than unity at STP. Therefore:",choices:["Vm > 22.4 L","Vm < 22.4 L","Vm = 22.4 L","Vm = 44.8 L"],correct:1,pat:"C6 \u00b7 Z<1 \u21d2 Vm<22.4",ans:"Vm < 22.4 L"},
+  {src:"Ex-I Q97",doc:"exI",type:"SC",tier:1,tax:"C12",q:"The temperature above which a gas cannot be liquefied however high the pressure is called the:",choices:["Boyle temperature","Critical temperature","Liquefaction temperature","Inversion temperature"],correct:1,pat:"C12 \u00b7 critical temperature",ans:"Critical temperature"},
+  {src:"Ex-I Q98",doc:"exI",type:"SC",tier:2,tax:"C6",q:"A real gas is expected to show maximum deviation from ideal behaviour at:",choices:["Low T and high P","Low T and low P","High T and high P","High T and low P"],correct:0,pat:"C6 \u00b7 deviations at low T, high P",ans:"Low T and high P"},
+  {src:"Ex-I Q100",doc:"exI",type:"SC",tier:2,tax:"C7",q:"The van der Waals constant 'a' for O\u2082, N\u2082, NH\u2083 and CH\u2084 are 1.360, 1.390, 4.170 and 2.253 dm\u2076 atm mol\u207b\u00b2. The gas most easily liquefied is:",choices:["O\u2082","N\u2082","NH\u2083","CH\u2084"],correct:2,pat:"C7 \u00b7 larger a \u21d2 easier to liquefy",ans:"NH\u2083"},
+  {src:"Ex-I Q101",doc:"exI",type:"SC",tier:1,tax:"C16",q:"In Shimla, cooking food without a pressure cooker takes longer because at high altitude:",choices:["pressure increases","temperature decreases","pressure decreases","temperature increases"],correct:2,pat:"C16 \u00b7 low P \u21d2 low boiling point",ans:"pressure decreases"},
+  {src:"Ex-I Q106",doc:"exI",type:"SC",tier:1,tax:"C17",q:"Increasing the temperature of a liquid causes its viscosity to:",choices:["Decrease","Increase","Remain unchanged","Decrease then increase"],correct:0,pat:"C17 \u00b7 viscosity falls with T",ans:"Decrease"},
+  {src:"Ex-I Q108",doc:"exI",type:"SC",tier:1,tax:"C17",q:"The viscosities of four liquids P, Q, R, S are 85, 11.4, 18 and 12.3 (milli-poise). Which flows the slowest?",choices:["P","Q","R","S"],correct:0,pat:"C17 \u00b7 higher \u03b7 \u21d2 slower flow",ans:"P"},
+  {src:"Ex-I Q109",doc:"exI",type:"SC",tier:2,tax:"C17",q:"Which behaviour of the coefficient of viscosity (\u03b7) of a liquid is correct?",choices:["\u03b7 vs T is linear","\u03b7 vs 1/T is linear","\u03b7 = E/RT","log \u03b7 vs 1/T is linear"],correct:3,pat:"C17 \u00b7 \u03b7 = A\u00b7e^(E/RT)",ans:"log \u03b7 vs 1/T is linear"},
+  {src:"Ex-I Q34",doc:"exI",type:"NV",tier:2,tax:"C1",q:"28 g of N\u2082 gas occupies a volume of 10 L at 2.46 atm pressure. The temperature of the gas (in K) is:",ans:"300 K",pat:"C1 \u00b7 PV = nRT",nudge:"n = 1 mol, so T = PV/nR = 2.46\u00b710/0.0821."},
+  /* ---------- Exercise-III (JEE-Advanced) ---------- */
+  {src:"Ex-III Q1",doc:"exIII",type:"SC",tier:3,tax:"C7",q:"Assuming an N\u2082 molecule is spherical with radius 2\u00d710\u207b\u00b9\u2070 m, the percentage of empty space in one mole of N\u2082 gas at NTP is about:",choices:["90 %","99.9 %","9 %","79 %"],correct:1,pat:"C7 \u00b7 molecular volume \u226a gas volume",ans:"99.9 %",nudge:"Compare N_A\u00b7(4/3)\u03c0r\u00b3 with 22.4 L."},
+  {src:"Ex-III Q2",doc:"exIII",type:"SC",tier:3,tax:"C1",q:"For an ideal gas, which plot is linear with a slope equal to zero?",choices:["V vs T at constant P","V/T vs T at constant P","log P vs log V at constant T","P vs T at constant V"],correct:1,pat:"C1 \u00b7 V/T = nR/P = const",ans:"V/T vs T at constant P"},
+  {src:"Ex-III Q3",doc:"exIII",type:"SC",tier:3,tax:"C6",q:"PV is plotted against P for an ideal gas at two temperatures T\u2081 and T\u2082 (the T\u2082 line lies above the T\u2081 line). The relation between them is:",choices:["T\u2081 > T\u2082","T\u2082 > T\u2081","T\u2081 = T\u2082","T\u2081 + T\u2082 = 1"],correct:1,pat:"C6 \u00b7 PV = nRT, higher line = higher T",ans:"T\u2082 > T\u2081",fig:"pv_vs_p"},
+  {src:"Ex-III Q7",doc:"exIII",type:"SC",tier:3,tax:"C1",q:"A spherical flask A (radius 1.0 m) contains 300 g H\u2082 and, inside it, a balloon B (radius 60 cm) of N\u2082, and inside B a balloon C (radius 30 cm) of O\u2082, all at 27\u00b0C. The total weight of gas inside the flask is about:",choices:["1526.4 g","1477.8 g","1652.8 g","1825.8 g"],correct:1,pat:"C1 \u00b7 PV=nRT for each nested volume",ans:"1477.8 g"},
+  {src:"Ex-III Q8",doc:"exIII",type:"SC",tier:3,tax:"C4",q:"The pressure exerted by 10\u00b2\u00b3 gas molecules, each of mass 10\u207b\u00b2\u00b2 g, in a 1 L container with rms speed 10\u2075 cm s\u207b\u00b9 is:",choices:["3.33\u00d710\u2077 dyne cm\u207b\u00b2","2.22\u00d710\u2077 dyne cm\u207b\u00b2","1.11\u00d710\u2077 dyne cm\u207b\u00b2","4.44\u00d710\u2077 dyne cm\u207b\u00b2"],correct:0,pat:"C4 \u00b7 P = (1/3)\u00b7m\u00b7N\u00b7u\u00b2/V",ans:"3.33\u00d710\u2077 dyne cm\u207b\u00b2"},
+  {src:"Ex-III Q9",doc:"exIII",type:"SC",tier:3,tax:"C2",q:"1 mol N\u2082 and 4 mol H\u2082 are taken in a 15 L flask at 27\u00b0C. After complete conversion of N\u2082 to NH\u2083, 5 L of water is added (dissolving all the NH\u2083). The pressure set up in the flask is:",choices:["4.926 atm","3.284 atm","1.643 atm","2.463 atm"],correct:3,pat:"C2 \u00b7 leftover H\u2082 in the remaining volume",ans:"2.463 atm",nudge:"Only 1 mol H\u2082 remains; NH\u2083 dissolves; V = 10 L."},
+  {src:"Ex-III Q11",doc:"exIII",type:"SC",tier:3,tax:"C1",q:"Two identical connected vessels together hold 3 mol of an ideal gas at 4 atm and 27\u00b0C. The first is cooled to \u221273\u00b0C while the second is heated to 127\u00b0C. The numbers of moles in the first and second vessels are then:",choices:["1.5, 1.5","1, 2","2, 1","1.8, 1.2"],correct:2,pat:"C1 \u00b7 colder vessel holds more moles",ans:"2, 1"},
+  {src:"Ex-III Q21",doc:"exIII",type:"SC",tier:3,tax:"C11",q:"In a Maxwell\u2013Boltzmann plot, three curves are drawn for T\u2081, T\u2082, T\u2083 (the T\u2081 curve has the tallest, left-most peak; the T\u2083 curve is the flattest and right-most). The correct order of temperature is:",choices:["T\u2081 < T\u2082 < T\u2083","T\u2083 < T\u2082 < T\u2081","T\u2082 < T\u2081 < T\u2083","T\u2081 > T\u2082 < T\u2083"],correct:0,pat:"C11 \u00b7 hotter \u21d2 flatter, peak shifts right",ans:"T\u2081 < T\u2082 < T\u2083",fig:"maxwell"},
+  {src:"Ex-III Q27",doc:"exIII",type:"SC",tier:3,tax:"C5",q:"At 1200\u00b0C a mixture of Cl\u2082 and Cl atoms effuses 1.16 times as fast as krypton (M = 84) under identical conditions. The fraction of chlorine molecules dissociated into atoms is nearly:",choices:["14 %","22 %","87 %","44 %"],correct:0,pat:"C5 \u00b7 Graham's law + dissociation",ans:"14 %"},
+  {src:"Ex-III Q31",doc:"exIII",type:"SC",tier:3,tax:"C6",q:"A real gas obeying the van der Waals equation will resemble an ideal gas if:",choices:["the constants a and b are negligibly small","a is large and b is small","a is small and b is large","a and b are both large"],correct:0,pat:"C6 \u00b7 small a,b \u21d2 ideal",ans:"a and b are negligibly small"},
+  {src:"Ex-III Q33",doc:"exIII",type:"SC",tier:3,tax:"C6",q:"For a real gas at high pressure, PVm is plotted against P (Vm = molar volume). The y-intercept of the (nearly linear) graph is:",choices:["RT","P + a/V\u00b2","RT/(V\u2212b)","P \u2212 a/V\u00b2"],correct:0,pat:"C6 \u00b7 PV = RT + Pb at high P",ans:"RT"},
+  {src:"Ex-III Q38",doc:"exIII",type:"SC",tier:3,tax:"C8",q:"The critical temperature and critical pressure of a van der Waals gas are 30\u00b0C and 73 atm. Its constant b (in L mol\u207b\u00b9) is:",choices:["0.500","0.060","0.265","0.0426"],correct:3,pat:"C8 \u00b7 b = RTc/8Pc",ans:"0.0426"},
+  {src:"Ex-III Q39",doc:"exIII",type:"SC",tier:3,tax:"C9",q:"The correct order of the characteristic temperatures (I) Boyle, (II) critical, (III) inversion is:",choices:["III > I > II","I > II > III","II > I > III","I > III > II"],correct:0,pat:"C9 \u00b7 Ti > TB > Tc",ans:"III > I > II"},
+  {src:"Ex-III Q40",doc:"exIII",type:"SC",tier:3,tax:"C9",q:"Among H\u2082, He, CH\u2084 and O\u2082 (Boyle temperatures 117, 23, 498 and 406 K respectively), the gas liquefied most easily is:",choices:["H\u2082","He","CH\u2084","O\u2082"],correct:2,pat:"C9 \u00b7 higher Boyle T \u21d2 stronger forces",ans:"CH\u2084"},
+  {src:"Ex-III Q6",doc:"exIII",type:"SC",tier:3,tax:"C1",q:"Statement: In a gaseous reaction the volume ratio of reactants and products agrees with their molar ratio.  Explanation: The volume of a gas is inversely proportional to its number of moles at constant P and T.",choices:["Statement correct, Explanation wrong","Statement wrong, Explanation correct","Both correct, and Explanation is the correct explanation of the Statement","Both correct, but Explanation is NOT the correct explanation"],correct:0,pat:"C1 \u00b7 V \u221d n (Gay-Lussac/Avogadro)",ans:"Statement correct, Explanation wrong",nudge:"V \u221d n DIRECTLY (not inversely) at fixed P, T."},
+  {src:"Ex-III Q41",doc:"exIII",type:"SC",tier:3,tax:"C10",q:"Statement: An ideal gas shows no Joule\u2013Thomson effect and cannot be liquefied.  Explanation: For an ideal gas (\u2202U/\u2202V)_T and (\u2202T/\u2202P)_H are both zero.",choices:["Statement correct, Explanation wrong","Statement wrong, Explanation correct","Both correct, and Explanation is the correct explanation of the Statement","Both correct, but Explanation is NOT the correct explanation"],correct:2,pat:"C10 \u00b7 ideal gas \u03bc_JT = 0",ans:"Both correct, Explanation explains Statement"},
+  /* ---------- Exercise-IV (JEE-Advanced) ---------- */
+  {src:"Ex-IV Q1",doc:"exIV",type:"SC",tier:3,tax:"C4",q:"Three gases of densities A (0.82), B (0.25), C (0.51) are enclosed in a 4 L vessel. Pick the correct statement(s): I. Gas A lies at the bottom  II. The numbers of atoms of A, B, C are the same  III. The gases diffuse to form a homogeneous mixture  IV. The average kinetic energy of each gas is the same at identical temperature.",choices:["I, IV","only III","III, IV","II, III"],correct:2,pat:"C4 \u00b7 gases mix; equal KE at equal T",ans:"III, IV"},
+  {src:"Ex-IV Q2",doc:"exIV",type:"SC",tier:3,tax:"C1",q:"At 0\u00b0C, the density of a certain gaseous oxide at 2 bar equals the density of dinitrogen at 5 bar. The molecular mass of the oxide is:",choices:["70 g/mol","35 g/mol","140 g/mol","280 g/mol"],correct:0,pat:"C1 \u00b7 d = PM/RT \u21d2 equal PM",ans:"70 g/mol"},
+  {src:"Ex-IV Q3",doc:"exIV",type:"SC",tier:3,tax:"C1",q:"12 g of an ideal gas (M = 120) at t\u00b0C in volume V exerts 1 atm. When T is raised by 10\u00b0C at the same volume, the pressure rises by 10%. Then t and V are:",choices:["t = \u2212273 \u00b0C, V = 0.082 L","t = \u2212173 \u00b0C, V = 0.82 L","t = 0 \u00b0C, V = 22.4 L","t = \u221227 \u00b0C, V = 22.4 L"],correct:1,pat:"C1 \u00b7 P \u221d T at constant V",ans:"t = \u2212173 \u00b0C, V = 0.82 L"},
+  {src:"Ex-IV Q4",doc:"exIV",type:"SC",tier:3,tax:"C1",q:"A gas in a 1000 mL vessel at 72.6 cm Hg is evacuated by a piston pump that expels 10% of the gas each stroke. The pressure after the second stroke is:",choices:["50 cm","56.6 cm","58.8 cm","66.6 cm"],correct:2,pat:"C1 \u00b7 P \u2190 0.9\u00b70.9\u00b7P\u2080",ans:"58.8 cm"},
+  {src:"Ex-IV Q6",doc:"exIV",type:"SC",tier:3,tax:"C1",q:"An ideal gas occupies 30 L at 20\u00b0C. It is compressed at constant T until the pressure doubles, then heated to 100\u00b0C at constant pressure. The final volume is:",choices:["25 L","30 L","19 L","40 L"],correct:2,pat:"C1 \u00b7 Boyle then Charles",ans:"19 L",nudge:"30\u219215 L (P doubles), then \u00d7373/293."},
+  {src:"Ex-IV Q32",doc:"exIV",type:"SC",tier:3,tax:"C7",q:"The van der Waals constant b of a gas is 4.42 centilitre per mole. How close can the centres of two molecules approach each other?",choices:["127.2 pm","427.2 pm","327.2 pm","627.2 pm"],correct:2,pat:"C7 \u00b7 b = 4\u00b7N_A\u00b7(4/3)\u03c0r\u00b3",ans:"327.2 pm"},
+  {src:"Ex-IV Q33",doc:"exIV",type:"SC",tier:3,tax:"C6",q:"The vapour density of a substance X at 1 atm and 500 K is 0.8 kg m\u207b\u00b3. It effuses at 4/5 the rate of oxygen under the same conditions. Its compressibility factor Z is:",choices:["0.974","1.35","1.52","1.22"],correct:2,pat:"C6 \u00b7 Z from M and d",ans:"1.52"},
+  {src:"Ex-IV Q35",doc:"exIV",type:"SC",tier:3,tax:"C8",q:"For a fixed amount of a van der Waals gas at 0\u00b0C and 100 atm, Z = 0.5. Assuming the molecular volume is negligible, the constant a is:",choices:["1.256 L\u00b2 mol\u207b\u00b2 atm","0.256 L\u00b2 mol\u207b\u00b2 atm","2.256 L\u00b2 mol\u207b\u00b2 atm","0.0256 L\u00b2 mol\u207b\u00b2 atm"],correct:0,pat:"C8 \u00b7 Z<1 from the a term",ans:"1.256 L\u00b2 mol\u207b\u00b2 atm"},
+  {src:"Ex-IV Q40",doc:"exIV",type:"SC",tier:3,tax:"C7",q:"1 mol of CO\u2082 at 273 K exerts 34.98 atm. Assuming the molecular volume is negligible, the van der Waals constant a for CO\u2082 is:",choices:["3.59 dm\u2076 atm mol\u207b\u00b2","2.59 dm\u2076 atm mol\u207b\u00b2","1.25 dm\u2076 atm mol\u207b\u00b2","1.59 dm\u2076 atm mol\u207b\u00b2"],correct:0,pat:"C7 \u00b7 a from P = RT/V \u2212 a/V\u00b2",ans:"3.59 dm\u2076 atm mol\u207b\u00b2"},
+  {src:"Ex-IV Q41",doc:"exIV",type:"SC",tier:3,tax:"C7",q:"The van der Waals constant b for a gas whose molecular diameter is 2.0 \u00c5 is:",choices:["2.4 mL/mol","4.8 mL/mol","7.2 mL/mol","9.6 mL/mol"],correct:3,pat:"C7 \u00b7 b = 4\u00b7N_A\u00b7(4/3)\u03c0r\u00b3",ans:"9.6 mL/mol"},
+  {src:"Ex-IV Q42",doc:"exIV",type:"SC",tier:3,tax:"C6",q:"1 mol of SO\u2082 occupies 350 mL at 300 K and 50 atm. The compressibility factor of the gas is:",choices:["0.711","7.11","1.406","14.06"],correct:0,pat:"C6 \u00b7 Z = PV/nRT",ans:"0.711"},
+  {src:"Ex-IV Q43",doc:"exIV",type:"SC",tier:3,tax:"C7",q:"The pressure exerted by 8.5 g of NH\u2083 in a 0.5 L vessel at 300 K (a = 4.0 atm L\u00b2 mol\u207b\u00b2, b = 0.036 L mol\u207b\u00b9) is:",choices:["21.51 atm","2.151 atm","215.1 atm","43.02 atm"],correct:0,pat:"C7 \u00b7 van der Waals P",ans:"21.51 atm"},
+  {src:"Ex-IV Q49",doc:"exIV",type:"SC",tier:3,tax:"C9",q:"The inversion temperature Ti of hydrogen (a = 0.244 atm L\u00b2 mol\u207b\u00b2, b = 0.027 L mol\u207b\u00b9) is:",choices:["440 K","220 K","110 K","330 K"],correct:1,pat:"C9 \u00b7 Ti = 2a/Rb",ans:"220 K"},
+  {src:"Ex-IV Q51",doc:"exIV",type:"SC",tier:3,tax:"C10",q:"Statement: The Joule\u2013Thomson coefficient for an ideal gas is zero.  Explanation: There are no intermolecular attractive forces in an ideal gas.",choices:["Statement correct, Explanation wrong","Statement wrong, Explanation correct","Both correct, and Explanation is the correct explanation of the Statement","Both correct, but Explanation is NOT the correct explanation"],correct:2,pat:"C10 \u00b7 ideal gas \u03bc_JT = 0",ans:"Both correct, Explanation explains Statement"},
+  {src:"Ex-IV Q52",doc:"exIV",type:"SC",tier:3,tax:"C12",q:"Statement: CO\u2082 has stronger intermolecular forces than CH\u2084.  Explanation: The critical temperature of CO\u2082 is higher than that of CH\u2084.",choices:["Statement correct, Explanation wrong","Statement wrong, Explanation correct","Both correct, and Explanation is the correct explanation of the Statement","Both correct, but Explanation is NOT the correct explanation"],correct:2,pat:"C12 \u00b7 higher Tc \u21d2 stronger forces",ans:"Both correct, Explanation explains Statement"}
+];
+
+/* ===== practice source groups (for grouped display + dates) ===== */
+let CHEM_SOM_PRAC_DOCS = [
+  {id:"exI",  label:"Narayana Module \u00b7 Exercise-I",  date:"30 Jun 2026", note:"Single-correct \u00b7 options & answers verified vs Exercise-I key"},
+  {id:"exIII",label:"Narayana Module \u00b7 Exercise-III (JEE-Adv)", date:"30 Jun 2026", note:"verified vs Exercise-III key \u00b7 includes Statement\u2013Explanation"},
+  {id:"exIV", label:"Narayana Module \u00b7 Exercise-IV (JEE-Adv)",  date:"30 Jun 2026", note:"verified vs Exercise-IV key \u00b7 includes Statement\u2013Explanation"}
+];
+
+const CHEM_SOM_PRAC_TIERS=[{k:"All",l:"All"},{k:"1",l:"Foundation"},{k:"2",l:"JEE Main"},{k:"3",l:"JEE Advanced"},{k:"Flag",l:"\u2605 Flagged"}];
+
+
 /* ===== CURRICULUM TREE  (Subjects > Subsections > Chapters) ===== */
 const CURRICULUM=[
   {id:"maths",name:"Mathematics",sym:"\u2211",subs:[
@@ -879,14 +1214,18 @@ const CURRICULUM=[
       {id:"es",name:"Electrostatics",grade:12},{id:"cur",name:"Current Electricity",grade:12},
       {id:"mag",name:"Magnetism & EMI",grade:12},{id:"ac",name:"Alternating Current",grade:12}]},
     {id:"opt",name:"Optics",chapters:[{id:"ray",name:"Ray Optics",grade:12},{id:"wav",name:"Wave Optics",grade:12}]},
-    {id:"mod",name:"Modern Physics",chapters:[{id:"mp",name:"Atoms, Nuclei & Dual Nature",grade:12},{id:"semi",name:"Semiconductor Devices",grade:12}]}]}
+    {id:"mod",name:"Modern Physics",chapters:[{id:"mp",name:"Atoms, Nuclei & Dual Nature",grade:12},{id:"semi",name:"Semiconductor Devices",grade:12}]}]},
+  {id:"chem",name:"Chemistry",sym:"\u2697",subs:[
+    {id:"phys",name:"Physical Chemistry",chapters:[
+      {id:"som",name:"States of Matter",grade:11}]}]}
 ];
 /* A chapter is "ready" iff its path appears here. Add a chapter by dropping its data in. */
 const CONTENT={
   "maths/trig/fg":{key:"trigfg",taxa:TAXA,formulae:FORMULAE,patterns:PATTERNS,guided:GUIDED,practice:PRACTICE,pracTiers:PRAC_TIERS},
   "maths/trig/pev":{key:"pev",taxa:PEV_TAXA,formulae:PEV_FORMULAE,patterns:PEV_PATTERNS,guided:PEV_GUIDED,practice:PEV_PRACTICE,pracDocs:PEV_PRAC_DOCS,pracTiers:PEV_PRAC_TIERS},
   "maths/trig/teq":{key:"teq",taxa:TEQ_TAXA,formulae:TEQ_FORMULAE,patterns:TEQ_PATTERNS,guided:TEQ_GUIDED,practice:TEQ_PRACTICE,pracDocs:TEQ_PRAC_DOCS,pracTiers:TEQ_PRAC_TIERS},
-  "phys/mech/wpe":{key:"wpe",taxa:WPE_TAXA,formulae:WPE_FORMULAE,patterns:WPE_PATTERNS,guided:WPE_GUIDED,practice:WPE_PRACTICE,figs:WPE_FIG,pracDocs:WPE_PRAC_DOCS,pracTiers:WPE_PRAC_TIERS}
+  "phys/mech/wpe":{key:"wpe",taxa:WPE_TAXA,formulae:WPE_FORMULAE,patterns:WPE_PATTERNS,guided:WPE_GUIDED,practice:WPE_PRACTICE,figs:WPE_FIG,pracDocs:WPE_PRAC_DOCS,pracTiers:WPE_PRAC_TIERS},
+  "chem/phys/som":{key:"chemsom",taxa:CHEM_SOM_TAXA,formulae:CHEM_SOM_FORMULAE,patterns:CHEM_SOM_PATTERNS,guided:CHEM_SOM_GUIDED,practice:CHEM_SOM_PRACTICE,figs:CHEM_SOM_FIG,pracDocs:CHEM_SOM_PRAC_DOCS,pracTiers:CHEM_SOM_PRAC_TIERS}
 };
 function chapPath(a,b,c){return a+"/"+b+"/"+c;}
 function findChapter(path){
@@ -936,6 +1275,15 @@ const CHAPTER_META = [
     topic:   "Trigonometry",
     chapter: "Trigonometric Equations",
     sources: ["Cengage (G. Tewani) Vol-III", "Narayana JEE-Adv Maths Vol-III", "Cengage Archives (IIT-JEE / JEE-Adv)"],
+    created: "Jun 2026"
+  },
+  {
+    id:      "chem/phys/som",
+    grade:   "11th",
+    subject: "Chemistry",
+    topic:   "Physical Chemistry",
+    chapter: "States of Matter",
+    sources: ["Narayana Module (JEE-Adv Chemistry Vol-II)"],
     created: "Jun 2026"
   }
 ];
