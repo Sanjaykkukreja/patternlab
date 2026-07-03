@@ -1181,6 +1181,254 @@ let CHEM_SOM_PRAC_DOCS = [
 
 const CHEM_SOM_PRAC_TIERS=[{k:"All",l:"All"},{k:"1",l:"Foundation"},{k:"2",l:"JEE Main"},{k:"3",l:"JEE Advanced"},{k:"Flag",l:"\u2605 Flagged"}];
 
+/* ===== L0.5 EXPLAIN (first-principles read; rendered into the Explain tab) ===== */
+let CHEM_SOM_EXPLAIN = `<div class="xpl">
+<!-- HERO: the thesis -->
+  <section class="hero">
+    <div class="eyebrow">The one idea</div>
+    <h2>A real gas is an ideal gas that got caught being real.</h2>
+    <p>The ideal gas is a fiction: point-sized molecules that never attract each other. It obeys one clean law, <span class="mono">PV = nRT</span>. Every real gas <em>tries</em> to obey it — and succeeds when its molecules are far apart and moving fast (low pressure, high temperature).</p>
+    <p>It fails when molecules get close and slow. Then two very real things they'd been ignoring start to matter: <b>they take up space</b>, and <b>they attract each other</b>. The entire second half of this chapter is those two facts fighting.</p>
+    <div class="eq key zline"><span class="lab">The one number that measures it all</span>Z = PV / nRT&nbsp;&nbsp;&nbsp;→&nbsp;&nbsp;&nbsp;Z = 1 means ideal · Z &lt; 1 means attraction is winning · Z &gt; 1 means size is winning</div>
+    <div class="note spine"><span class="k">Spine</span><span>Keep <b>Z</b> in your head the whole way down. Every station below is really answering: <i>where are we on the Z story, and why?</i></span></div>
+  </section>
+
+  <nav class="xpl-rail" aria-label="Chapter acts"><a href="#xpl-act1"><b>Act I</b> The Ideal</a><a href="#xpl-act2"><b>Act II</b> The Real</a><a href="#xpl-act3"><b>Act III</b> The Condensed</a></nav>
+
+  <!-- ================= ACT I ================= -->
+  <div class="act-label" id="xpl-act1">Act I · The Ideal</div>
+  <p class="act-sub">The model that works when molecules are lonely and hot.</p>
+
+  <!-- Station 1 -->
+  <section class="station easy" id="xpl-s1">
+    <div class="st-head"><span class="depth core">Core</span><div class="st-num">Station 01</div><div class="st-title">The ideal gas and its laws</div></div>
+    <div class="st-body">
+      <p class="picture">Picture a box of tiny, hard, lonely dots. They fly in straight lines, bounce off the walls perfectly, never touch each other, and take up no room themselves. That fiction is the <b>ideal gas</b>, and four "laws" are just one equation seen from four angles.</p>
+      <div class="eq key"><span class="lab">The whole of Act I in one line</span>PV = nRT&nbsp;&nbsp;=&nbsp;&nbsp;(w/M)RT&nbsp;&nbsp;→&nbsp;&nbsp;PM = dRT</div>
+      <p>Hold three of the four quantities fixed and you recover each named law: fix T,n → <b>Boyle</b> (PV constant); fix P,n → <b>Charles</b> (V ∝ T); fix V,n → <b>Gay-Lussac</b> (P ∝ T); fix P,T → <b>Avogadro</b> (V ∝ n). They aren't four things to memorise — they're one thing with three knobs held still.</p>
+      <div class="figure"><svg viewBox="0 0 220 130" class="fig"><line x1="26" y1="110" x2="208" y2="110" stroke="currentColor" stroke-width="1.2"/><line x1="26" y1="110" x2="26" y2="12" stroke="currentColor" stroke-width="1.2"/><line x1="26" y1="110" x2="200" y2="26" stroke="var(--teal)" stroke-width="1.8"/><line x1="26" y1="110" x2="200" y2="54" stroke="var(--amber)" stroke-width="1.8"/><line x1="26" y1="110" x2="200" y2="80" stroke="var(--coral)" stroke-width="1.8"/><text x="202" y="30" font-size="9" fill="var(--teal)">P\u2081</text><text x="202" y="58" font-size="9" fill="var(--amber)">P\u2082</text><text x="202" y="84" font-size="9" fill="var(--coral)">P\u2083</text><text x="56" y="22" font-size="8" fill="currentColor">steeper = lower P</text><text x="8" y="16" font-size="11" fill="currentColor">V</text><text x="196" y="124" font-size="11" fill="currentColor">T</text></svg></div>
+      <div class="figcap">Charles’ law: each line is one pressure — steeper means lower P.</div>
+      <div class="note connect"><span class="k">Connects to</span><span>The mole concept you already know: <span class="mono">n = w/M</span>. Slot it in and PV=nRT instantly gives you density and molar-mass problems for free — same equation, no new law.</span></div>
+      <div class="note watch"><span class="k">Watch out</span><span><b>Temperature is always in kelvin.</b> "Doubling the temperature" from 0°C to 27°C is <i>not</i> a doubling — 273 K to 300 K is a 10% rise. This one slip wrecks more marks here than anything else.</span></div>
+      <div class="note watch"><span class="k">Watch out</span><span>Pick <span class="mono">R</span> to match your pressure unit: <b>0.0821</b> for atm·L, <b>0.083</b> for bar·L, <b>8.314</b> for SI (Pa·m³ / joules), <b>2 cal</b> for energy. Wrong R = wrong answer with perfect working.</span></div>
+    </div>
+  </section>
+
+  <!-- Station 2 -->
+  <section class="station hard" id="xpl-s2">
+    <div class="st-head"><span class="depth deep">Deep</span><div class="st-num">Station 02</div><div class="st-title">Why PV=nRT is true: the kinetic theory</div></div>
+    <div class="st-body">
+      <p class="picture">Where does pressure actually <i>come from</i>? Not from some rule — from <b>molecules drumming on the walls</b>. Each collision is a tiny push; a mole of them per instant is a steady force per area. If you believe molecules are moving dots, you can <i>derive</i> the gas law from Newton's mechanics. This is the foundation everything real is built on, so it's worth doing once, slowly.</p>
+      <div class="eq key"><span class="lab">Pressure from first principles</span>PV = ⅓ · m · N · c̄²&nbsp;&nbsp;&nbsp;(m = mass of one molecule, N = number, c̄² = mean-square speed)</div>
+      <div class="figure"><svg viewBox="0 0 220 122" class="fig"><rect x="18" y="16" width="150" height="90" fill="none" stroke="currentColor" stroke-width="1.2"/><line x1="168" y1="16" x2="168" y2="106" stroke="var(--teal)" stroke-width="3"/><text x="146" y="13" font-size="8" fill="var(--teal)">wall</text><circle cx="58" cy="48" r="7" fill="var(--coral)"/><line x1="70" y1="48" x2="150" y2="48" stroke="var(--coral)" stroke-width="1.6"/><polygon points="150,48 141,44 141,52" fill="var(--coral)"/><text x="90" y="42" font-size="9" fill="var(--coral)">+m·u</text><circle cx="58" cy="80" r="7" fill="none" stroke="currentColor" stroke-width="1.4"/><line x1="46" y1="80" x2="26" y2="80" stroke="currentColor" stroke-width="1.4"/><polygon points="26,80 35,76 35,84" fill="currentColor"/><text x="28" y="74" font-size="9" fill="currentColor">−m·u</text><text x="40" y="119" font-size="8.5" fill="currentColor">momentum change per hit = 2m·u</text></svg></div>
+      <div class="figcap">Each wall hit reverses a molecule’s momentum by 2m·u; summed over billions, that is pressure.</div>
+      <details class="build">
+        <summary>Build it from scratch — a molecule hitting a wall <span class="chev">›</span></summary>
+        <div class="build-body">
+          <ol>
+            <li>Put N molecules of mass m in a cube of side L (so V = L³). Take one molecule moving toward a wall with speed component <span class="mono">u<sub>x</sub></span>.</li>
+            <li>It hits, bounces back elastically. Its momentum changes by <span class="mono">2m·u<sub>x</sub></span> (from +mu<sub>x</sub> to −mu<sub>x</sub>).</li>
+            <li>It re-hits the same wall every time it crosses the box and back: time between hits = <span class="mono">2L / u<sub>x</sub></span>.</li>
+            <li>Force from this one molecule = momentum change ÷ time = <span class="mono">2m u<sub>x</sub> ÷ (2L/u<sub>x</sub>) = m u<sub>x</sub>² / L</span>.</li>
+            <li>Pressure = force ÷ area = that ÷ L² = <span class="mono">m u<sub>x</sub>² / L³ = m u<sub>x</sub>² / V</span>. Sum over all N molecules → <span class="mono">P = (m/V)·Σu<sub>x</sub>²</span>.</li>
+            <li>Motion is random in 3D, so on average <span class="mono">c̄² = ū<sub>x</sub>² + ū<sub>y</sub>² + ū<sub>z</sub>² = 3ū<sub>x</sub>²</span>, giving <span class="mono">Σu<sub>x</sub>² = N·c̄²/3</span>.</li>
+            <li>Therefore <b>PV = ⅓ m N c̄²</b>. Pressure is literally bottled-up molecular momentum.</li>
+          </ol>
+        </div>
+      </details>
+      <p>Now the payoff. Rewrite ⅓ mN c̄² as <span class="mono">⅔ · N · (½m c̄²)</span> — that bracket is the average kinetic energy of one molecule. So <span class="mono">PV = ⅔ · (total KE)</span>. Set that equal to nRT and something profound falls out:</p>
+      <div class="eq key"><span class="lab">Temperature IS energy</span>½ m c̄² = (3/2) kT&nbsp;&nbsp;&nbsp;→&nbsp;&nbsp;&nbsp;KE per mole = (3/2)RT&nbsp;&nbsp;(k = R/N<sub>A</sub>)</div>
+      <div class="note spine"><span class="k">Spine</span><span>This is the anchor of the whole chapter: <b>temperature is a direct measure of average molecular kinetic energy</b> — nothing else. Not pressure, not volume, not which gas.</span></div>
+      <div class="note connect"><span class="k">Connects to</span><span>Pure mechanics you already own: <span class="mono">KE = ½mv²</span>, momentum <span class="mono">= mv</span>, force <span class="mono">= Δp/Δt</span>. Kinetic theory is just those three applied a billion times and averaged.</span></div>
+      <div class="note watch"><span class="k">Watch out</span><span>Because KE depends <i>only</i> on T, at the same temperature <b>every</b> gas — H₂ or CO₂ — has the same average KE. The heavy one isn't "more energetic"; it just moves slower to carry the same energy.</span></div>
+    </div>
+  </section>
+
+  <!-- Station 3 -->
+  <section class="station" id="xpl-s3">
+    <div class="st-head"><span class="depth core">Core</span><div class="st-num">Station 03</div><div class="st-title">Three speeds, and the bell curve behind them</div></div>
+    <div class="st-body">
+      <p class="picture">Molecules don't all move at one speed — they have a <b>spread</b>, from nearly still to very fast, described by the Maxwell–Boltzmann curve. Because there's a spread, "the speed" isn't a single number, so we quote three, each answering a different question.</p>
+      <div class="eq"><span class="lab">The three speeds — all ∝ √(T/M)</span>u<sub>rms</sub> = √(3RT/M)&nbsp;·&nbsp;u<sub>avg</sub> = √(8RT/πM)&nbsp;·&nbsp;u<sub>mp</sub> = √(2RT/M)</div>
+      <p>They never change their pecking order: <span class="mono">u<sub>rms</sub> : u<sub>avg</sub> : u<sub>mp</sub> = 1 : 0.921 : 0.816</span>. Root-mean-square is biggest (it over-weights the fast molecules by squaring), most-probable is the peak of the curve, average sits between. Pick by the question: energy problems want <b>rms</b> (it comes from c̄²); the graph's peak is <b>most probable</b>.</p>
+      <p>The curve itself tells the temperature story. Heat the gas and the peak slides <b>right</b> (faster) and <b>down</b> (flatter) — because the total area, the number of molecules, is fixed, so a wider spread must be shorter.</p>
+      <div class="figure"><svg viewBox="0 0 220 130" class="fig"><line x1="22" y1="110" x2="210" y2="110" stroke="currentColor" stroke-width="1.2"/><line x1="22" y1="110" x2="22" y2="12" stroke="currentColor" stroke-width="1.2"/><path d="M22,110 C50,110 58,24 78,24 C98,24 120,110 205,110" fill="none" stroke="var(--teal)" stroke-width="2"/><path d="M22,110 C58,110 78,44 104,44 C130,44 150,110 205,110" fill="none" stroke="var(--amber)" stroke-width="1.8"/><path d="M22,110 C66,110 100,64 132,64 C162,64 178,110 205,110" fill="none" stroke="var(--coral)" stroke-width="1.8"/><text x="60" y="20" font-size="9" fill="var(--teal)">T\u2081</text><text x="108" y="40" font-size="9" fill="var(--amber)">T\u2082</text><text x="136" y="60" font-size="9" fill="var(--coral)">T\u2083</text><text x="150" y="74" font-size="8" fill="currentColor">T\u2081&lt;T\u2082&lt;T\u2083</text><text x="150" y="124" font-size="10" fill="currentColor">speed \u2192</text></svg></div>
+      <div class="figcap">Raising T pushes the peak right and down — the area (number of molecules) stays fixed.</div>
+      <div class="note connect"><span class="k">Connects to</span><span>The √(T/M) scaling is the engine of <b>Graham's law</b> two stations on, and the "peak shifts right + down with T" reading is a guaranteed graph question.</span></div>
+      <div class="note watch"><span class="k">Watch out</span><span>Raising temperature does <i>not</i> add molecules — the area under the curve is always the same. Only the <i>shape</i> changes.</span></div>
+    </div>
+  </section>
+
+  <!-- Station 4 -->
+  <section class="station easy" id="xpl-s4">
+    <div class="st-head"><span class="depth core">Core</span><div class="st-num">Station 04</div><div class="st-title">Mixtures & escaping: Dalton and Graham</div></div>
+    <div class="st-body">
+      <p class="picture"><b>Dalton:</b> in a mix of non-reacting gases, each one ignores the others — it fills the whole box and pushes on the walls as if alone. So pressures simply add, and each share is set by <i>how many molecules</i> it has, i.e. its mole fraction.</p>
+      <div class="eq"><span class="lab">Dalton</span>P<sub>total</sub> = ΣP<sub>i</sub>&nbsp;&nbsp;·&nbsp;&nbsp;P<sub>i</sub> = x<sub>i</sub> · P<sub>total</sub>&nbsp;&nbsp;(x<sub>i</sub> = mole fraction)</div>
+      <p><b>Graham:</b> lighter molecules move faster (same KE, smaller mass → bigger speed), so they stream through a pinhole more often. Rate of escape tracks the average speed, which goes as 1/√M.</p>
+      <div class="eq"><span class="lab">Graham</span>rate ∝ 1/√M ∝ 1/√d&nbsp;&nbsp;→&nbsp;&nbsp;r<sub>1</sub>/r<sub>2</sub> = √(M<sub>2</sub>/M<sub>1</sub>)</div>
+      <div class="note watch"><span class="k">Watch out</span><span>Two classic traps: use <b>mole</b> fraction (not mass) for partial pressure; and remember the <b>faster</b> gas is the <b>lighter</b> one, with √M, not M.</span></div>
+      <div class="note connect"><span class="k">Connects to</span><span>Collecting a gas over water is just Dalton in reverse: <span class="mono">P<sub>dry</sub> = P<sub>total</sub> − aqueous&nbsp;tension</span>. The water vapour is one more partial pressure.</span></div>
+    </div>
+  </section>
+
+  <!-- ================= ACT II ================= -->
+  <div class="act-label" id="xpl-act2">Act II · The Real</div>
+  <p class="act-sub">Where the ideal model breaks, and the two equations that fix it.</p>
+
+  <!-- Station 5 -->
+  <section class="station" id="xpl-s5">
+    <div class="st-head"><span class="depth core">Core</span><div class="st-num">Station 05</div><div class="st-title">Why real gases deviate — the pivot of the chapter</div></div>
+    <div class="st-body">
+      <p class="picture">Compress a real gas hard, or cool it down, and PV=nRT starts lying. Two assumptions of the ideal model were never true; they just didn't matter when molecules were far apart:</p>
+      <p><b>1. Molecules take up space.</b> The "free" volume to fly around in is less than the container — so at high pressure the gas is <i>harder</i> to compress than ideal (Z &gt; 1).<br>
+      <b>2. Molecules attract each other.</b> Attraction pulls them inward, so they hit the walls a little softer — the gas is <i>easier</i> to compress than ideal (Z &lt; 1).</p>
+      <div class="eq key"><span class="lab">The scoreboard</span>Z = PV / nRT&nbsp;&nbsp;·&nbsp;&nbsp;Z &lt; 1: attraction wins (low T, moderate P)&nbsp;·&nbsp;Z &gt; 1: size wins (very high P)</div>
+      <div class="figure"><svg viewBox="0 0 220 130" class="fig"><line x1="28" y1="110" x2="208" y2="110" stroke="currentColor" stroke-width="1.2"/><line x1="28" y1="110" x2="28" y2="14" stroke="currentColor" stroke-width="1.2"/><line x1="28" y1="60" x2="208" y2="60" stroke="currentColor" stroke-width="1" stroke-dasharray="3 3"/><text x="4" y="63" font-size="9" fill="currentColor">Z=1</text><path d="M28,60 C70,86 110,92 150,80 C175,72 195,58 206,40" fill="none" stroke="var(--coral)" stroke-width="2"/><path d="M28,60 C70,46 130,34 206,20" fill="none" stroke="var(--teal)" stroke-width="2"/><text x="150" y="98" font-size="9" fill="var(--coral)">CO\u2082 (Z&lt;1)</text><text x="116" y="32" font-size="9" fill="var(--teal)">H\u2082,He (Z&gt;1)</text><text x="8" y="16" font-size="11" fill="currentColor">Z</text><text x="196" y="124" font-size="11" fill="currentColor">P</text></svg></div>
+      <div class="figcap">The scoreboard: CO₂ dips below Z=1 (attraction winning); H₂/He rise above (size winning).</div>
+      <div class="note spine"><span class="k">Spine</span><span>Everything in Act II is these two effects, quantified. The <b>a</b> in van der Waals is effect 2 (attraction). The <b>b</b> is effect 1 (size). Hold that and the algebra never confuses you.</span></div>
+      <div class="note connect"><span class="k">Connects to</span><span>Deviation is worst at <b>low T, high P</b> — exactly the conditions that bring molecules close and slow, where Station 02's "lonely and hot" assumption collapses. He (small, weakly attracting) stays nearly ideal longest.</span></div>
+    </div>
+  </section>
+
+  <!-- Station 6 -->
+  <section class="station hard" id="xpl-s6">
+    <div class="st-head"><span class="depth deep">Deep</span><div class="st-num">Station 06</div><div class="st-title">Van der Waals: patching PV=nRT twice</div></div>
+    <div class="st-body">
+      <p class="picture">Van der Waals didn't invent a new law — he took PV=nRT and added <b>one correction for each broken assumption</b>. That's the whole equation, and if you know which term fixes which flaw you can rebuild it any time.</p>
+      <div class="figure"><svg viewBox="0 0 240 122" class="fig"><circle cx="55" cy="52" r="14" fill="var(--teal)" opacity="0.85"/><circle cx="86" cy="52" r="14" fill="var(--teal)" opacity="0.4"/><circle cx="55" cy="52" r="28" fill="none" stroke="currentColor" stroke-width="1" stroke-dasharray="3 3"/><line x1="55" y1="52" x2="83" y2="52" stroke="currentColor" stroke-width="0.8"/><text x="60" y="48" font-size="8" fill="currentColor">2r</text><text x="24" y="100" font-size="8.5" fill="currentColor">size → free volume V−nb</text><line x1="206" y1="18" x2="206" y2="96" stroke="currentColor" stroke-width="1.4"/><text x="188" y="14" font-size="8" fill="currentColor">wall</text><circle cx="186" cy="54" r="9" fill="var(--coral)"/><line x1="177" y1="54" x2="150" y2="44" stroke="var(--coral)" stroke-width="1"/><polygon points="150,44 159,44 155,51" fill="var(--coral)"/><line x1="177" y1="54" x2="150" y2="54" stroke="var(--coral)" stroke-width="1"/><polygon points="150,54 158,50 158,58" fill="var(--coral)"/><line x1="177" y1="54" x2="150" y2="65" stroke="var(--coral)" stroke-width="1"/><polygon points="150,65 159,64 155,58" fill="var(--coral)"/><text x="138" y="100" font-size="8.5" fill="var(--coral)">attraction → P + an²/V²</text></svg></div>
+      <div class="figcap">Two fixes: molecules exclude a co-volume b, and pull each other back from the wall (the a term).</div>
+      <div class="eq key"><span class="lab">van der Waals (n moles)</span>( P + a n²/V² ) ( V − nb ) = nRT</div>
+      <details class="build">
+        <summary>Build it from scratch — the two corrections <span class="chev">›</span></summary>
+        <div class="build-body">
+          <p><b>Correction 1 — volume (the <span class="mono">b</span> term).</b> Molecules aren't points; they occupy space, so the room left to move in isn't V but <span class="mono">V − nb</span>. Here <span class="mono">b</span> is the "co-volume" per mole. Curiously b ≈ <b>four times</b> the true volume of the molecules, because two molecules of radius r can't get closer than 2r centre-to-centre — the volume forbidden per pair is a sphere of radius 2r, i.e. 8× a molecule's volume, or 4× when shared between the two. Replace V with (V − nb).</p>
+          <p><b>Correction 2 — attraction (the <span class="mono">a</span> term).</b> A molecule deep inside the gas is pulled equally in all directions — no net force. But one about to hit the wall has neighbours only <i>behind</i> it, so it's tugged backward and strikes <b>softer</b>. The real pressure is therefore below ideal. How much? The pull is proportional to the density of molecules doing the pulling <i>and</i> to the density of molecules being pulled — so ∝ (n/V)². Add it back to recover the "ideal" pressure: <span class="mono">P<sub>ideal</sub> = P + a n²/V²</span>.</p>
+          <p>Substitute both into PV=nRT: <b>(P + an²/V²)(V − nb) = nRT</b>. Two facts, two terms.</p>
+        </div>
+      </details>
+      <div class="eq"><span class="lab">reading the constants</span>a = strength of attraction (atm·L²·mol⁻²)&nbsp;·&nbsp;b = molecular size / co-volume (L·mol⁻¹)</div>
+      <div class="note connect"><span class="k">Connects to</span><span>Bigger, stickier molecules → bigger <b>a</b> → easier to liquefy. That single line predicts Act III: NH₃ (large a) liquefies easily; He (tiny a) is a nightmare.</span></div>
+      <div class="note watch"><span class="k">Watch out</span><span>Don't swap the roles: <b>a is not size and b is not attraction.</b> And keep the units apart — a carries L², b carries L.</span></div>
+    </div>
+  </section>
+
+  <!-- Station 7 -->
+  <section class="station hard" id="xpl-s7">
+    <div class="st-head"><span class="depth deep">Deep</span><div class="st-num">Station 07</div><div class="st-title">The virial equation: deviation as a series</div></div>
+    <div class="st-body">
+      <p class="picture">There's a second, more flexible way to write a real gas — not one fixed equation but a <b>correction ladder</b> on top of the ideal gas. Start from Z = 1 (perfectly ideal) and add terms that switch on as the gas gets denser.</p>
+      <div class="eq key"><span class="lab">the virial equation</span>Z = PV/RT = 1 + B/V<sub>m</sub> + C/V<sub>m</sub>² + D/V<sub>m</sub>³ + …</div>
+      <p>Read it as levels of company: the leading <b>1</b> is the ideal gas (molecules alone); <b>B</b> corrects for meetings between <i>two</i> molecules; <b>C</b> for <i>three</i>; and so on. B, C, D are the virial coefficients — they depend on temperature and on the gas, not on P or V. At low density V<sub>m</sub> is huge, every term dies, and Z → 1. That's <i>why</i> every gas becomes ideal at low pressure — proven, not asserted.</p>
+      <details class="build">
+        <summary>Build B from van der Waals — where geometric series meets chemistry <span class="chev">›</span></summary>
+        <div class="build-body">
+          <ol>
+            <li>Take vdW for one mole and solve for P: <span class="mono">P = RT/(V−b) − a/V²</span>.</li>
+            <li>Form Z by multiplying by V/RT: <span class="mono">Z = V/(V−b) − a/(RTV) = 1/(1 − b/V) − a/(RTV)</span>.</li>
+            <li>Now the move you know from <b>maths</b>: when b/V is small, expand the geometric series <span class="mono">1/(1 − b/V) = 1 + b/V + (b/V)² + …</span></li>
+            <li>Collect powers of 1/V: <span class="mono">Z = 1 + (b − a/RT)/V + b²/V² + …</span></li>
+            <li>Compare with the virial form. The coefficients fall right out:</li>
+          </ol>
+          <div class="eq" style="margin-left:0"><span class="lab">the punchline</span>B = b − a/RT&nbsp;&nbsp;·&nbsp;&nbsp;C = b²&nbsp;&nbsp;·&nbsp;&nbsp;D = b³</div>
+          <p>That one expression <b>B = b − a/RT</b> is the whole deviation story in miniature: size (b, positive) versus attraction (a/RT, negative), fighting.</p>
+        </div>
+      </details>
+      <p>Now watch the fight in B. At high temperature a/RT shrinks, so B &gt; 0 → Z &gt; 1 (size wins). At low temperature the a/RT term dominates, B &lt; 0 → Z &lt; 1 (attraction wins). And there is exactly one temperature where they cancel, B = 0:</p>
+      <div class="eq key"><span class="lab">Boyle temperature — where a real gas fakes being ideal</span>B = 0&nbsp;⟹&nbsp;T<sub>B</sub> = a / bR</div>
+      <div class="figure"><svg viewBox="0 0 220 134" class="fig"><line x1="40" y1="70" x2="208" y2="70" stroke="currentColor" stroke-width="1.2"/><line x1="40" y1="14" x2="40" y2="122" stroke="currentColor" stroke-width="1.2"/><text x="20" y="30" font-size="10" fill="currentColor">B</text><text x="198" y="64" font-size="10" fill="currentColor">T</text><path d="M46,116 C72,96 96,76 120,70 C150,62 182,52 206,46" fill="none" stroke="var(--teal)" stroke-width="2"/><circle cx="120" cy="70" r="3.4" fill="var(--coral)"/><line x1="120" y1="70" x2="120" y2="124" stroke="var(--coral)" stroke-width="0.8" stroke-dasharray="3 3"/><text x="108" y="134" font-size="9" fill="var(--coral)">T_B</text><text x="150" y="44" font-size="8" fill="currentColor">B&gt;0 (size)</text><text x="50" y="110" font-size="8" fill="currentColor">B&lt;0 (attraction)</text><text x="124" y="66" font-size="8" fill="var(--coral)">B=0</text></svg></div>
+      <div class="figcap">B is negative at low T (attraction), positive at high T (size), and zero at the Boyle temperature.</div>
+      <div class="note spine"><span class="k">Spine</span><span>The Boyle temperature isn't a random fact to memorise — it's simply "the temperature at which the leading deviation term vanishes." At T<sub>B</sub>, Z ≈ 1 over a wide pressure range: the gas behaves ideally on purpose.</span></div>
+      <div class="note connect"><span class="k">Connects to</span><span>The geometric-series trick is the same <span class="mono">1/(1−x) = 1 + x + x² + …</span> from your maths chapters. Chemistry didn't invent new maths — it borrowed yours to describe a gas.</span></div>
+    </div>
+  </section>
+
+  <!-- Station 10 (forces) placed as bridge in Act II -->
+  <section class="station" id="xpl-s10">
+    <div class="st-head"><span class="depth core">Core</span><div class="st-num">Station 08</div><div class="st-title">What "a" really is: intermolecular forces</div></div>
+    <div class="st-body">
+      <p class="picture">The van der Waals <span class="mono">a</span> is a single number hiding a family of attractions. All are electrical, all get weaker fast with distance — and the exponent tells you which force you're looking at.</p>
+      <div class="eq"><span class="lab">distance laws (energy ∝ 1/rⁿ)</span>ion–dipole 1/r²&nbsp;·&nbsp;dipole–dipole (fixed) 1/r³&nbsp;·&nbsp;ion–induced 1/r⁴&nbsp;·&nbsp;dipole–dipole (rotating) 1/r⁶&nbsp;·&nbsp;London 1/r⁶</div>
+      <p>The weak, universal, short-range ones — rotating dipole–dipole and <b>London dispersion</b> (both 1/r⁶) — are the glue behind most condensation. London grows with size and polarizability, which is why HI &gt; HBr &gt; HCl and why big molecules stick.</p>
+      <div class="note connect"><span class="k">Connects to</span><span>Polarity and electronegativity from your <b>bonding</b> chapter decide which force is present. A molecule's a-value is really its intermolecular-force strength wearing a number.</span></div>
+      <div class="note watch"><span class="k">Watch out</span><span>Don't confuse the exponents — <b>rotating</b> dipole–dipole is 1/r⁶, <b>fixed</b> is 1/r³. That swap is a favourite matrix-match trap.</span></div>
+    </div>
+  </section>
+
+  <!-- ================= ACT III ================= -->
+  <div class="act-label" id="xpl-act3">Act III · The Condensed</div>
+  <p class="act-sub">When deviation runs all the way to a phase change.</p>
+
+  <!-- Station 8 -->
+  <section class="station hard" id="xpl-s8">
+    <div class="st-head"><span class="depth deep">Deep</span><div class="st-num">Station 09</div><div class="st-title">The critical point: where gas and liquid become one</div></div>
+    <div class="st-body">
+      <p class="picture">Push attraction far enough and the gas doesn't just deviate — it <b>condenses</b>. Plot pressure against volume at a fixed temperature (an Andrews isotherm) and cool step by step. High above a special temperature the curve is a smooth Boyle-like hyperbola. Lower it, and a <b>flat shelf</b> appears: as you squeeze, pressure stops rising while gas turns to liquid at constant pressure. That shelf is coexistence — liquid and vapour together.</p>
+      <p>The shelf shrinks as temperature rises and collapses to a single point at the <b>critical temperature T<sub>c</sub></b>. There, liquid and gas become indistinguishable: same density, the meniscus vanishes, surface tension → 0. Above T<sub>c</sub>, no shelf ever appears — <b>no pressure can liquefy the gas.</b></p>
+      <div class="figure"><svg viewBox="0 0 240 152" class="fig"><line x1="30" y1="130" x2="228" y2="130" stroke="currentColor" stroke-width="1.2"/><line x1="30" y1="130" x2="30" y2="14" stroke="currentColor" stroke-width="1.2"/><text x="10" y="24" font-size="10" fill="currentColor">P</text><text x="220" y="145" font-size="10" fill="currentColor">V</text><path d="M58,120 C74,66 122,50 130,49 C138,50 178,72 202,120 Z" fill="var(--teal-soft)" stroke="var(--ink-faint)" stroke-width="1" stroke-dasharray="3 3"/><text x="96" y="112" font-size="8" fill="var(--ink-faint)">liquid + vapour</text><path d="M40,58 C56,56 60,86 86,94 L152,94 C184,94 198,110 216,122" fill="none" stroke="var(--ink-soft)" stroke-width="1.4"/><text x="196" y="118" font-size="8" fill="var(--ink-soft)">T&lt;Tc</text><path d="M44,38 C82,42 116,49 130,49 C152,49 182,68 216,108" fill="none" stroke="var(--coral)" stroke-width="1.8"/><text x="150" y="44" font-size="8" fill="var(--coral)">Tc</text><path d="M50,24 C112,30 172,46 216,92" fill="none" stroke="var(--amber)" stroke-width="1.4"/><text x="184" y="64" font-size="8" fill="var(--amber)">T&gt;Tc</text><circle cx="130" cy="49" r="3.6" fill="var(--coral)"/><text x="135" y="45" font-size="9" fill="var(--coral)">C</text></svg></div>
+      <div class="figcap">Below Tc a flat plateau = liquid and vapour coexisting; it shrinks to the critical point C at Tc.</div>
+      <div class="eq key"><span class="lab">critical constants from a and b</span>V<sub>c</sub> = 3b&nbsp;·&nbsp;P<sub>c</sub> = a/27b²&nbsp;·&nbsp;T<sub>c</sub> = 8a/27Rb&nbsp;·&nbsp;Z<sub>c</sub> = 3/8</div>
+      <details class="build">
+        <summary>Build it from scratch — the critical point is an inflection <span class="chev">›</span></summary>
+        <div class="build-body">
+          <p>At the critical point the S-shaped vdW isotherm flattens into a horizontal <b>inflection</b> — the same idea from your <b>calculus</b>: the tangent is flat and the curvature changes sign. So <i>both</i> derivatives vanish:</p>
+          <div class="eq" style="margin-left:0">(∂P/∂V)<sub>T</sub> = 0&nbsp;&nbsp;and&nbsp;&nbsp;(∂²P/∂V²)<sub>T</sub> = 0</div>
+          <p>Apply these two conditions to the vdW equation <span class="mono">P = RT/(V−b) − a/V²</span> and you get two equations. Solve them together with the equation itself (three equations, three unknowns P<sub>c</sub>, V<sub>c</sub>, T<sub>c</sub>) and out drop <b>V<sub>c</sub> = 3b, P<sub>c</sub> = a/27b², T<sub>c</sub> = 8a/27Rb</b>. Plug those into Z = PV/RT and every van der Waals gas gives the same <b>Z<sub>c</sub> = 3/8 = 0.375</b>.</p>
+        </div>
+      </details>
+      <div class="note connect"><span class="k">Connects to</span><span>Larger <b>a</b> → higher <b>T<sub>c</sub></b> → easier to liquefy. This is Station 06's promise cashed in: T<sub>c</sub> is a direct readout of intermolecular attraction.</span></div>
+      <div class="note watch"><span class="k">Watch out</span><span>Z<sub>c</sub> is <b>3/8</b>, never 8/3 — a deliberate trap in options. And T<sub>c</sub> must go in as kelvin.</span></div>
+    </div>
+  </section>
+
+  <!-- Station 9 -->
+  <section class="station hard" id="xpl-s9">
+    <div class="st-head"><span class="depth deep">Deep</span><div class="st-num">Station 10</div><div class="st-title">Actually making a liquid: Joule–Thomson</div></div>
+    <div class="st-body">
+      <p class="picture">Knowing a gas <i>can</i> liquefy below T<sub>c</sub> is not the same as doing it. The industrial trick is to let a compressed gas <b>expand through a nozzle</b>. As it expands, molecules move apart — and to move apart they must do work <b>against their own attraction</b>, spending kinetic energy. Less KE means (Station 02) lower temperature. The gas cools itself.</p>
+      <div class="eq"><span class="lab">Joule–Thomson</span>μ<sub>JT</sub> = (∂T/∂P)<sub>H</sub>&nbsp;·&nbsp;cools only if T &lt; inversion temperature T<sub>i</sub> = 2a/Rb</div>
+      <p>But it only cools <b>below the inversion temperature</b> T<sub>i</sub>. Above it, the repulsive/size effect dominates and the gas actually <i>warms</i> on expansion. For an <b>ideal gas there's no attraction at all</b>, so nothing to work against: μ<sub>JT</sub> = 0 — it neither cools nor warms, and can never be liquefied this way.</p>
+      <div class="note spine"><span class="k">Spine</span><span>Same two culprits again: attraction cools (the a effect), size warms (the b effect), and T<sub>i</sub> = 2a/Rb is exactly where they balance. Notice T<sub>i</sub> = 2·T<sub>B</sub> — the inversion temperature is just twice the Boyle temperature.</span></div>
+      <div class="note connect"><span class="k">Connects to</span><span>This is why <b>He was the last gas ever liquefied.</b> Its tiny a gives T<sub>i</sub> below room temperature, so at 300 K helium <i>warms</i> when throttled — you must pre-cool it with liquid nitrogen before the trick works at all.</span></div>
+    </div>
+  </section>
+
+  <!-- Station 11 -->
+  <section class="station" id="xpl-s11">
+    <div class="st-head"><span class="depth core">Core</span><div class="st-num">Station 11</div><div class="st-title">The liquid it becomes: surface tension & viscosity</div></div>
+    <div class="st-body">
+      <p class="picture">Once condensed, the same attraction that caused it all now rules the liquid. A molecule inside is pulled evenly; one at the surface is pulled only inward — so the surface pulls itself taut and minimises its area. That's <b>surface tension</b>, and it's why drops are spheres.</p>
+      <p><b>Viscosity</b> is the same attraction resisting flow — layers of liquid gripping each other. Both are just intermolecular force showing up in bulk, so both <b>fall as temperature rises</b> (heat gives molecules the KE to break free), and surface tension drops to zero exactly at T<sub>c</sub>, where the liquid stops being distinct from vapour.</p>
+      <div class="eq"><span class="lab">temperature dependence</span>γ (surface tension) ↓ with T, → 0 at T<sub>c</sub>&nbsp;·&nbsp;η (viscosity) = A·e^(E<sub>a</sub>/RT)&nbsp;→&nbsp;ln η vs 1/T is linear</div>
+      <p><b>Vapour pressure & boiling</b> close the loop: a liquid boils when its vapour pressure equals the pressure pushing down on it. Up a mountain the air pushes less, so water boils below 100 °C and food cooks slowly — the pressure-cooker fact, explained.</p>
+      <div class="note watch"><span class="k">Watch out</span><span>Both γ and η <b>decrease</b> with temperature (a common reversal in options). And it's <b>ln η</b> vs 1/T that's linear, not η itself.</span></div>
+    </div>
+  </section>
+
+  <!-- ASK panel (stub for step-2 wiring) -->
+  <section class="ask" id="xpl-ask">
+    <div class="eyebrow">Stuck on a step?</div>
+    <h3>Ask about States of Matter</h3>
+    <p>Type what's confusing — "why is Z less than 1 at low temperature?", "re-derive PV=⅓mNc̄² slower" — and get a first-principles explanation in plain words.</p>
+    <div class="row">
+      <input id="askq" type="text" placeholder="Ask about a concept or a derivation…" aria-label="Ask a question about States of Matter" disabled>
+      <button id="asksend" disabled>Ask</button>
+    </div>
+    <div class="status" id="askstatus">Tutor not connected yet — this button turns on once the Claude API key is wired in (next build step).</div>
+    <div class="answer" id="askans" aria-live="polite"></div>
+    <div class="guard">This tutor explains concepts and re-derives steps. By design it will <b>not</b> hand over answers to the pattern or practice questions — those you earn.</div>
+  </section>
+
+  <!-- closer -->
+  <section class="closer">
+    <h3>The whole chapter in six breaths</h3>
+    <p>Ideal gas = lonely point-molecules obeying PV=nRT (Act I). Real molecules break that by <b>taking up space</b> and <b>attracting</b> — measured by <b>Z</b>. Van der Waals patches both flaws (a = attraction, b = size); the virial equation writes the deviation as a series whose first coefficient <b>B = b − a/RT</b> vanishes at the Boyle temperature (Act II). Push attraction far enough and the gas condenses at the critical point, is coaxed into liquid by Joule–Thomson cooling, and settles into a liquid ruled by surface tension and viscosity (Act III).</p>
+    <p>That's the understanding. Now go make it automatic: <a href="#" onclick="var b=document.querySelector('#tabs button[data-tab=patterns]')||document.querySelector('#tabs button:not([data-tab=explain])');if(b)b.click();return false;">open the patterns and guided problems →</a></p>
+  </section>
+
+  <div class="foot">Pattern Lab · Explain layer · States of Matter · first-principles read before drill</div>
+</div>`;
+
 
 /* ===== CURRICULUM TREE  (Subjects > Subsections > Chapters) ===== */
 const CURRICULUM=[
@@ -1225,7 +1473,7 @@ const CONTENT={
   "maths/trig/pev":{key:"pev",taxa:PEV_TAXA,formulae:PEV_FORMULAE,patterns:PEV_PATTERNS,guided:PEV_GUIDED,practice:PEV_PRACTICE,pracDocs:PEV_PRAC_DOCS,pracTiers:PEV_PRAC_TIERS},
   "maths/trig/teq":{key:"teq",taxa:TEQ_TAXA,formulae:TEQ_FORMULAE,patterns:TEQ_PATTERNS,guided:TEQ_GUIDED,practice:TEQ_PRACTICE,pracDocs:TEQ_PRAC_DOCS,pracTiers:TEQ_PRAC_TIERS},
   "phys/mech/wpe":{key:"wpe",taxa:WPE_TAXA,formulae:WPE_FORMULAE,patterns:WPE_PATTERNS,guided:WPE_GUIDED,practice:WPE_PRACTICE,figs:WPE_FIG,pracDocs:WPE_PRAC_DOCS,pracTiers:WPE_PRAC_TIERS},
-  "chem/phys/som":{key:"chemsom",taxa:CHEM_SOM_TAXA,formulae:CHEM_SOM_FORMULAE,patterns:CHEM_SOM_PATTERNS,guided:CHEM_SOM_GUIDED,practice:CHEM_SOM_PRACTICE,figs:CHEM_SOM_FIG,pracDocs:CHEM_SOM_PRAC_DOCS,pracTiers:CHEM_SOM_PRAC_TIERS}
+  "chem/phys/som":{key:"chemsom",taxa:CHEM_SOM_TAXA,formulae:CHEM_SOM_FORMULAE,patterns:CHEM_SOM_PATTERNS,guided:CHEM_SOM_GUIDED,practice:CHEM_SOM_PRACTICE,figs:CHEM_SOM_FIG,pracDocs:CHEM_SOM_PRAC_DOCS,pracTiers:CHEM_SOM_PRAC_TIERS,explain:CHEM_SOM_EXPLAIN}
 };
 function chapPath(a,b,c){return a+"/"+b+"/"+c;}
 function findChapter(path){

@@ -44,7 +44,7 @@ async function setState(kind, key, patch){
 
 /* ---------- current chapter + practice helpers (keyed by global id) ---------- */
 let CHAP = null;  // e.g. "maths/trig/fg" ; practice gid = CHAP + "::" + src
-let FIGS={}, PRAC_DOCS=null, CUR_TIERS=null;
+let FIGS={}, PRAC_DOCS=null, CUR_TIERS=null, EXPLAIN=null;
 function figHTML(key){ return (key && FIGS[key]) ? `<div class="figbox">${FIGS[key]}</div>` : ''; }
 function normAtt(v){ if(!v) return {a:false,r:null,f:false,ci:null}; if(typeof v==='string') return {a:true,r:v,f:false,ci:null}; return Object.assign({a:false,r:null,f:false,ci:null}, v); }
 function attOf(src){ return normAtt(getState('practice', CHAP + '::' + src)); }
@@ -412,6 +412,26 @@ function mountFlash(){
 }
 
 
+function mountExplain(){
+  const tabs=document.getElementById('tabs');
+  let btn=document.getElementById('tab-explain');
+  let panel=document.getElementById('explain');
+  if(!EXPLAIN){ if(btn) btn.style.display='none'; if(panel){ panel.classList.remove('on'); panel.innerHTML=''; } return; }
+  if(!panel){
+    panel=document.createElement('section'); panel.className='panel'; panel.id='explain';
+    const anchor=document.getElementById('map');
+    if(anchor&&anchor.parentNode) anchor.parentNode.insertBefore(panel,anchor);
+    else { const mn=document.querySelector('main'); if(mn) mn.appendChild(panel); }
+  }
+  panel.innerHTML=EXPLAIN;
+  if(!btn){
+    btn=document.createElement('button'); btn.id='tab-explain'; btn.dataset.tab='explain';
+    btn.innerHTML='<span class="n">READ</span>Explain';
+    tabs.insertBefore(btn, tabs.firstChild);
+  }
+  btn.style.display='';
+}
+
 /* ===== CHAPTER LOADING + MODE ===== */
 function setMode(ready){
   document.getElementById('tabs').style.display = ready ? '' : 'none';
@@ -423,15 +443,17 @@ function setMode(ready){
 function loadChapter(path){
   const c = CONTENT[path], m = findChapter(path);
   CHAP = path;
+  EXPLAIN = (c && c.explain) || null;
   if (c){ TAXA=c.taxa; FORMULAE=c.formulae; PATTERNS=c.patterns; GUIDED=c.guided; PRACTICE=c.practice; FIGS=c.figs||{}; PRAC_DOCS=c.pracDocs||null; CUR_TIERS=c.pracTiers||(typeof PRAC_TIERS!=="undefined"?PRAC_TIERS:[{k:"All",l:"All"},{k:"Flag",l:"\u2605 Flagged"}]); }
   document.getElementById('wtitle').textContent = m.chap.name;
   document.getElementById('wsub').textContent =
     m.subjName + ' \u00b7 ' + m.subName + (m.chap.grade ? ('  \u00b7  Class ' + m.chap.grade) : '');
   if (c){
     setMode(true);
-    renderMap(); mountFormulae(); mountPatterns(); mountGuided(); mountPractice(); renderReview(); mountFlash();
-    document.querySelectorAll('#tabs button').forEach((x,i)=>x.classList.toggle('on', i===0));
-    document.querySelectorAll('.panel').forEach(p=>p.classList.toggle('on', p.id==='map'));
+    renderMap(); mountFormulae(); mountPatterns(); mountGuided(); mountPractice(); renderReview(); mountFlash(); mountExplain();
+    const startTab = EXPLAIN ? 'explain' : 'map';
+    document.querySelectorAll('#tabs button').forEach(x=>x.classList.toggle('on', x.dataset.tab===startTab));
+    document.querySelectorAll('.panel').forEach(p=>p.classList.toggle('on', p.id===startTab));
   } else {
     setMode(false);
     document.getElementById('coming-name').textContent = m.chap.name;
