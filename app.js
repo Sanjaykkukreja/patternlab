@@ -432,6 +432,28 @@ function mountExplain(){
   btn.style.display='';
 }
 
+/* ===== tab order + last-chapter memory ===== */
+function reorderTabs(){
+  const tabs=document.getElementById('tabs'); if(!tabs) return;
+  // order by visible label so it works regardless of each tab's data-tab id
+  const order=['explain','pattern','guided','practice','coverage','map','formula','review'];
+  function rank(btn){
+    const t=(btn.textContent||'').toLowerCase();
+    for(let i=0;i<order.length;i++){ if(t.indexOf(order[i])>=0) return i; }
+    return order.length+1;
+  }
+  Array.prototype.slice.call(tabs.querySelectorAll('button'))
+    .map((b,i)=>[b,i])
+    .sort((A,B)=>{ const ra=rank(A[0]), rb=rank(B[0]); return ra!==rb ? ra-rb : A[1]-B[1]; })
+    .forEach(x=>tabs.appendChild(x[0]));
+}
+function lastChapKey(){
+  try{ const cur=JSON.parse(localStorage.getItem(CUR_KEY)||'null'); return 'patternlab:lastchap:'+((cur&&cur.id)||'anon'); }
+  catch(e){ return 'patternlab:lastchap:anon'; }
+}
+function saveLastChap(path){ try{ localStorage.setItem(lastChapKey(), path); }catch(e){} }
+function loadLastChap(){ try{ return localStorage.getItem(lastChapKey()); }catch(e){ return null; } }
+
 /* ===== CHAPTER LOADING + MODE ===== */
 function setMode(ready){
   document.getElementById('tabs').style.display = ready ? '' : 'none';
@@ -449,9 +471,9 @@ function loadChapter(path){
   document.getElementById('wsub').textContent =
     m.subjName + ' \u00b7 ' + m.subName + (m.chap.grade ? ('  \u00b7  Class ' + m.chap.grade) : '');
   if (c){
-    setMode(true);
-    renderMap(); mountFormulae(); mountPatterns(); mountGuided(); mountPractice(); renderReview(); mountFlash(); mountExplain();
-    const startTab = EXPLAIN ? 'explain' : 'map';
+    setMode(true); saveLastChap(path);
+    renderMap(); mountFormulae(); mountPatterns(); mountGuided(); mountPractice(); renderReview(); mountFlash(); mountExplain(); reorderTabs();
+    const fb=document.querySelector('#tabs button'); const startTab = fb ? fb.dataset.tab : 'map';
     document.querySelectorAll('#tabs button').forEach(x=>x.classList.toggle('on', x.dataset.tab===startTab));
     document.querySelectorAll('.panel').forEach(p=>p.classList.toggle('on', p.id===startTab));
   } else {
@@ -476,7 +498,11 @@ function renderSelectors(){
     return `<button class="selpill ${sb.id===sel.sub?'on':''} ${r?'':'dim'}" data-sub="${sb.id}">${sb.name}</button>`;
   }).join('');
   const sub = subj.subs.find(x=>x.id===sel.sub);
-  document.getElementById('sel-chaps').innerHTML = sub.chapters.map(c => {
+  const chapsOrdered = sub.chapters.slice().sort((a,b)=>{
+    const ra=!!CONTENT[chapPath(subj.id,sub.id,a.id)], rb=!!CONTENT[chapPath(subj.id,sub.id,b.id)];
+    return (rb?1:0)-(ra?1:0);
+  });
+  document.getElementById('sel-chaps').innerHTML = chapsOrdered.map(c => {
     const p = chapPath(subj.id, sub.id, c.id), ready = !!CONTENT[p];
     return `<button class="selpill chap ${c.id===sel.chap?'on':''} ${ready?'ready':'soon'}" data-chap="${c.id}">`
       + `<span class="cn">${c.name}</span>`
@@ -528,8 +554,18 @@ async function chooseProfile(id, name){
 
 /* ===== BOOT ===== */
 function startApp(){
-  // default landing selection = first ready chapter (Maths > Trigonometry > Functions & Graphs)
-  sel.subj = 'maths'; sel.sub = 'trig'; sel.chap = firstReadyChap(CURRICULUM[0], CURRICULUM[0].subs[0]);
+  // restore last opened chapter if still valid & ready; else default to first ready chapter
+  let restored=false; const last=loadLastChap();
+  if(last){
+    const parts=last.split('/');
+    if(parts.length===3){
+      const sj=CURRICULUM.find(x=>x.id===parts[0]);
+      const sb2=sj&&sj.subs.find(x=>x.id===parts[1]);
+      const cp=sb2&&sb2.chapters.find(x=>x.id===parts[2]);
+      if(sj&&sb2&&cp&&CONTENT[last]){ sel.subj=parts[0]; sel.sub=parts[1]; sel.chap=parts[2]; restored=true; }
+    }
+  }
+  if(!restored){ sel.subj='maths'; sel.sub='trig'; sel.chap=firstReadyChap(CURRICULUM[0], CURRICULUM[0].subs[0]); }
   renderSelectors();
   loadChapter(chapPath(sel.subj, sel.sub, sel.chap));
 }

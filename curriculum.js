@@ -1532,7 +1532,7 @@ const CHAPTER_META = [
     topic:   "Physical Chemistry",
     chapter: "States of Matter",
     sources: ["Narayana Module (JEE-Adv Chemistry Vol-II)"],
-    created: "Jun 2026"
+    created: "30 Jun 2026"
   }
 ];
 
