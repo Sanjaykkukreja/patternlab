@@ -1653,6 +1653,400 @@ let CS_PRAC_DOCS = [
 
 const CS_PRAC_TIERS=[{k:"All",l:"All"},{k:"1",l:"Foundation"},{k:"2",l:"JEE Main"},{k:"3",l:"JEE Advanced"},{k:"Flag",l:"\u2605 Flagged"}];
 
+/* =========================================================================
+   Chapter: Momentum & Its Conservation  (phys/mech/mom)  — CORE
+   Source: SBT Mechanics II, Chapter 2 "Momentum and Its Conservation",
+           pp.2.1-2.15 (Introduction, Momentum, Force & Momentum [Newton II /
+           dP/dt form + thrust], Impulse, Impulsive Force, Conservation of
+           Linear Momentum). Theory + worked Examples 1-19 (printed solutions).
+   NOTE: Collision (sections 6.1-6.7) is a SEPARATE chapter, uploaded later.
+   TIER-3 STATUS: built from the chapter's own worked Examples (verified vs
+   printed solutions). This is the "complete scaffolding, fewer Practice"
+   fallback — the SBT Worksheets + Answer Sheet for this chapter were not yet
+   supplied, so the >=20 test-paper-biased tier-3 rule is deliberately
+   under-filled and flagged for top-up (see pracDocs note).
+   No Explain layer (mechanics problem-solving chapter, per Maths/technique
+   policy applied to physics drilling chapters).
+   ========================================================================= */
+
+/* ===== TAXONOMY ===== */
+let MOM_EXPLAIN = `<div class="xpl">
+<!-- HERO: the thesis -->
+  <section class="hero">
+    <div class="eyebrow">The one idea</div>
+    <h2>Momentum is what a force actually changes — and the universe keeps the total fixed.</h2>
+    <p>A truck and a car at the same speed are not the same kind of dangerous. The truck carries more <em>quantity of motion</em> — harder to start, harder to stop. That quantity is <span class="mono">p = mv</span>, and it is a <b>vector</b>: it has a direction, and turning it counts as changing it.</p>
+    <p>Newton didn't write <span class="mono">F = ma</span>. He wrote something deeper — force is the <b>rate at which momentum changes</b>. From that one sentence fall three things: impulse (force stretched over time), the trick of impulsive forces, and the crown jewel — that in an isolated system the total momentum <i>never changes at all</i>.</p>
+    <div class="eq key zline"><span class="lab">The spine of the whole chapter</span>F = dP/dt&nbsp;&nbsp;&nbsp;→&nbsp;&nbsp;&nbsp;no external force ⇒ dP/dt = 0 ⇒ P = constant</div>
+    <div class="note spine"><span class="k">Spine</span><span>Keep one question in your head the whole way down: <i>is there an external force on my system, or not?</i> If not, the total momentum is frozen — and that single fact solves recoils, explosions, collisions, jumps, and chains.</span></div>
+  </section>
+
+  <nav class="xpl-rail" aria-label="Chapter acts"><a href="#xpl-act1"><b>Act I</b> The Quantity</a><a href="#xpl-act2"><b>Act II</b> The Change</a><a href="#xpl-act3"><b>Act III</b> The Law</a></nav>
+
+  <!-- ================= ACT I ================= -->
+  <div class="act-label" id="xpl-act1">Act I · The Quantity of Motion</div>
+  <p class="act-sub">What momentum is, and why its direction is the whole game.</p>
+
+  <!-- Station 1 -->
+  <section class="station easy" id="xpl-s1">
+    <div class="st-head"><span class="depth core">Core</span><div class="st-num">Station 01</div><div class="st-title">p = mv, and why it is a vector</div></div>
+    <div class="st-body">
+      <p class="picture">Picture two things that are hard to stop: a heavy truck rolling slowly, and a light bullet flying fast. Both have a lot of <b>quantity of motion</b>. One packs it into mass, the other into speed. Momentum <span class="mono">p = mv</span> is exactly that quantity — and because velocity points somewhere, so does momentum.</p>
+      <div class="eq key"><span class="lab">Momentum of a body, and of a whole system</span>p = mv&nbsp;&nbsp;&nbsp;·&nbsp;&nbsp;&nbsp;P<sub>system</sub> = Σ m<sub>i</sub>v<sub>i</sub> = M v<sub>CM</sub></div>
+      <p>That second form is quietly powerful: the momentum of a swarm of particles equals one imaginary particle — the whole mass <span class="mono">M</span> riding on the centre of mass. You never have to track every piece; you track the COM.</p>
+      <div class="note watch"><span class="k">Watch out</span><span>Because <span class="mono">p</span> is a vector, <b>changing direction is changing momentum</b>, even at constant speed. A ball bouncing straight back off a wall at the same speed has <i>not</i> kept its momentum — it has reversed it, a change of <span class="mono">2mv</span>. This one idea generates half the problems in Act II.</span></div>
+      <div class="note connect"><span class="k">Connects to</span><span>You met <span class="mono">v<sub>CM</sub></span> in Centre of Mass. Momentum is just mass × that same COM velocity — the two chapters are one story told twice.</span></div>
+    </div>
+  </section>
+
+  <!-- Station 2 -->
+  <section class="station easy" id="xpl-s2">
+    <div class="st-head"><span class="depth core">Core</span><div class="st-num">Station 02</div><div class="st-title">Why a rebound doubles, not cancels</div></div>
+    <div class="st-body">
+      <p class="picture">The single most common slip in this chapter: "the speed is the same before and after, so the momentum didn't change." Wrong — and the fix is to always draw the two arrows.</p>
+      <div class="figure"><svg viewBox="0 0 220 120" class="fig"><line x1="150" y1="18" x2="150" y2="104" stroke="var(--teal)" stroke-width="3"/><text x="128" y="14" font-size="8" fill="var(--teal)">wall</text><circle cx="52" cy="44" r="8" fill="var(--coral)"/><line x1="64" y1="44" x2="138" y2="44" stroke="var(--coral)" stroke-width="1.8"/><polygon points="138,44 129,40 129,48" fill="var(--coral)"/><text x="82" y="38" font-size="9" fill="var(--coral)">+mv (before)</text><circle cx="52" cy="82" r="8" fill="none" stroke="currentColor" stroke-width="1.5"/><line x1="40" y1="82" x2="22" y2="82" stroke="currentColor" stroke-width="1.6"/><polygon points="22,82 31,78 31,86" fill="currentColor"/><text x="26" y="76" font-size="9" fill="currentColor">−mv (after)</text><text x="40" y="116" font-size="8.5" fill="currentColor">Δp = (−mv) − (+mv) = −2mv</text></svg></div>
+      <div class="figcap">A normal rebound at unchanged speed still flips the momentum arrow — the change is 2mv, not zero.</div>
+      <p>For an <b>oblique</b> bounce (hitting at an angle), only the component <i>along the wall's normal</i> reverses; the component sliding along the wall is untouched. So <span class="mono">Δp = 2mu cosθ</span>, pointing straight out of the wall.</p>
+      <div class="note watch"><span class="k">Watch out</span><span>Resolve into normal + tangential <em>before</em> you subtract. Students who work with the full velocity vectors get lost; students who split it off get the answer in one line.</span></div>
+    </div>
+  </section>
+
+  <!-- ================= ACT II ================= -->
+  <div class="act-label" id="xpl-act2">Act II · The Change — Force, Impulse, and dP/dt</div>
+  <p class="act-sub">Newton's real second law, and the two ways a force delivers momentum.</p>
+
+  <!-- Station 3 -->
+  <section class="station hard" id="xpl-s3">
+    <div class="st-head"><span class="depth deep">Deep</span><div class="st-num">Station 03</div><div class="st-title">The law Newton actually wrote: F = dP/dt</div></div>
+    <div class="st-body">
+      <p class="picture">Everyone learns <span class="mono">F = ma</span>. But that is a special case — the case where mass never changes. Newton's own statement is more general and more honest: <b>force is the rate at which momentum changes.</b> Get comfortable here and the strangest problems in the chapter (chains, rockets, water jets) stop being strange.</p>
+      <div class="eq key"><span class="lab">The real second law</span>F = dP/dt&nbsp;&nbsp;=&nbsp;&nbsp;d(mv)/dt</div>
+      <details class="build">
+        <summary>Why F = ma is only half the story <span class="chev">›</span></summary>
+        <div class="build-body">
+          <ol>
+            <li>Start from the honest law: <span class="mono">F = d(mv)/dt</span>.</li>
+            <li>Use the product rule — because <i>both</i> m and v might change: <span class="mono">F = m(dv/dt) + v(dm/dt)</span>.</li>
+            <li>If the mass is constant, <span class="mono">dm/dt = 0</span>, the second term vanishes, and you're left with <span class="mono">F = m(dv/dt) = ma</span>. That's the familiar case.</li>
+            <li>But if mass is being gained or lost — a chain piling up, a rocket burning fuel, a jet of water arriving — then <span class="mono">dm/dt ≠ 0</span>, and the extra term <span class="mono">v(dm/dt)</span> <b>is</b> the thrust. F=ma alone would miss it entirely.</li>
+          </ol>
+          <p class="build-punch">So "F = ma" isn't wrong — it's incomplete. The full <span class="mono">dP/dt</span> carries a second term that only shows up when mass flows.</p>
+        </div>
+      </details>
+      <div class="note connect"><span class="k">Connects to</span><span>That second term <span class="mono">v(dm/dt)</span> is the entire engine behind Stations 04 and 05 — the water bend and the falling chain. They look like different problems; they're the same term.</span></div>
+    </div>
+  </section>
+
+  <!-- Station 4 -->
+  <section class="station med" id="xpl-s4">
+    <div class="st-head"><span class="depth build">Build</span><div class="st-num">Station 04</div><div class="st-title">Mass that flows: jets, bends, and ρAv²</div></div>
+    <div class="st-body">
+      <p class="picture">A stream of water hits a wall and stops. No single mass accelerates — instead, fresh mass keeps arriving and keeps having its motion killed. The force is steady because the <i>arrival</i> is steady. This is <span class="mono">dP/dt</span> with the flowing-mass term doing all the work.</p>
+      <div class="eq key"><span class="lab">Force from a stream stopping head-on</span>mass arriving per second = ρAv&nbsp;&nbsp;→&nbsp;&nbsp;F = (ρAv)·v = ρAv²</div>
+      <p>Two things scale with speed at once — <i>how much</i> mass arrives (ρAv) and <i>how much</i> velocity each bit loses (v). That double dependence is why the force goes as <b>v²</b>: double the wind speed and the push quadruples.</p>
+      <div class="figure"><svg viewBox="0 0 220 120" class="fig"><line x1="150" y1="14" x2="150" y2="108" stroke="var(--teal)" stroke-width="2.5"/><text x="156" y="20" font-size="8" fill="var(--teal)">wall</text><line x1="24" y1="46" x2="146" y2="46" stroke="var(--coral)" stroke-width="1.6"/><line x1="24" y1="60" x2="146" y2="60" stroke="var(--coral)" stroke-width="1.6"/><line x1="24" y1="74" x2="146" y2="74" stroke="var(--coral)" stroke-width="1.6"/><polygon points="146,46 137,42 137,50" fill="var(--coral)"/><polygon points="146,60 137,56 137,64" fill="var(--coral)"/><polygon points="146,74 137,70 137,78" fill="var(--coral)"/><text x="52" y="38" font-size="9" fill="var(--coral)">speed v, area A</text><text x="40" y="100" font-size="8.5" fill="currentColor">arrives at ρAv per sec, loses all of v → F = ρAv²</text></svg></div>
+      <div class="figcap">A steady stream: the force is steady because mass arrives at a steady rate.</div>
+      <details class="build">
+        <summary>The right-angle bend: why √2, not 2 <span class="chev">›</span></summary>
+        <div class="build-body">
+          <ol>
+            <li>Water enters a pipe moving right with momentum-per-second <span class="mono">ρAv²</span>, and leaves moving down (say) with the same magnitude <span class="mono">ρAv²</span> — the bend turned it 90°.</li>
+            <li>The <i>change</i> in momentum per second is the vector difference of two perpendicular arrows of equal length. That difference is the diagonal: <span class="mono">√((ρAv²)² + (ρAv²)²) = √2·ρAv²</span>.</li>
+            <li>It points at 45° — outward along the bisector of the bend. The external agent must supply exactly this to hold the pipe still.</li>
+          </ol>
+          <p class="build-punch">Turning momentum through 90° costs √2 times a single stream's push — a hypotenuse, never a sum or a difference.</p>
+        </div>
+      </details>
+    </div>
+  </section>
+
+  <!-- Station 5 -->
+  <section class="station hard" id="xpl-s5">
+    <div class="st-head"><span class="depth deep">Deep</span><div class="st-num">Station 05</div><div class="st-title">The falling chain, and where 3Mg comes from</div></div>
+    <div class="st-body">
+      <p class="picture">A chain is released and piles onto a table. Weigh the table at any instant and you read <i>three</i> times the weight of what's fallen. That factor of three surprises everyone — until you see there are two separate things pushing down.</p>
+      <div class="eq key"><span class="lab">Force on the table when length x has piled</span>impact thrust 2λgx&nbsp;&nbsp;+&nbsp;&nbsp;pile weight λgx&nbsp;&nbsp;=&nbsp;&nbsp;3λgx&nbsp;&nbsp;&nbsp;(max 3Mg)</div>
+      <details class="build">
+        <summary>Separate the two forces the table feels <span class="chev">›</span></summary>
+        <div class="build-body">
+          <ol>
+            <li><b>The weight of what's already down.</b> A length x is resting on the table, mass <span class="mono">λx</span> (with λ = M/L). Its weight is <span class="mono">λgx</span> — an ordinary static load.</li>
+            <li><b>The thrust of what's arriving.</b> The links landing right now fell a height x, so they arrive at <span class="mono">v = √(2gx)</span>. Mass arriving per second = <span class="mono">λv</span>, and the table must kill all of that velocity: thrust = <span class="mono">λv·v = λv² = λ(2gx) = 2λgx</span>.</li>
+            <li>Add them: <span class="mono">2λgx + λgx = 3λgx</span>. It grows as more piles up, hitting its maximum <span class="mono">3Mg</span> the instant the last link lands (x = L).</li>
+          </ol>
+          <p class="build-punch">The impact thrust is exactly <b>twice</b> the resting weight — so the table feels three times the pile's weight, not one.</p>
+        </div>
+      </details>
+      <div class="note watch"><span class="k">Watch out</span><span>The whole trap is forgetting one of the two pieces. Report only the weight and you'll write Mg; report only the thrust and you'll write 2Mg. The answer needs both.</span></div>
+    </div>
+  </section>
+
+  <!-- Station 6 -->
+  <section class="station med" id="xpl-s6">
+    <div class="st-head"><span class="depth build">Build</span><div class="st-num">Station 06</div><div class="st-title">Impulse: force smeared over time</div></div>
+    <div class="st-body">
+      <p class="picture">Sometimes you don't care <i>how</i> the force varied instant to instant — a bat on a ball, a car hitting a wall. The force is a violent, unknowable spike. But its <b>total effect</b> — the area under the force-time curve — is pinned exactly, and it equals the change in momentum.</p>
+      <div class="eq key"><span class="lab">The impulse-momentum theorem</span>J = ∫F dt = area under F–t&nbsp;&nbsp;=&nbsp;&nbsp;ΔP</div>
+      <p>This is just <span class="mono">F = dP/dt</span> integrated over time. It's a licence to ignore the messy middle: give me the momentum before and after, and I know the impulse — without ever knowing the peak force.</p>
+      <div class="figure"><svg viewBox="0 0 220 118" class="fig"><line x1="26" y1="98" x2="206" y2="98" stroke="currentColor" stroke-width="1.2"/><line x1="26" y1="98" x2="26" y2="12" stroke="currentColor" stroke-width="1.2"/><path d="M26,98 Q70,20 110,20 Q150,20 190,98" fill="var(--teal)" opacity="0.18"/><path d="M26,98 Q70,20 110,20 Q150,20 190,98" fill="none" stroke="var(--teal)" stroke-width="1.8"/><text x="92" y="60" font-size="9" fill="currentColor">area = J = ΔP</text><text x="6" y="16" font-size="10" fill="currentColor">F</text><text x="196" y="112" font-size="10" fill="currentColor">t</text></svg></div>
+      <div class="figcap">The peak is unknowable, but the shaded area — the impulse — equals the momentum change exactly.</div>
+      <div class="note watch"><span class="k">Watch out</span><span>For a rebound, take the momenta with signs: a cricket ball in at 40 and back at 30 gives ΔP = 30 − (−40) = 70 units, not 10. The reversal makes them add.</span></div>
+    </div>
+  </section>
+
+  <!-- Station 7 -->
+  <section class="station hard" id="xpl-s7">
+    <div class="st-head"><span class="depth deep">Deep</span><div class="st-num">Station 07</div><div class="st-title">Impulsive forces: which forces even count</div></div>
+    <div class="st-body">
+      <p class="picture">A kick, a punch, a sudden jerk of a string — these are <b>impulsive</b> forces: enormous magnitude, vanishingly short time, but a finite, real impulse. The deep skill isn't computing them; it's knowing <i>which forces to keep and which to throw away</i> during that tiny instant.</p>
+      <div class="eq key"><span class="lab">The rule</span>During the impulse: keep impulsive forces · drop every finite force (weight, ordinary tension) — their F·Δt ≈ 0</div>
+      <p>Weight is finite. Over a blow lasting a thousandth of a second, gravity's impulse <span class="mono">mg·Δt</span> is negligible next to the blow itself. So you ignore it. The subtlety is <b>friction</b>: it's only impulsive if the normal reaction it rides on is impulsive too.</p>
+      <details class="build">
+        <summary>The horizontal blow vs the angled blow <span class="chev">›</span></summary>
+        <div class="build-body">
+          <ol>
+            <li><b>Horizontal blow.</b> A sharp horizontal impulse doesn't change the normal reaction — N stays equal to mg, an ordinary finite value. So friction (μN) is finite, its impulse ≈ 0, and you drop it. The block simply takes <span class="mono">v = J/m</span>.</li>
+            <li><b>Angled blow.</b> Now the blow has a vertical component. That component spikes the normal reaction — N becomes <i>impulsive</i> — and so friction, riding on N, becomes impulsive too. Now you <b>must</b> keep it.</li>
+            <li>That's why the same block, same μ, same impulse magnitude, ends up slower when the blow is angled: an impulsive friction now eats part of the horizontal impulse.</li>
+          </ol>
+          <p class="build-punch">Weight is never impulsive. Friction is impulsive exactly when its normal reaction is — no sooner.</p>
+        </div>
+      </details>
+      <div class="note connect"><span class="k">Connects to</span><span>Same logic runs the <b>sudden-taut string</b> (impulsive tension) problems: energy is <i>lost</i> in the jerk, so you must use impulse–momentum, never energy conservation, across the instant the string snaps tight.</span></div>
+    </div>
+  </section>
+
+  <!-- ================= ACT III ================= -->
+  <div class="act-label" id="xpl-act3">Act III · The Law — Conservation</div>
+  <p class="act-sub">The one principle that outranks force itself.</p>
+
+  <!-- Station 8 -->
+  <section class="station hard" id="xpl-s8">
+    <div class="st-head"><span class="depth deep">Deep</span><div class="st-num">Station 08</div><div class="st-title">No external force ⇒ momentum is frozen</div></div>
+    <div class="st-body">
+      <p class="picture">Here is the summit. Take <span class="mono">F = dP/dt</span> and ask: what if there is no external force? Then <span class="mono">dP/dt = 0</span>, and <b>the total momentum simply cannot change</b> — no matter what violence happens <i>inside</i> the system. Explosions, collisions, people jumping, springs releasing: all internal, all powerless to shift the total.</p>
+      <div class="eq key"><span class="lab">Conservation of linear momentum</span>F<sub>ext</sub> = 0&nbsp;&nbsp;⇒&nbsp;&nbsp;P = constant&nbsp;&nbsp;(equivalently, v<sub>CM</sub> never changes)</div>
+      <p>Why is it so powerful? Because internal forces come in Newton's-third-law pairs — equal and opposite — so they cancel in the sum. Only an <i>external</i> force can move the total. A bomb blowing apart in flight has its fragments' momenta still adding up to what the whole bomb carried; the centre of mass sails on as if nothing happened.</p>
+      <div class="note watch"><span class="k">Watch out</span><span><b>Kinetic energy is not conserved</b> in an explosion or a sticky collision — chemical or deformation energy leaks in or out. Momentum is the reliable one; energy needs its own separate accounting.</span></div>
+    </div>
+  </section>
+
+  <!-- Station 9 -->
+  <section class="station med" id="xpl-s9">
+    <div class="st-head"><span class="depth build">Build</span><div class="st-num">Station 09</div><div class="st-title">Conserve along one axis only</div></div>
+    <div class="st-body">
+      <p class="picture">The sharpest version of the skill: momentum can be frozen in <i>one direction</i> while it changes freely in another. A projectile that explodes mid-flight still has gravity pulling down — so its vertical momentum is <b>not</b> conserved. But nothing pushes it sideways, so its <b>horizontal</b> momentum is untouched.</p>
+      <div class="eq key"><span class="lab">Component-wise conservation</span>(F<sub>ext</sub>)<sub>x</sub> = 0&nbsp;⇒&nbsp;P<sub>x</sub> conserved&nbsp;&nbsp;&nbsp;— even while P<sub>y</sub> is not</div>
+      <p>This is the key to blocks-on-free-wedges, guns firing at an angle, and a man sliding off a boat. Pick the axis with no external force and conserve momentum there; handle the other axis with energy or kinematics. Two axes, two different tools.</p>
+      <div class="note connect"><span class="k">Connects to</span><span>On a smooth free wedge, horizontal momentum of (block + wedge) stays zero the whole slide — that plus energy conservation cracks the whole problem, without ever touching the contact forces.</span></div>
+    </div>
+  </section>
+
+  <!-- Station 10 -->
+  <section class="station med" id="xpl-s10">
+    <div class="st-head"><span class="depth build">Build</span><div class="st-num">Station 10</div><div class="st-title">The COM never moves: platforms, boats, chains</div></div>
+    <div class="st-body">
+      <p class="picture">If a system starts at rest with no external horizontal force, its centre of mass is <b>nailed in place</b> — forever. A man walking the length of a free boat, an insect crawling along a floating straw: whatever they do, the COM does not budge. That single constraint hands you the answer.</p>
+      <div class="eq key"><span class="lab">COM fixed ⇒ opposite displacements</span>m₁Δx₁ = m₂Δx₂&nbsp;&nbsp;→&nbsp;&nbsp;platform shift = mL/(M+m)</div>
+      <details class="build">
+        <summary>Insect crawls a straw: how far does the straw slide <span class="chev">›</span></summary>
+        <div class="build-body">
+          <ol>
+            <li>System at rest, smooth floor: no external horizontal force, so the COM cannot move.</li>
+            <li>Let the straw slide back by <span class="mono">Δx</span> while the insect moves forward by <span class="mono">Δx<sub>i</sub></span> (both measured against the ground). COM fixed ⇒ <span class="mono">m·Δx<sub>i</sub> = M·Δx</span>.</li>
+            <li>The insect walks the straw's full length L <i>relative to the straw</i>, so its ground move plus the straw's slide-back is L: <span class="mono">Δx<sub>i</sub> + Δx = L</span>.</li>
+            <li>Solve the two together: <span class="mono">Δx = mL/(M+m)</span>. The straw creeps opposite to the crawl.</li>
+          </ol>
+          <p class="build-punch">Two equations — the mass-weighted balance and the relative displacement — pin both moves exactly.</p>
+        </div>
+      </details>
+      <div class="note watch"><span class="k">Watch out</span><span>Don't confuse the walker's move <i>relative to the platform</i> (that's L) with his move <i>relative to the ground</i> (that's less). The relative-velocity bookkeeping is where most marks are lost.</span></div>
+    </div>
+  </section>
+
+  <!-- closer -->
+  <section class="closer">
+    <h3>The whole chapter in five breaths</h3>
+    <p>Momentum <span class="mono">p = mv</span> is directed quantity-of-motion, so turning it counts as changing it (Act I). Newton's real law is <span class="mono">F = dP/dt</span> — which reduces to F=ma only for fixed mass, and carries a thrust term that runs jets, bends, and falling chains; over time it integrates to <b>impulse = ΔP</b>, with impulsive forces obeying "keep the huge, drop the finite" (Act II). And the summit: with no external force the total momentum is frozen — conserved as a vector, axis by axis, with the centre of mass pinned in place. That single law solves recoils, explosions, jumps, and boats (Act III).</p>
+    <p>That's the understanding. Now go make it automatic: <a href="#" onclick="var b=document.querySelector('#tabs button[data-tab=patterns]')||document.querySelector('#tabs button:not([data-tab=explain])');if(b)b.click();return false;">open the patterns and guided problems →</a></p>
+  </section>
+
+  <div class="foot">Pattern Lab · Explain layer · Momentum &amp; Its Conservation · first-principles read before drill</div>
+</div>`;
+
+let MOM_TAXA = [
+  {code:"F1", label:"Momentum as a vector (p = mv)", group:"Foundations"},
+  {code:"F2", label:"Newton II as dP/dt (rate of change)", group:"Foundations"},
+  {code:"F3", label:"Impulse = area under F-t / change in momentum", group:"Foundations"},
+  {code:"F4", label:"Isolated system \u21d2 momentum conserved", group:"Foundations"},
+  {code:"P1", label:"Vector \u0394p (direction change counts)", group:"Patterns"},
+  {code:"P2", label:"Continuous mass flow / thrust (\u0394m\u00b7v per unit time)", group:"Patterns"},
+  {code:"P3", label:"Falling / piling chain force", group:"Patterns"},
+  {code:"P4", label:"Force on a bend / wall (fluid or particle stream)", group:"Patterns"},
+  {code:"P5", label:"Average force over an interval (\u0394p/\u0394t)", group:"Patterns"},
+  {code:"P6", label:"Impulse from an F-t graph (area)", group:"Patterns"},
+  {code:"P7", label:"Impulse-momentum on a struck body", group:"Patterns"},
+  {code:"P8", label:"Impulsive force: keep impulsive, drop finite", group:"Patterns"},
+  {code:"P9", label:"Impulsive tension / sudden-jerk (string, Atwood)", group:"Patterns"},
+  {code:"P10",label:"1-D momentum conservation (recoil / explosion)", group:"Patterns"},
+  {code:"P11",label:"2-D / vector momentum conservation (fragments)", group:"Patterns"},
+  {code:"P12",label:"Internal displacement: \u0394p=0 \u21d2 platform/boat shift", group:"Patterns"},
+  {code:"P13",label:"Man/monkey on car or plank (relative velocity)", group:"Patterns"},
+  {code:"P14",label:"Conservation only along a force-free axis", group:"Patterns"}
+];
+
+/* ===== FORMULAE ===== */
+let MOM_FORMULAE = [
+  {tag:"basics",title:"Momentum & Newton II",rows:[
+    {f:"p = mv  (vector; unit kg\u00b7m/s = N\u00b7s)"},
+    {f:"System: P = \u03a3m\u1d62v\u1d62 = M v_CM"},
+    {f:"Newton II: dP/dt = F_ext  (reduces to ma only when m is constant)",k:"trap",note:"The dP/dt form is the real Newton II \u2014 it also handles variable-mass (chain, rocket, fluid) problems where F=ma alone fails."}]},
+  {tag:"impulse",title:"Impulse",rows:[
+    {f:"J = F\u00b7\u0394t  (constant force)  =  \u222bF dt  (variable force) = area under F-t graph"},
+    {f:"Impulse-momentum theorem: J = \u0394P = P_f \u2212 P_i"},
+    {f:"Unit of impulse = N\u00b7s = kg\u00b7m/s (same as momentum)",k:"trig",note:"When F is unknown or messy, don't chase the force \u2014 get the impulse straight from \u0394P."}]},
+  {tag:"thrust",title:"Continuous mass flow (thrust)",rows:[
+    {f:"Mass hitting/leaving per unit time = (dm/dt); force = v\u00b7(dm/dt)"},
+    {f:"Fluid stream, area A, density \u03c1, speed v: mass/time = \u03c1Av; normal-hit force = \u03c1Av\u00b2"},
+    {f:"Right-angle pipe bend: F = \u221a2\u00b7\u03c1Av\u00b2 (momentum turns 90\u00b0, \u0394p = \u221a2\u00b7mv)",k:"trap",note:"The stream's momentum changes direction, not just magnitude \u2014 use the vector \u0394p, not the scalar difference."}]},
+  {tag:"chain",title:"Falling / piling chain",rows:[
+    {f:"Chain of linear density \u03bb=M/L falling onto a table, length x already piled:"},
+    {f:"Thrust (links arriving) = \u03bb v\u00b2 = \u03bb(2gx) = 2\u03bbgx ; weight of pile = \u03bbgx"},
+    {f:"Total force on table = 2\u03bbgx + \u03bbgx = 3\u03bbgx ; max = 3Mg (last link lands)",k:"trig",note:"Two contributions: the impact thrust of arriving links PLUS the ordinary weight of what's already down. Total is 3\u00d7 the pile's weight."}]},
+  {tag:"impulsive",title:"Impulsive force",rows:[
+    {f:"An impulsive force is huge but acts for a tiny \u0394t \u2014 its impulse (F\u0394t) is finite and significant."},
+    {f:"During the impulse, IGNORE finite forces (weight, ordinary tension) \u2014 their impulse \u2248 0."},
+    {f:"BUT keep friction if it is itself impulsive (rides on a large normal reaction from an impulsive force).",k:"trap",note:"The whole skill: decide which forces are impulsive. Weight is never impulsive; friction is impulsive only when N is."}]},
+  {tag:"conservation",title:"Conservation of linear momentum",rows:[
+    {f:"F_ext = 0  \u21d2  P = constant  (isolated system)"},
+    {f:"Explosions/collisions are internal \u2014 they never change the system's total P (or v_CM)."},
+    {f:"Component form: if (F_ext)_x = 0 then P_x is conserved even if P_y is not.",k:"trap",note:"Conservation can hold along ONE axis only \u2014 e.g. horizontal momentum conserved while gravity acts vertically."}]},
+  {tag:"internal",title:"Internal-displacement (\u0394P=0) results",rows:[
+    {f:"If v_CM=0 and stays 0: m\u2081\u0394x\u2081 = m\u2082\u0394x\u2082 (displacements opposite, COM fixed)."},
+    {f:"Man (mass m) walks length L of a free platform (mass M): platform shifts \u0394x = mL/(M+m)."},
+    {f:"Relative-velocity link: v_man \u2212 v_platform = v_rel (given); combine with \u03a3mv = 0.",k:"trig",note:"Two equations: momentum (\u03a3mv=0) and the stated relative velocity. Solve them together."}]}
+];
+
+/* ===== PATTERNS (L2) ===== */
+let MOM_PATTERNS = [
+  {id:"P1",name:"Vector \u0394p (direction change counts)",trigger:"A body rebounds, turns, or reflects \u2014 speed may be unchanged but the direction of velocity changes.",move:"Compute \u0394p = p_f \u2212 p_i as VECTORS. For a normal rebound at speed v: \u0394p = 2mv opposite to incidence. For an oblique bounce, only the normal component reverses.",why:"Momentum is a vector, so any change of direction is a change of momentum even at constant speed \u2014 that change demands a force.",mini:"A 1 kg ball hits a wall normally at 10 m/s and rebounds at 10 m/s \u2014 find |\u0394p|. (= 20 kg\u00b7m/s)",fails:"Writing \u0394p = m(v\u2212v) = 0 because 'speed is the same' \u2014 the classic scalar trap; the directions are opposite so the magnitudes ADD.",src:"Example 1, Example 2",srcText:{"Example 1":"A ball of mass 1 kg hits a wall normally at 10 m/s and rebounds at 10 m/s. Find the change in momentum (\u0394P = 2\u00d71\u00d710 = 20 kg\u00b7m/s, directed away from the wall).","Example 2":"A ball of mass m impinges on a wall at speed u, angle of incidence \u03b8, rebounds at the same speed at angle \u03b8. \u0394P = \u22122mu cos\u03b8 (only the normal component reverses; the tangential component is unchanged)."}},
+  {id:"P2",name:"Continuous Mass Flow / Thrust",trigger:"Mass is continuously delivered or ejected at a rate \u2014 water from a hose, sand onto a belt, a stream hitting a surface.",move:"Force = (rate of mass arrival)\u00d7(velocity change of that mass) = v\u00b7(dm/dt). For a fluid: mass/time = \u03c1Av, so a normal hit gives F = \u03c1Av\u00b2.",why:"Each little packet \u0394m has its momentum changed; summing the packets per unit time gives a steady force via dP/dt.",mini:"Water (density \u03c1) at speed v through area A hits a wall head-on and stops \u2014 find the force. (= \u03c1Av\u00b2)",fails:"Using F=ma with a fixed mass \u2014 here the MASS is what's flowing; you must use dP/dt with dm/dt.",src:"Q.8, Q.9, Example 5 (setup)",srcText:{"Q.8":"Wind blows horizontally at speed v, air density \u03c1, against a vertical wall of area A; the air spreads parallel after striking. Force = \u03c1Av\u00b2. If speed doubles to 2v the force becomes 4\u00d7.","Q.9":"A wide container of negligible mass on a scale; a tank at height H pours water at rate \u03bc kg/s onto it (water does not splash). Reading of the scale at time t combines the collected weight PLUS the impact thrust of the arriving stream.","Example 5":"Water (density \u03c1) flows at speed v through a pipe of cross-section A with a right-angle bend \u2014 the arriving-mass-per-time \u03c1Av drives the bend force."}},
+  {id:"P3",name:"Falling / Piling Chain Force",trigger:"A chain/rope falls onto a surface and piles up, and you're asked for the force on the surface (often the maximum).",move:"At the instant length x has piled: arriving links land at v=\u221a(2gx), giving thrust \u03bbv\u00b2 = 2\u03bbgx; add the pile's own weight \u03bbgx. Total = 3\u03bbgx, maximum 3Mg when x=L.",why:"The table both STOPS the newly-arriving links (impact thrust, via dP/dt) and SUPPORTS the links already resting (static weight) \u2014 two separate contributions.",mini:"A chain of mass M, length L falls onto a table; find the maximum force on the table. (= 3Mg)",fails:"Reporting only the pile's weight \u03bbgx (forgetting the impact thrust) \u2014 you'd get Mg instead of 3Mg.",src:"Example 4 (falling chain)",srcText:{"Example 4":"A uniform chain of mass M, length L is held with its lower end just touching a table, then released. When length x has piled up: velocity of arriving links v=\u221a(2gx); thrust = (M/L)v\u00b2 = 2(M/L)gx; plus weight of pile (M/L)gx; total = 3(M/L)gx; maximum 3Mg when the last link lands."}},
+  {id:"P4",name:"Force on a Bend / Wall (stream)",trigger:"A fluid stream or particle stream is deflected by a bend, vane, or wall and you need the force to hold it.",move:"Find the vector \u0394p of the stream per unit time. Right-angle bend: incoming \u03c1Av\u00b2 one way, outgoing \u03c1Av\u00b2 perpendicular \u21d2 \u0394p per second = \u221a2\u00b7\u03c1Av\u00b2 at 45\u00b0. The holding force balances it.",why:"The pipe/wall changes the stream's momentum direction; by Newton III the stream pushes back, and an external agent must supply the balancing force.",mini:"Water \u03c1, speed v, area A rounds a 90\u00b0 pipe bend \u2014 find the force needed to hold the bend. (= \u221a2\u00b7\u03c1Av\u00b2)",fails:"Adding the in/out momenta as scalars (2\u03c1Av\u00b2) or subtracting them (0) instead of taking the vector resultant (\u221a2\u00b7\u03c1Av\u00b2).",src:"Example 5 (bend in a water pipe)",srcText:{"Example 5":"Water (density \u03c1) flows at speed v through a pipe of area A with a right-angle bend. Momentum changes from \u0394mv one way to \u0394mv perpendicular; |\u0394P| = \u221a2\u00b7\u0394mv, at 45\u00b0 to both arms. Force by pipe on water F = \u221a2\u00b7\u03c1Av\u00b2; external agent supplies \u221a2\u00b7\u03c1Av\u00b2 opposite to F to keep the bend fixed."}},
+  {id:"P5",name:"Average Force over an Interval",trigger:"A collision/impact lasts a stated time \u0394t and you want the AVERAGE force (car crash, ball on floor, bat on ball).",move:"F_avg = \u0394P/\u0394t. Get \u0394P from initial and final momenta (as vectors if directions differ), then divide by the contact time.",why:"Even though the instantaneous force varies wildly during contact, its time-average is fixed by the total momentum change over the interval.",mini:"A 1500 kg car at 54 km/h hits a wall, interacts for 0.15 s, ends at 18 km/h same direction \u2014 find the average force.",fails:"Confusing average force with the (larger) peak force, or forgetting to convert km/h to m/s before computing \u0394P.",src:"Q.4, Q.5, Q.7",srcText:{"Q.4":"A 1500 kg car at 54 km/h hits a temporary wall, interacts for \u0394t=0.15 s, and just after is travelling at 18 km/h in the same direction. (i) average force during collision = \u0394P/\u0394t; (ii) loss in KE.","Q.5":"A 50 g ball falls from 5 m and rebounds to 1.25 m; contact time \u2248 (0.11\u00b10.01) s. Estimate the average force by the floor (use \u0394P over the contact time).","Q.7":"A car of mass M enters a semicircular track at speed v and exits at speed v; find the average force over the track (the velocity REVERSES, so \u0394P = 2Mv)."}},
+  {id:"P6",name:"Impulse from an F-t Graph (area)",trigger:"Force is given as a graph (or a function) of time and you need the impulse or the resulting velocity.",move:"Impulse = area under the F-t graph (or \u222bF dt). Then \u0394P = impulse \u21d2 v = impulse/m (from rest).",why:"J = \u222bF dt is literally the area; the impulse-momentum theorem converts that area straight into a velocity change.",mini:"A 4 kg block from rest under a triangular F-t pulse peaking 10 N over 2 s \u2014 find the final speed. (area = 10 N\u00b7s \u21d2 v = 2.5 m/s)",fails:"Multiplying peak force by time for a non-rectangular graph (must use the true area \u2014 \u00bd\u00d7base\u00d7height for a triangle).",src:"Q.6, Example 6",srcText:{"Q.6":"Momentum of a particle changes with time as a trapezoidal F-t graph (ramps 0\u219220 over 0\u21922 s, flat to 4 s, ramps to 0 at 5 s). Find the maximum force acting at any instant.","Example 6":"A 4 kg block on a smooth surface under a horizontal force. Find v after 2 s if (i) F=10 N constant \u21d2 J=20, v=5; (ii) F=2t \u21d2 J=\u222b2t dt=4, v=1; (iii) F from a triangular graph peaking 10 N \u21d2 J=\u00bd\u00d72\u00d710=10, v=2.5."}},
+  {id:"P7",name:"Impulse-Momentum on a Struck Body",trigger:"A bat/racket/wall strikes a ball; you want the impulse delivered, without knowing the messy contact force.",move:"J = \u0394P = m v_f \u2212 m v_i (as vectors \u2014 a rebound reverses sign). The impulse on the ball equals minus the impulse on the bat (Newton III).",why:"The interaction force is complicated and short, but its integral (impulse) is pinned exactly by the ball's momentum change.",mini:"A 150 g cricket ball hits a bat at 144 km/h and returns along the same line at 108 km/h \u2014 find the impulse. (= 10.5 N\u00b7s)",fails:"Subtracting speeds (0.15\u00d7(40\u221230)=1.5) instead of accounting for the reversal (0.15\u00d7(40+30)=10.5) \u2014 the rebound makes the momenta ADD.",src:"Example 7 (cricket ball)",srcText:{"Example 7":"A 150 g cricket ball hits a bat normally at 144 km/h (=40 m/s) and bounces back at 108 km/h (=30 m/s). P_i = 0.15\u00d740 = 6 kg\u00b7m/s one way; P_f = 0.15\u00d730 = 4.5 kg\u00b7m/s the other; \u0394P = 4.5\u2212(\u22126) = 10.5 kg\u00b7m/s. Impulse J = 10.5 N\u00b7s; the ball applies the same impulse back on the bat."}},
+  {id:"P8",name:"Impulsive Force: Keep Impulsive, Drop Finite",trigger:"A sharp blow / sudden jerk is applied to a body that also feels ordinary (finite) forces like weight or normal friction.",move:"During the tiny impulse interval, keep only impulsive forces (the blow, and friction ONLY if its normal reaction is itself impulsive). Set the impulse of every finite force (weight, ordinary tension) to zero.",why:"Impulse = force\u00d7time; a finite force over a vanishing time contributes negligible impulse, while an impulsive force's F\u0394t stays finite.",mini:"A 2 kg block, \u03bc=0.2, gets a sharp horizontal blow of impulse J=10 N\u00b7s \u2014 find the velocity (friction's impulse is negligible here). (v = 5 m/s)",fails:"Including mg\u0394t or ordinary friction\u00d7\u0394t in the impulse balance \u2014 they're second-order small during the blow. But wrongly dropping friction when the blow is angled (then N, and friction, ARE impulsive).",src:"Example 8, Example 9",srcText:{"Example 8":"A 2 kg block on a table (\u03bc=0.2) gets a horizontal sharp blow of impulse J=10 N\u00b7s. Friction impulse \u226a J is neglected \u21d2 \u0394P=J \u21d2 Mv=10 \u21d2 v=5 m/s. (Weight and friction are finite, so their impulse over the short blow is ignored.)","Example 9":"The same sharp impulse J=10 N\u00b7s is applied at 37\u00b0 to the horizontal. Now the vertical component makes the normal reaction impulsive, so friction becomes impulsive too: net horizontal impulse J_x = (4/5)J \u2212 (3/5)\u03bcJ = 8 \u2212 1.2 = 6.8 N\u00b7s \u21d2 v = 3.4 m/s."}},
+  {id:"P9",name:"Impulsive Tension / Sudden Jerk",trigger:"A slack string/rope suddenly becomes taut (falling ball on a string, Atwood block yanked into motion).",move:"When the string goes taut, an impulsive tension J acts. Write J = \u0394P for each connected body (impulse up on one, down/along on the other); the string transmits equal impulse. Solve for the common speed.",why:"The jerk is over a tiny interval, so only the impulsive tension matters; the two bodies emerge sharing momentum through that common impulse.",mini:"In an Atwood setup, a ball (mass m) falls freely through h then the string to a block (2m) suddenly tautens \u2014 find the speed just after. (v = \u221a(2gh)/3)",fails:"Using energy conservation across the jerk (energy is LOST in the sudden tautening) instead of the impulse-momentum balance.",src:"Example 10 (impulsive tension)",srcText:{"Example 10":"In an Atwood machine, block B (2m) rests on a table, connected over a smooth pulley to a ball (m) that is raised by height h and released. Just before the string tautens the ball has u=\u221a(2gh). An impulsive tension J acts: for the ball 3mv... eliminating J gives the common speed just after the string becomes taut v = u/3 = \u221a(2gh)/3. Energy is lost in the sudden jerk."}},
+  {id:"P10",name:"1-D Momentum Conservation (recoil / explosion)",trigger:"A gun recoils, a bomb splits along a line, or two bodies interact on a frictionless line with no external horizontal force.",move:"Set total P before = total P after along the line. For recoil: 0 = M V_gun + m v_bullet. For a two-piece explosion from rest: pieces carry equal-and-opposite momenta.",why:"With no external force along the line, the system's linear momentum is conserved through the internal (explosive/recoil) interaction.",mini:"A stationary object of mass m splits into m/4 and 3m/4; if the small piece moves one way at v, find the large piece's velocity. (= v/3 opposite)",fails:"Conserving speed or KE instead of momentum (KE is NOT conserved in an explosion \u2014 chemical energy is released).",src:"Q.16, Q.20 (setup), Example 11",srcText:{"Q.16":"Two balls of masses m and 2m are placed on a smooth surface, connected by a compressed massless spring and released. The ball of mass m is imparted a sudden velocity u; find the impulse imparted by the string/spring, using \u03a3mv=0 for the isolated pair.","Example 11":"Block A (mass m) slides at speed u toward an identical block B (mass m) and they collide/stick per the section's setup \u2014 momentum conservation on the frictionless line pins the final velocity; kinetic energy is examined separately."}},
+  {id:"P11",name:"2-D / Vector Momentum Conservation",trigger:"A body at rest explodes into 3+ fragments moving in different directions, or fragments fly off a projectile at the top of its path.",move:"Conserve momentum as vectors: \u03a3p_x = 0 and \u03a3p_y = 0 separately (measured from rest). The unknown fragment's momentum is minus the vector sum of the others.",why:"Momentum conservation is a vector statement; each Cartesian component is conserved independently, so a 2-D explosion splits into two 1-D equations.",mini:"A bomb at rest bursts into 3 equal pieces; two fly off perpendicular at equal speed \u2014 find the third's direction and relative speed. (opposite the resultant, speed \u221a2\u00d7)",fails:"Adding fragment SPEEDS instead of momentum VECTORS; forgetting a piece can carry momentum along the bisector of the others.",src:"Example 13 (bomb blast)",srcText:{"Example 13":"A remote-at-rest bomb blasts into three chunks. One 100 g piece moves north at a stated speed, another 200 g piece east; find the velocity of the third 200 g piece. Momentum of piece 1 (north) and piece 2 (east) are added as vectors; the third piece carries the equal-and-opposite resultant (magnitude \u221a(P\u2081\u00b2+P\u2082\u00b2), directed SW/opposite the NE resultant), giving its speed."}},
+  {id:"P12",name:"Internal Displacement (COM fixed)",trigger:"A person/animal moves along a free platform/boat/car on a frictionless surface, the system starting from rest.",move:"v_CM stays 0, so the COM does not move: m\u2081\u0394x\u2081 = m\u2082\u0394x\u2082 (opposite directions). Solve for the platform's shift given the person's walk length.",why:"No external horizontal force \u21d2 the COM is fixed; the person's forward displacement is exactly balanced by the platform's backward displacement so the weighted mean stays put.",mini:"A man (mass m) walks the full length L of a free platform (mass M) \u2014 how far does the platform move? (\u0394x = mL/(M+m))",fails:"Using the man's displacement relative to the platform (L) as his ground displacement \u2014 they differ; ground displacement of the man is (M/(M+m))L.",src:"Example 14 (insect on a straw), Example 15 (monkey out of a car)",srcText:{"Example 14":"A straw of mass M, length L on a smooth surface; an insect of mass m at end A crawls to end B. Since v_CM=0, m\u0394x_insect = M\u0394x_straw; the straw shifts by \u0394x = mL/(M+m) opposite to the insect's motion.","Example 15":"A car of mass M carries a monkey of mass m; the monkey jumps or the man moves \u2014 horizontal momentum of the (man+car) system is conserved (v_CM=0), fixing the relative displacements."}},
+  {id:"P13",name:"Man/Monkey on a Car (relative velocity)",trigger:"A person jumps off, or walks on, a movable car/plank with a velocity given RELATIVE to the car.",move:"Write momentum conservation \u03a3mv = 0 (or = initial P) in the ground frame, and separately the relative-velocity relation v_person \u2212 v_car = v_rel. Solve the two together for the ground velocities.",why:"The stated speed is relative to the car, but momentum conservation lives in the ground frame \u2014 you need both equations to connect them.",mini:"A monkey (m) on a stationary car (M) jumps off horizontally at speed u_rel relative to the car \u2014 find the car's recoil speed.",fails:"Plugging the relative velocity straight into \u03a3mv=0 as if it were the ground velocity \u2014 you must convert via v_person = v_car + v_rel first.",src:"Example 16 (man jumps off a moving car)",srcText:{"Example 16":"A flat car of mass M moves at speed u; a man of mass m on it jumps off the front with velocity u_r RELATIVE to the car. Momentum is conserved horizontally: combine (M+m)u = M\u00b7v_car + m\u00b7v_man with v_man \u2212 v_car = u_r to find the car's new velocity and the man's ground velocity."}},
+  {id:"P14",name:"Conservation Along a Force-Free Axis",trigger:"An external force acts along one direction (usually vertical, gravity) but not the other \u2014 e.g. a projectile that explodes, or a block sliding off a free wedge.",move:"Conserve momentum ONLY along the force-free axis (horizontal). Along the axis with the external force, momentum is not conserved \u2014 use energy or kinematics there instead.",why:"P_x is conserved iff (F_ext)_x = 0; gravity kills vertical-momentum conservation but leaves the horizontal component free.",mini:"A projectile explodes at the top of its flight; the horizontal momentum of the fragments still equals the original \u2014 vertical does not (gravity acts).",fails:"Claiming total momentum is conserved during a projectile explosion \u2014 only the horizontal component is; the vertical carries the impulse of gravity.",src:"Q.3 (projectile \u0394p), Example 17-18 (wedge / curved-track, horizontal-P conserved)",srcText:{"Q.3":"A projectile of mass m is launched at angle \u03b8, speed u. Find the change in its momentum by the time (i) it reaches the top of its trajectory, (ii) it is about to hit the ground \u2014 only gravity acts, so \u0394p is vertical (horizontal component unchanged).","Example 17":"Two identical balls / a wedge system where there is no horizontal external force: horizontal momentum is conserved while the vertical is governed by gravity/normal forces \u2014 solve the horizontal axis by \u03a3(mv)_x=const and the vertical by energy.","Example 18":"A block released from the top of a smooth curved track on a free wedge: no external horizontal force, so horizontal momentum of (block+wedge) stays zero; combine with energy conservation for the speeds."}}
+];
+
+/* ===== GUIDED (L3) \u2014 all tier 3, laddered, DISTINCT from pattern minis ===== */
+let MOM_GUIDED = [
+  {id:"G1",tier:3,tax:"P1",pattern:"P1",q:"A ball of mass m strikes a smooth wall at speed u, angle of incidence \u03b8 to the wall's normal, and rebounds at the same speed u at angle \u03b8. Find the magnitude and direction of the change in the ball's momentum.",
+    opts:["Vector \u0394p (direction change counts)","Average Force over an Interval","Continuous Mass Flow / Thrust","1-D Momentum Conservation"],correct:0,
+    hints:["Resolve the incoming velocity into a component along the wall's normal (u cos\u03b8) and along the wall (u sin\u03b8).","Only the NORMAL component reverses on rebound; the tangential component is unchanged \u2014 so it contributes nothing to \u0394p.","\u0394p = (final normal p) \u2212 (initial normal p) = (\u2212mu cos\u03b8) \u2212 (+mu cos\u03b8)."],
+    ans:"|\u0394p| = 2mu cos\u03b8, directed along the outward normal (away from the wall)",why:"Splitting into normal + tangential shows the whole momentum change lives in the reversed normal component \u2014 the tangential part is a decoy."},
+  {id:"G2",tier:3,tax:"P2",pattern:"P2",q:"Wind blows horizontally at speed v against a vertical wall of area A; air density is \u03c1 and the air spreads sideways (parallel to the wall) after striking, without rebounding. Find the force on the wall, and how it changes if v doubles to 2v.",
+    opts:["Continuous Mass Flow / Thrust","Vector \u0394p","Impulse from an F-t graph","Conservation Along a Force-Free Axis"],correct:0,
+    hints:["Mass of air arriving per unit time = \u03c1 \u00d7 (volume per second) = \u03c1 \u00d7 A \u00d7 v.","Each parcel's horizontal velocity drops from v to 0 (it then moves sideways), so its momentum change per unit mass = v.","Force = (mass/time)\u00d7(velocity lost) = (\u03c1Av)\u00d7v. Then replace v by 2v."],
+    ans:"F = \u03c1Av\u00b2; doubling v makes it 4\u03c1Av\u00b2 (four times larger)",why:"Both the mass-arrival rate AND the velocity lost scale with v, so the force scales as v\u00b2 \u2014 the hallmark of a stream-impact force."},
+  {id:"G3",tier:3,tax:"P3",pattern:"P3",q:"A uniform chain of mass M and length L hangs vertically with its lower end just touching a table, then is released. When a length x has piled on the table, what is the total force the chain exerts on the table at that instant?",
+    opts:["Falling / Piling Chain Force","Force on a Bend / Wall","Continuous Mass Flow / Thrust","Average Force over an Interval"],correct:0,
+    hints:["Two separate contributions: (a) the WEIGHT of the length x already resting on the table, and (b) the THRUST of the links arriving right now.","The links arriving have fallen a height x, so they land at v = \u221a(2gx); mass arriving per second = \u03bb v with \u03bb = M/L; thrust = \u03bb v\u00b2 = 2\u03bbgx.","Add: weight \u03bbgx + thrust 2\u03bbgx."],
+    ans:"Total force = 3\u03bbgx = 3(M/L)gx  (maximum 3Mg when x = L)",why:"The table both supports what's down and stops what's arriving \u2014 the impact thrust is exactly twice the resting weight, giving the memorable 3\u00d7 result."},
+  {id:"G4",tier:3,tax:"P4",pattern:"P4",q:"Water of density \u03c1 flows at speed v through a pipe of cross-sectional area A that has a right-angle (90\u00b0) bend. Find the magnitude of the external force needed to hold the bend in place.",
+    opts:["Force on a Bend / Wall (stream)","Falling / Piling Chain Force","Vector \u0394p on a single body","Impulsive Tension"],correct:0,
+    hints:["Mass of water flowing per second = \u03c1Av. Its momentum per second entering = \u03c1Av\u00b2 along the inlet, leaving = \u03c1Av\u00b2 along the outlet (perpendicular).","The change in momentum per second is the VECTOR difference of two perpendicular vectors of equal magnitude \u03c1Av\u00b2.","|\u0394p per second| = \u221a((\u03c1Av\u00b2)\u00b2 + (\u03c1Av\u00b2)\u00b2) = \u221a2\u00b7\u03c1Av\u00b2, directed at 45\u00b0."],
+    ans:"F = \u221a2\u00b7\u03c1Av\u00b2, along the 45\u00b0 bisector of the bend",why:"Because the momentum turns through 90\u00b0, the change is the hypotenuse \u221a2\u00b7\u03c1Av\u00b2 \u2014 not the scalar sum or difference."},
+  {id:"G5",tier:3,tax:"P5",pattern:"P5",q:"A 1500 kg car travelling at 54 km/h hits a temporary wall and interacts with it for \u0394t = 0.15 s, after which it is moving at 18 km/h in the SAME direction. Find the average force experienced by the car during the collision.",
+    opts:["Average Force over an Interval","Impulse from an F-t graph","Vector \u0394p on a single body","1-D Momentum Conservation"],correct:0,
+    hints:["Convert speeds to m/s: 54 km/h = 15 m/s, 18 km/h = 5 m/s (both in the same direction).","\u0394P = m(v_f \u2212 v_i) = 1500\u00d7(5 \u2212 15) = \u221215000 kg\u00b7m/s (the minus sign = decelerating).","F_avg = \u0394P/\u0394t = \u221215000 / 0.15."],
+    ans:"F_avg = 1.0\u00d710\u2075 N (i.e. 100 kN), opposing the motion",why:"The average force is fixed entirely by the momentum change over the contact time \u2014 no need to know how the force varied instant to instant."},
+  {id:"G6",tier:3,tax:"P6",pattern:"P6",q:"A 4 kg block, initially at rest on a smooth surface, is pushed by a horizontal force that varies with time as F = 2t (newtons, t in seconds). Find the speed of the block after 2 s.",
+    opts:["Impulse from an F-t graph (area)","Average Force over an Interval","Vector \u0394p on a single body","Continuous Mass Flow / Thrust"],correct:0,
+    hints:["The force is not constant, so use impulse J = \u222bF dt rather than F\u00d7t.","J = \u222b\u2080\u00b2 2t dt = [t\u00b2]\u2080\u00b2 = 4 N\u00b7s.","Impulse-momentum: J = \u0394P = mv (from rest) \u21d2 v = J/m = 4/4."],
+    ans:"v = 1 m/s",why:"For a time-varying force, integrate to get the impulse; the impulse-momentum theorem then hands you the velocity directly."},
+  {id:"G7",tier:3,tax:"P7",pattern:"P7",q:"A 150 g cricket ball hits a bat normally while travelling at 144 km/h and bounces straight back along the same line at 108 km/h. Find the impulse the bat imparts to the ball.",
+    opts:["Impulse-Momentum on a Struck Body","Average Force over an Interval","Vector \u0394p from a stream","Impulsive Tension"],correct:0,
+    hints:["Convert: 144 km/h = 40 m/s (incoming), 108 km/h = 30 m/s (outgoing, opposite direction).","Take the outgoing direction as positive: P_i = \u22120.15\u00d740 = \u22126 kg\u00b7m/s; P_f = +0.15\u00d730 = +4.5 kg\u00b7m/s.","J = \u0394P = P_f \u2212 P_i = 4.5 \u2212 (\u22126)."],
+    ans:"J = 10.5 N\u00b7s (directed back along the outgoing path)",why:"The rebound flips the sign, so the momenta ADD in magnitude \u2014 the impulse is far larger than the naive speed-difference would suggest."},
+  {id:"G8",tier:3,tax:"P8",pattern:"P8",q:"A 2 kg block rests on a rough table (\u03bc = 0.2). A sharp horizontal blow delivers an impulse J = 10 N\u00b7s to it. Find the velocity acquired by the block, explaining why friction's impulse is neglected.",
+    opts:["Impulsive Force: Keep Impulsive, Drop Finite","1-D Momentum Conservation","Impulse from an F-t graph","Average Force over an Interval"],correct:0,
+    hints:["The blow is horizontal, so it does NOT change the normal reaction \u2014 N stays = mg, an ordinary (finite) value. Friction \u03bcN is therefore finite, not impulsive.","Over the tiny blow-interval \u0394t, a finite friction force contributes impulse \u2248 \u03bcmg\u00b7\u0394t \u2248 0 compared with J = 10 N\u00b7s.","So \u0394P \u2248 J \u21d2 mv = 10 \u21d2 v = 10/2."],
+    ans:"v = 5 m/s (friction's impulse is negligible because N \u2014 and hence friction \u2014 stays finite during a purely horizontal blow)",why:"The whole trick is classifying forces: a horizontal blow leaves N finite, so friction is finite and drops out; contrast this with an angled blow where N becomes impulsive."},
+  {id:"G9",tier:3,tax:"P8",pattern:"P8",q:"The same 2 kg block (\u03bc = 0.2) instead receives the sharp impulse J = 10 N\u00b7s directed at 37\u00b0 ABOVE the horizontal. Find the velocity acquired by the block immediately after the blow.",
+    opts:["Impulsive Force: Keep Impulsive, Drop Finite","Impulse-Momentum on a Struck Body","Vector \u0394p from a stream","Conservation Along a Force-Free Axis"],correct:0,
+    hints:["Now the blow has a vertical component (J sin37\u00b0 = 3/5\u00b7J) that presses/lifts the block, making the normal reaction \u2014 and therefore friction \u2014 IMPULSIVE during the blow.","Horizontal impulse from the blow = J cos37\u00b0 = (4/5)(10) = 8 N\u00b7s. Impulsive friction opposes it = \u03bc\u00d7(vertical impulse) = 0.2\u00d7(3/5)(10) = 1.2 N\u00b7s.","Net horizontal impulse = 8 \u2212 1.2 = 6.8 N\u00b7s \u21d2 v = 6.8/2."],
+    ans:"v = 3.4 m/s",why:"Because the blow is angled, its vertical part makes N impulsive \u2014 so this time friction MUST be kept (impulsive), unlike the purely horizontal case."},
+  {id:"G10",tier:3,tax:"P9",pattern:"P9",q:"In an Atwood setup, a block B of mass 2m rests on a table, connected by a light string over a smooth pulley to a ball of mass m. The ball is raised to give slack, then released and falls freely through height h before the string suddenly becomes taut. Find the common speed just after the string tautens.",
+    opts:["Impulsive Tension / Sudden Jerk","Conservation of Mechanical Energy","1-D Momentum Conservation","Impulse from an F-t graph"],correct:0,
+    hints:["Just before the jerk, the ball has fallen freely: u = \u221a(2gh). Block B is still at rest.","The sudden tautening delivers an impulsive tension J: for the ball, J acts up \u2014 m u \u2212 J\u00b7(sign) = m v; for block B, J drives it \u2014 J = 2m v. Do NOT use energy conservation (energy is lost in the jerk).","Eliminate J between the two impulse equations: m u = m v + 2m v = 3m v \u21d2 v = u/3."],
+    ans:"v = u/3 = \u221a(2gh)/3",why:"A sudden jerk is an impulse problem, not an energy one \u2014 the impulsive tension shares momentum among the bodies and mechanical energy is lost."},
+  {id:"G11",tier:3,tax:"P10",pattern:"P10",q:"A stationary body of mass m explodes into two fragments of mass m/4 and 3m/4. If the smaller fragment flies off with velocity v, find the velocity of the larger fragment.",
+    opts:["1-D Momentum Conservation (recoil / explosion)","Vector Momentum Conservation","Conservation of Mechanical Energy","Impulsive Force"],correct:0,
+    hints:["The body was at rest, so the total momentum before = 0, and it stays 0 after (the explosion is internal).","0 = (m/4)v + (3m/4)V, where V is the large fragment's velocity.","Solve: (3m/4)V = \u2212(m/4)v \u21d2 V = \u2212v/3."],
+    ans:"V = v/3, directed opposite to the smaller fragment",why:"Momentum (not KE) is conserved in an explosion; the heavier piece recoils more slowly, in the exact ratio of the masses."},
+  {id:"G12",tier:3,tax:"P11",pattern:"P11",q:"A bomb at rest explodes into three pieces. A 100 g piece flies north at 20 m/s and a 200 g piece flies east at 10 m/s. Find the magnitude and direction of the velocity of the third 200 g piece.",
+    opts:["2-D / Vector Momentum Conservation","1-D Momentum Conservation","Man/Monkey on a Car","Conservation Along a Force-Free Axis"],correct:0,
+    hints:["Momenta: north piece p\u2081 = 0.1\u00d720 = 2 kg\u00b7m/s (north); east piece p\u2082 = 0.2\u00d710 = 2 kg\u00b7m/s (east).","Total momentum must stay zero, so the third piece carries p\u2083 = \u2212(p\u2081 + p\u2082); |p\u2081 + p\u2082| = \u221a(2\u00b2 + 2\u00b2) = 2\u221a2 kg\u00b7m/s, pointing NE.","p\u2083 = 2\u221a2 kg\u00b7m/s toward SW; its speed = p\u2083 / 0.2 = 2\u221a2 / 0.2."],
+    ans:"v\u2083 = 10\u221a2 m/s \u2248 14.1 m/s, directed south-west (opposite the NE resultant)",why:"Vector momentum conservation splits into perpendicular components; the third piece must cancel the resultant of the other two."},
+  {id:"G13",tier:3,tax:"P12",pattern:"P12",q:"A straw of mass M and length L lies on a smooth horizontal surface. An insect of mass m sits at one end A and crawls to the other end B. By what distance, and in which direction, does the straw move?",
+    opts:["Internal Displacement (COM fixed)","Man/Monkey on a Car","1-D Momentum Conservation","Conservation Along a Force-Free Axis"],correct:0,
+    hints:["No external horizontal force and the system starts at rest, so the centre of mass does not move at all.","Let the straw shift by \u0394x (backward) while the insect moves \u0394x_insect (forward) relative to the ground; COM fixed \u21d2 m\u00b7\u0394x_insect = M\u00b7\u0394x.","The insect's displacement relative to the straw is L, so \u0394x_insect + \u0394x = L. Combine with m\u00b7\u0394x_insect = M\u00b7\u0394x."],
+    ans:"The straw moves \u0394x = mL/(M+m), opposite to the insect's crawl",why:"Fixing the COM converts 'who moves how far' into two simple relations \u2014 the relative displacement L and the mass-weighted balance."},
+  {id:"G14",tier:3,tax:"P13",pattern:"P13",q:"A flat car of mass M moves on a smooth track at speed u. A man of mass m standing on it jumps off the front horizontally with velocity u_r RELATIVE to the car. Find the velocity of the car immediately after the man jumps.",
+    opts:["Man/Monkey on a Car (relative velocity)","Internal Displacement (COM fixed)","2-D Momentum Conservation","Impulsive Tension"],correct:0,
+    hints:["Horizontal momentum is conserved: (M + m)u = M\u00b7V_car + m\u00b7V_man, where V's are GROUND velocities.","The jump speed is relative to the car: V_man \u2212 V_car = u_r \u21d2 V_man = V_car + u_r.","Substitute V_man and solve the momentum equation for V_car."],
+    ans:"V_car = u \u2212 m\u00b7u_r/(M+m)  (the car slows down/recoils)",why:"The stated speed is relative to the car, so you must convert it to a ground velocity via v_man = v_car + u_r before applying momentum conservation."},
+  {id:"G15",tier:3,tax:"P14",pattern:"P14",q:"A projectile of mass m is launched at speed u and angle \u03b8 to the horizontal. Find the change in its momentum (i) from launch to the top of its trajectory, and (ii) from launch to just before it lands.",
+    opts:["Conservation Along a Force-Free Axis","Vector \u0394p on a struck body","2-D Momentum Conservation","Impulse from an F-t graph"],correct:0,
+    hints:["Only gravity acts, so the horizontal momentum (m u cos\u03b8) never changes \u2014 all momentum change is vertical.","(i) At the top the vertical velocity is 0; initial vertical momentum was m u sin\u03b8, so \u0394p = m u sin\u03b8 downward.","(ii) On landing the vertical velocity has reversed to \u2212u sin\u03b8; \u0394p = m(\u2212u sin\u03b8) \u2212 m(u sin\u03b8) = \u22122 m u sin\u03b8 (downward)."],
+    ans:"(i) \u0394p = m u sin\u03b8 downward;  (ii) \u0394p = 2 m u sin\u03b8 downward",why:"Gravity acts only vertically, so horizontal momentum is conserved and every bit of \u0394p is the impulse of gravity along the vertical axis."}
+];
+
+/* ===== PRACTICE (L4) \u2014 verified vs printed Example solutions; tier-3 thin, to be topped up ===== */
+let MOM_PRACTICE = [
+  /* ---------- tier 1 : foundation (verified vs worked Examples / direct definition) ---------- */
+  {src:"Example 1", type:"NV", tier:1, tax:"F1", pat:"P1", q:"A ball of mass 1 kg hits a wall normally at 10 m/s and rebounds at 10 m/s. Find the magnitude of the change in momentum of the ball.", ans:"20 kg\u00b7m/s", note:"\u0394P = mv_f \u2212 mv_i = 1\u00d710 \u2212 1\u00d7(\u221210) = 20 kg\u00b7m/s (momenta oppose, so magnitudes add). (SBT Example 1, worked)", doc:"sbtEx"},
+  {src:"Example 6(i)", type:"NV", tier:1, tax:"F3", pat:"P6", q:"A 4 kg block at rest on a smooth surface is pushed by a constant horizontal force 10 N. Find its speed after 2 s.", ans:"5 m/s", note:"J = F\u0394t = 10\u00d72 = 20 N\u00b7s = \u0394P = mv \u21d2 v = 20/4 = 5 m/s. (SBT Example 6(i), worked)", doc:"sbtEx"},
+  {src:"Example 6(ii)", type:"NV", tier:1, tax:"F3", pat:"P6", q:"The same 4 kg block from rest under a force F = 2t (N). Find its speed after 2 s.", ans:"1 m/s", note:"J = \u222b\u2080\u00b2 2t dt = 4 N\u00b7s = mv \u21d2 v = 1 m/s. (SBT Example 6(ii), worked)", doc:"sbtEx"},
+  {src:"Example 6(iii)", type:"NV", tier:1, tax:"F3", pat:"P6", q:"The same 4 kg block from rest under a triangular F-t pulse peaking at 10 N over 2 s. Find its speed after 2 s.", ans:"2.5 m/s", note:"J = area = \u00bd\u00d72\u00d710 = 10 N\u00b7s = mv \u21d2 v = 2.5 m/s. (SBT Example 6(iii), worked)", doc:"sbtEx"},
+  {src:"Definition", type:"SC", tier:1, tax:"F1", pat:"P1", q:"The SI unit of impulse is equivalent to", choices:["kg\u00b7m/s\u00b2","N\u00b7s","N/s","kg\u00b7m/s\u00b2 per second"], correct:1, ans:"N\u00b7s", note:"Impulse = force\u00d7time = N\u00b7s, which equals kg\u00b7m/s (the unit of momentum). (Definitional)", doc:"sbtTheory"},
+  {src:"Q.1", type:"SC", tier:1, tax:"F1", pat:"P1", q:"Which has the larger momentum: a 50 g bullet at 500 m/s, or an 80 kg bicycle+rider at 9 km/h?", choices:["The bullet","The bicycle+rider","Equal","Cannot be determined"], correct:1, ans:"The bicycle+rider", note:"Bullet: 0.05\u00d7500 = 25 kg\u00b7m/s. Bicycle: 80\u00d72.5 = 200 kg\u00b7m/s. The bicycle wins. (SBT Q.1)", doc:"sbtYT"},
+
+  /* ---------- tier 2 : moderate (verified vs worked Examples) ---------- */
+  {src:"Example 3", type:"NV", tier:2, tax:"F2", pat:"P2", q:"A gun fires n bullets per second, each of mass m at speed u, horizontally into a wall where they embed. Find the force experienced by the wall.", ans:"n m u", note:"Each bullet's momentum change = mu; n per second \u21d2 F = rate of momentum change = nmu. (SBT Example 3, worked)", doc:"sbtEx"},
+  {src:"Example 2", type:"NV", tier:2, tax:"P1", pat:"P1", q:"A ball of mass m hits a wall at speed u and angle of incidence \u03b8 (to the normal), rebounding at speed u and angle \u03b8. Find the magnitude of the change in momentum.", ans:"2mu cos\u03b8", note:"Only the normal component reverses: \u0394P = \u22122mu cos\u03b8 (along the outward normal). (SBT Example 2, worked)", doc:"sbtEx"},
+  {src:"Example 7", type:"NV", tier:2, tax:"P7", pat:"P7", q:"A 150 g cricket ball hits a bat normally at 144 km/h and rebounds along the same line at 108 km/h. Find the impulse imparted by the bat to the ball.", ans:"10.5 N\u00b7s", note:"P_i = 0.15\u00d740 = 6, P_f = 0.15\u00d730 = 4.5 (opposite); J = \u0394P = 4.5\u2212(\u22126) = 10.5 N\u00b7s. (SBT Example 7, worked)", doc:"sbtEx"},
+  {src:"Example 8", type:"NV", tier:2, tax:"P8", pat:"P8", q:"A 2 kg block on a rough table (\u03bc = 0.2) receives a sharp HORIZONTAL blow of impulse J = 10 N\u00b7s. Find the velocity acquired (friction impulse negligible).", ans:"5 m/s", note:"Horizontal blow leaves N finite \u21d2 friction finite \u21d2 impulse \u2248 0; \u0394P = J \u21d2 v = 10/2 = 5 m/s. (SBT Example 8, worked)", doc:"sbtEx"},
+  {src:"Q.10", type:"NV", tier:2, tax:"P5", pat:"P5", q:"An army person fires 50 g bullets horizontally at 1 km/s from a machine gun, 20 bullets in 4 s. Find the average horizontal force he exerts on the gun to hold it.", ans:"250 N", note:"Momentum/second = (20\u00d70.05\u00d71000)/4 = 250 kg\u00b7m/s per s \u21d2 F = 250 N. (SBT Q.10)", doc:"sbtYT"},
+  {src:"Q.8", type:"SC", tier:2, tax:"P2", pat:"P2", q:"Wind at speed v (air density \u03c1) strikes a wall of area A and spreads sideways. If the wind speed doubles to 2v, the force on the wall becomes", choices:["2\u00d7","3\u00d7","4\u00d7","\u221a2\u00d7"], correct:2, ans:"4\u00d7", note:"F = \u03c1Av\u00b2, so F \u221d v\u00b2 \u21d2 doubling v gives 4\u00d7. (SBT Q.8)", doc:"sbtYT"},
+
+  /* ---------- tier 3 : JEE-Advanced level (verified vs worked Examples \u2014 THIN, top up from Worksheets) ---------- */
+  {src:"Example 4", type:"NV", tier:3, tax:"P3", pat:"P3", q:"A uniform chain of mass M and length L is held vertically with its lower end just touching a table, then released. Find the maximum force the chain exerts on the table.", ans:"3Mg", note:"When length x is piled: thrust 2\u03bbgx + weight \u03bbgx = 3\u03bbgx; maximum at x=L \u21d2 3Mg. (SBT Example 4, worked)", doc:"sbtEx"},
+  {src:"Example 5", type:"NV", tier:3, tax:"P4", pat:"P4", q:"Water of density \u03c1 flows at speed v through a pipe of area A with a right-angle bend. Find the magnitude of the external force required to keep the bend fixed.", ans:"\u221a2\u00b7\u03c1Av\u00b2", note:"Momentum turns 90\u00b0: |\u0394P/s| = \u221a2\u00b7\u03c1Av\u00b2 at 45\u00b0; agent supplies \u221a2\u00b7\u03c1Av\u00b2 opposite. (SBT Example 5, worked)", doc:"sbtEx"},
+  {src:"Example 9", type:"NV", tier:3, tax:"P8", pat:"P8", q:"A 2 kg block on a rough table (\u03bc = 0.2) receives a sharp impulse J = 10 N\u00b7s at 37\u00b0 above the horizontal. Find the velocity acquired immediately after the blow.", ans:"3.4 m/s", note:"Angled blow \u21d2 N impulsive \u21d2 friction impulsive: J_x = (4/5)(10) \u2212 0.2(3/5)(10) = 8 \u2212 1.2 = 6.8 N\u00b7s \u21d2 v = 3.4 m/s. (SBT Example 9, worked)", doc:"sbtEx"},
+  {src:"Example 10", type:"NV", tier:3, tax:"P9", pat:"P9", q:"In an Atwood machine, a block of mass 2m rests on a table connected over a smooth pulley to a ball of mass m. The ball falls freely through height h before the string tautens. Find the common speed just after the string becomes taut.", ans:"\u221a(2gh)/3", note:"u = \u221a(2gh); impulsive tension gives mu = 3mv \u21d2 v = u/3 = \u221a(2gh)/3 (energy lost in the jerk). (SBT Example 10, worked)", doc:"sbtEx"},
+  {src:"Example 13", type:"NV", tier:3, tax:"P11", pat:"P11", q:"A bomb at rest bursts into three pieces. A 100 g piece flies north at 20 m/s and a 200 g piece flies east at 10 m/s. Find the speed of the third 200 g piece.", ans:"10\u221a2 m/s (\u2248 14.1 m/s), toward SW", note:"p\u2081 = 2 (N), p\u2082 = 2 (E); resultant 2\u221a2 NE; third piece 2\u221a2 SW \u21d2 v = 2\u221a2/0.2 = 10\u221a2 m/s. (SBT Example 13, worked)", doc:"sbtEx"},
+  {src:"Example 14", type:"NV", tier:3, tax:"P12", pat:"P12", q:"A straw of mass M and length L lies on a smooth surface; an insect of mass m crawls from one end to the other. Find the distance the straw moves.", ans:"mL/(M+m)", note:"v_CM=0 \u21d2 COM fixed; \u0394x_straw = mL/(M+m), opposite the insect. (SBT Example 14, worked)", doc:"sbtEx"},
+  {src:"Example 16", type:"NV", tier:3, tax:"P13", pat:"P13", q:"A flat car of mass M moves at speed u on a smooth track. A man of mass m jumps off the front with velocity u_r relative to the car. Find the car's velocity just after the jump.", ans:"u \u2212 m\u00b7u_r/(M+m)", note:"(M+m)u = M\u00b7V_car + m(V_car+u_r) \u21d2 V_car = u \u2212 m\u00b7u_r/(M+m). (SBT Example 16, worked)", doc:"sbtEx"},
+  {src:"Example 18", type:"SC", tier:3, tax:"P14", pat:"P14", q:"A block is released from the top of a smooth curved track fixed on a free wedge (mass M) resting on a frictionless floor; the block slides down and leaves horizontally. Which quantity of the (block+wedge) system is conserved throughout?", choices:["Total momentum (both components)","Horizontal momentum only","Vertical momentum only","Kinetic energy only"], correct:1, ans:"Horizontal momentum only", note:"No external horizontal force \u21d2 horizontal P conserved (=0); vertical P is not (normal/gravity act). Mechanical energy is separately conserved (smooth). (SBT Example 18, worked)", doc:"sbtEx"},
+  {src:"Q.3", type:"NV", tier:3, tax:"P14", pat:"P14", q:"A projectile of mass m is launched at speed u, angle \u03b8. Find the magnitude of the change in its momentum from launch to just before landing.", ans:"2 m u sin\u03b8 (downward)", note:"Horizontal p unchanged; vertical reverses from +u sin\u03b8 to \u2212u sin\u03b8 \u21d2 |\u0394p| = 2mu sin\u03b8. (SBT Q.3(ii))", doc:"sbtYT"}
+];
+
+let MOM_PRAC_DOCS = [
+  {id:"sbtTheory", label:"SBT Mechanics II Ch.2 \u00b7 theory / definitions", date:"Jul 2026", note:"Momentum, impulse, conservation \u2014 definitional facts"},
+  {id:"sbtEx",     label:"SBT Mechanics II Ch.2 \u00b7 worked Examples 1\u201319", date:"Jul 2026", note:"Every record verified against the book's printed step-by-step solution"},
+  {id:"sbtYT",     label:"SBT Mechanics II Ch.2 \u00b7 Your Turn (Q.1\u2013Q.31, pre-collision)", date:"Jul 2026", note:"Answers computed and self-verified (SBT Answer Sheet for this chapter not yet supplied)"}
+];
+
+const MOM_PRAC_TIERS=[{k:"All",l:"All"},{k:"1",l:"Foundation"},{k:"2",l:"JEE Main"},{k:"3",l:"JEE Advanced"},{k:"Flag",l:"\u2605 Flagged"}];
+
 /* ===== CURRICULUM TREE  (Subjects > Subsections > Chapters) ===== */
 const CURRICULUM=[
   {id:"maths",name:"Mathematics",sym:"\u2211",subs:[
@@ -1679,7 +2073,7 @@ const CURRICULUM=[
   {id:"phys",name:"Physics",sym:"\u269b",subs:[
     {id:"mech",name:"Mechanics",chapters:[
       {id:"kin",name:"Kinematics",grade:11},{id:"nlm",name:"Laws of Motion",grade:11},
-      {id:"wpe",name:"Work, Power & Energy",grade:11},{id:"rot",name:"Rotational Motion",grade:11},
+      {id:"wpe",name:"Work, Power & Energy",grade:11},{id:"mom",name:"Momentum & Its Conservation",grade:11},{id:"rot",name:"Rotational Motion",grade:11},
       {id:"grav",name:"Gravitation",grade:11},{id:"shm",name:"SHM & Waves",grade:11}]},
     {id:"heat",name:"Heat & Thermodynamics",chapters:[{id:"thermo",name:"Thermodynamics & Kinetic Theory",grade:11}]},
     {id:"em",name:"Electricity & Magnetism",chapters:[
@@ -1697,6 +2091,7 @@ const CONTENT={
   "maths/trig/pev":{key:"pev",taxa:PEV_TAXA,formulae:PEV_FORMULAE,patterns:PEV_PATTERNS,guided:PEV_GUIDED,practice:PEV_PRACTICE,pracDocs:PEV_PRAC_DOCS,pracTiers:PEV_PRAC_TIERS},
   "maths/trig/teq":{key:"teq",taxa:TEQ_TAXA,formulae:TEQ_FORMULAE,patterns:TEQ_PATTERNS,guided:TEQ_GUIDED,practice:TEQ_PRACTICE,pracDocs:TEQ_PRAC_DOCS,pracTiers:TEQ_PRAC_TIERS},
   "phys/mech/wpe":{key:"wpe",taxa:WPE_TAXA,formulae:WPE_FORMULAE,patterns:WPE_PATTERNS,guided:WPE_GUIDED,practice:WPE_PRACTICE,figs:WPE_FIG,pracDocs:WPE_PRAC_DOCS,pracTiers:WPE_PRAC_TIERS},
+  "phys/mech/mom":{key:"mom",taxa:MOM_TAXA,formulae:MOM_FORMULAE,patterns:MOM_PATTERNS,guided:MOM_GUIDED,practice:MOM_PRACTICE,pracDocs:MOM_PRAC_DOCS,pracTiers:MOM_PRAC_TIERS,explain:MOM_EXPLAIN},
   "chem/phys/som":{key:"chemsom",taxa:CHEM_SOM_TAXA,formulae:CHEM_SOM_FORMULAE,patterns:CHEM_SOM_PATTERNS,guided:CHEM_SOM_GUIDED,practice:CHEM_SOM_PRACTICE,figs:CHEM_SOM_FIG,pracDocs:CHEM_SOM_PRAC_DOCS,pracTiers:CHEM_SOM_PRAC_TIERS,explain:CHEM_SOM_EXPLAIN},
   "maths/cg/cs":{key:"cs",taxa:CS_TAXA,formulae:CS_FORMULAE,patterns:CS_PATTERNS,guided:CS_GUIDED,practice:CS_PRACTICE,pracDocs:CS_PRAC_DOCS,pracTiers:CS_PRAC_TIERS}
 };
@@ -1767,6 +2162,16 @@ const CHAPTER_META = [
     chapter: "Coordinate System",
     sources: ["Cengage (G. Tewani) Coordinate Geometry Ch.1", "Narayana JEE-Adv Maths Vol-III (Locus & Transformation of Axes)"],
     created: "05 Jul 2026"
+  },
+  {
+    id:      "phys/mech/mom",
+    grade:   "11th",
+    subject: "Physics",
+    topic:   "Mechanics",
+    chapter: "Momentum & Its Conservation",
+    sources: ["SBT Mechanics II Ch.2 (theory + worked Examples 1\u201319)"],
+    created: "05 Jul 2026",
+    note:    "Core chapter (momentum, impulse, conservation). Collision is a SEPARATE chapter, pending upload. Tier-3 built from verified worked Examples; top up once SBT Worksheets + Answer Sheet arrive."
   }
 ];
 
@@ -2022,7 +2427,7 @@ let GAPLOG = [
     redoCold:true
   },
   {
-    id:"WTA6-Q18", date:"28 Jun 2026", test:"Na	rayana JR.IIT WTA-6 (Model-A) · JEE-Adv", qno:"Q18",
+    id:"WTA6-Q18", date:"28 Jun 2026", test:"Narayana JR.IIT WTA-6 (Model-A) · JEE-Adv", qno:"Q18",
     grade:"11th", chapter:"Periodicity & Extreme Values", type:"MM",
     qtext:"Match minimum-value bounds: (A) min of √((3sinx−4cosx−10)(3sinx+4cosx−10)); (B) min of g(x)=a cos²x − b sec²x + 2c given a²+b²+c²−2a+6b−4c+14=0; (C) values sin²A+sin²B+sin²C cannot take in a triangle; (D) min of x²+y² given xy(x²−y²)=x²+y².",
     diagnosis:"existing", pat:"pev · P7 + P14 (quadratic/AM-GM extrema + triangle range)",
