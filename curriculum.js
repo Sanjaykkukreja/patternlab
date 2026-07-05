@@ -2022,7 +2022,7 @@ let GAPLOG = [
     redoCold:true
   },
   {
-    id:"WTA6-Q18", date:"28 Jun 2026", test:"Narayana JR.IIT WTA-6 (Model-A) · JEE-Adv", qno:"Q18",
+    id:"WTA6-Q18", date:"28 Jun 2026", test:"Na	rayana JR.IIT WTA-6 (Model-A) · JEE-Adv", qno:"Q18",
     grade:"11th", chapter:"Periodicity & Extreme Values", type:"MM",
     qtext:"Match minimum-value bounds: (A) min of √((3sinx−4cosx−10)(3sinx+4cosx−10)); (B) min of g(x)=a cos²x − b sec²x + 2c given a²+b²+c²−2a+6b−4c+14=0; (C) values sin²A+sin²B+sin²C cannot take in a triangle; (D) min of x²+y² given xy(x²−y²)=x²+y².",
     diagnosis:"existing", pat:"pev · P7 + P14 (quadratic/AM-GM extrema + triangle range)",
