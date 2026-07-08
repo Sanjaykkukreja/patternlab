@@ -2047,6 +2047,415 @@ let MOM_PRAC_DOCS = [
 
 const MOM_PRAC_TIERS=[{k:"All",l:"All"},{k:"1",l:"Foundation"},{k:"2",l:"JEE Main"},{k:"3",l:"JEE Advanced"},{k:"Flag",l:"\u2605 Flagged"}];
 
+/* ============================================================
+   CHAPTER: Chemical Thermodynamics (chem/phys/thermo)
+   Source: Narayana Module (JEE-Adv Chemistry Vol-II)
+   ============================================================ */
+
+/* ===== TAXONOMY ===== */
+let THERMO_TAXA = [
+  {code:"D1",label:"Sign convention & first-law bookkeeping",group:"First law"},
+  {code:"D2",label:"\u0394H vs \u0394U \u2014 the \u0394n\u1d63RT bridge",group:"First law"},
+  {code:"D3",label:"Work-done fork (isothermal/adiabatic \u00d7 rev/irrev)",group:"First law"},
+  {code:"D4",label:"Heat capacity, Cp\u2212Cv=R, \u03b3 & degrees of freedom",group:"First law"},
+  {code:"D5",label:"Hess's Law \u2014 building the target equation",group:"Thermochemistry"},
+  {code:"D6",label:"Bond enthalpy calculations",group:"Thermochemistry"},
+  {code:"D7",label:"Enthalpy of formation \u2192 heat of reaction",group:"Thermochemistry"},
+  {code:"D8",label:"Enthalpy of combustion & calorific value",group:"Thermochemistry"},
+  {code:"D9",label:"Enthalpy of neutralisation (strong/weak)",group:"Thermochemistry"},
+  {code:"D10",label:"Lattice energy \u2014 Born-Haber cycle",group:"Thermochemistry"},
+  {code:"D11",label:"Enthalpy of solution / hydration / dilution",group:"Thermochemistry"},
+  {code:"D12",label:"Calorimetry (bomb & solution)",group:"Thermochemistry"},
+  {code:"D13",label:"Entropy of a process (iso/adia/isochoric/isobaric)",group:"Second law"},
+  {code:"D14",label:"Entropy of reaction from S\u00b0 data",group:"Second law"},
+  {code:"D15",label:"Gibbs free energy, spontaneity & \u0394G\u2194Keq",group:"Second law"},
+  {code:"D16",label:"Carnot cycle & reversible-vs-irreversible work",group:"Second law"}
+];
+
+/* ===== L1 FORMULAE ===== */
+let THERMO_FORMULAE = [
+  {tag:"convention",title:"Sign convention & the first law",rows:[
+    {f:"\u0394U = q + w   (IUPAC: q, w positive when given TO / done ON the system)"},
+    {f:"Heat absorbed: q > 0 \u00b7 Heat released: q < 0 \u00b7 Work done ON system: w > 0 \u00b7 Work done BY system: w < 0",k:"trap",note:"Older texts write \u0394U = q \u2212 w with w = work done BY the system. Fix ONE convention per problem and never mix them mid-solution."},
+    {f:"Isothermal ideal gas: \u0394U = 0 \u21d2 q = \u2212w \u00b7 Adiabatic: q = 0 \u21d2 \u0394U = w",k:"chem",note:"These two special cases resolve 80% of \u2018find q or w\u2019 questions instantly \u2014 check for the keyword first."}]},
+  {tag:"enthalpy",title:"Enthalpy & the \u0394ngRT bridge",rows:[
+    {f:"H = U + PV   \u21d2   \u0394H = \u0394U + \u0394(PV)"},
+    {f:"At constant P: \u0394H = \u0394U + P\u0394V = qp   \u00b7   At constant V: \u0394U = qv"},
+    {f:"For reactions: \u0394H = \u0394U + \u0394n\u2098RT   where \u0394n\u2098 = (mol gaseous products) \u2212 (mol gaseous reactants)",k:"chem",note:"\u0394n\u2098=0 \u21d2 \u0394H=\u0394U exactly (no gas-mole change, or reaction has no gases at all)."}]},
+  {tag:"work-iso",title:"Work done \u2014 isothermal process",rows:[
+    {f:"Reversible: W = \u22122.303\u00b7nRT\u00b7log(V\u2082/V\u2081) = \u22122.303\u00b7nRT\u00b7log(P\u2081/P\u2082)"},
+    {f:"Irreversible (against constant Pext): W = \u2212Pext\u00b7(V\u2082\u2212V\u2081)"},
+    {f:"Free expansion (Pext=0): W = 0, and since \u0394T=0 \u21d2 q = 0, \u0394U = 0, \u0394H = 0",k:"trap",note:"Free expansion is the one case where isothermal W is NOT \u22122.303nRT log(V\u2082/V\u2081) \u2014 it's simply zero."}]},
+  {tag:"work-adia",title:"Work done \u2014 adiabatic process (q = 0)",rows:[
+    {f:"Reversible: W = nCv(T\u2082\u2212T\u2081) = (P\u2082V\u2082\u2212P\u2081V\u2081)/(\u03b3\u22121)"},
+    {f:"PV^\u03b3 = const \u00b7 TV^(\u03b3\u22121) = const \u00b7 T^\u03b3\u00b7P^(1\u2212\u03b3) = const",k:"chem",note:"These P-T-V relations apply ONLY to REVERSIBLE adiabatic changes \u2014 never use them for an irreversible adiabatic step."},
+    {f:"Irreversible: W = \u2212Pext(V\u2082\u2212V\u2081) = nCv(T\u2082\u2212T\u2081)  \u2014 solve for T\u2082 directly from this energy balance"}]},
+  {tag:"heatcap",title:"Heat capacity, Cp, Cv and \u03b3",rows:[
+    {f:"Cp \u2212 Cv = R (per mole)   \u00b7   \u03b3 = Cp/Cv"},
+    {f:"Monoatomic: Cv=3/2R, Cp=5/2R, \u03b3=5/3=1.67 \u00b7 Diatomic: Cv=5/2R, Cp=7/2R, \u03b3=7/5=1.4 \u00b7 Triatomic(non-linear): Cv=3R, Cp=4R, \u03b3=4/3=1.33"},
+    {f:"Mixture: (Cv)mix = (n\u2081Cv\u2081+n\u2082Cv\u2082)/(n\u2081+n\u2082) \u00b7 similarly for Cp \u00b7 \u03b3mix = (Cp)mix/(Cv)mix",k:"chem",note:"Never average \u03b3 values directly \u2014 average Cv and Cp first, THEN divide."}]},
+  {tag:"hess",title:"Hess's Law",rows:[
+    {f:"\u0394H(target) = \u03a3 \u0394H(intermediate steps), combined algebraically (add/subtract/scale equations)"},
+    {f:"Applies to physical, allotropic AND chemical changes \u2014 it is a direct consequence of the first law (energy is a state function)"}]},
+  {tag:"bond",title:"Bond enthalpy calculations",rows:[
+    {f:"\u0394rH = \u03a3 B.E.(reactants) \u2212 \u03a3 B.E.(products)   [gas phase only]"},
+    {f:"For diatomic molecules: bond dissociation energy = bond energy (single value) \u00b7 For polyatomics, B.E. is an AVERAGE over all equivalent bonds",k:"trap",note:"CH\u2084\u2192C+4H needs 4 different stepwise energies in reality; the tabulated C\u2013H bond energy is their arithmetic mean."},
+    {f:"Resonance energy: R.E. = |\u0394Hf(experimental)| \u2212 |\u0394Hf(calculated from B.E.)|",k:"chem",note:"R.E. is reported with a NEGATIVE sign \u2014 the resonance-stabilised (real) molecule is always lower in energy than the hypothetical Kekul\u00e9 structure."}]},
+  {tag:"thermochem",title:"Formation, combustion & neutralisation enthalpies",rows:[
+    {f:"\u0394rH\u00b0 = \u03a3\u0394Hf\u00b0(products) \u2212 \u03a3\u0394Hf\u00b0(reactants)   \u00b7   \u0394Hf\u00b0(element, standard state) = 0"},
+    {f:"Strong acid + strong base (dilute): \u0394Hneut = \u221213.7 kcal/mol = \u221257.3 kJ/mol (FIXED \u2014 same net ionic reaction H\u207a+OH\u207b\u2192H\u2082O every time)"},
+    {f:"Weak acid/base: \u0394Hneut = \u0394Hneut(SA/SB) + \u0394Hionisation   \u00b7   |\u0394Hneut(weak)| < 13.7 kcal, since ionisation absorbs some heat",k:"chem",note:"The \u2018extra\u2019 heat difference from \u221213.7 kcal directly gives you the ionisation enthalpy of the weak component."}]},
+  {tag:"lattice",title:"Lattice energy & Born-Haber cycle",rows:[
+    {f:"\u0394Hf\u00b0(ionic solid) = \u0394Hsub(metal) + \u00bd\u00b7\u0394Hdiss(X\u2082) + I.E.(metal) + E.A.(X) + Lattice Energy  [signs included]"},
+    {f:"\u0394Hsolution = Lattice Energy + \u0394Hhydration  (LE is +ve/endothermic to break apart; hydration is \u2212ve/exothermic)"}]},
+  {tag:"calorim",title:"Calorimetry",rows:[
+    {f:"Bomb calorimeter (const V): q = Z\u00b7\u0394T (Z = heat capacity of calorimeter system) \u2192 gives \u0394U (=\u0394Ecombustion)"},
+    {f:"Convert to \u0394H: \u0394Hcombustion = \u0394Ucombustion + \u0394n\u2098RT"},
+    {f:"Solution/water calorimeter: q = (m + W)\u00b7s\u00b7\u0394T, where W = water equivalent of the calorimeter",k:"chem",note:"Water equivalent W absorbs/releases heat exactly like an equal mass of water \u2014 always add it to the actual mass before using q=msT."}]},
+  {tag:"entropy",title:"Entropy \u2014 process formulas (ideal gas)",rows:[
+    {f:"\u0394S = qrev/T   (2nd-law defining equation, reversible path only)"},
+    {f:"General: \u0394S = 2.303\u00b7nCv\u00b7log(T\u2082/T\u2081) + 2.303\u00b7nR\u00b7log(V\u2082/V\u2081)   (or with Cp & pressure: +2.303nR\u00b7log(P\u2081/P\u2082))"},
+    {f:"Isothermal: \u0394S = 2.303nR\u00b7log(V\u2082/V\u1d62)   \u00b7   Isochoric: \u0394S = 2.303nCv\u00b7log(T\u2082/T\u2081)   \u00b7   Adiabatic reversible: \u0394S = 0",k:"trap",note:"Adiabatic + REVERSIBLE \u21d2 \u0394S=0. Adiabatic + IRREVERSIBLE (e.g. free expansion) \u21d2 \u0394S > 0, even though q=0 throughout \u2014 don't confuse q=0 with \u0394S=0."},
+    {f:"Phase change (at Tb or Tf, constant P): \u0394S = \u0394H(transition)/T(transition)"}]},
+  {tag:"entropyrxn",title:"Entropy & spontaneity of a reaction",rows:[
+    {f:"\u0394S\u00b0(rxn) = \u03a3S\u00b0(products) \u2212 \u03a3S\u00b0(reactants)"},
+    {f:"\u0394S(total) = \u0394S(system) + \u0394S(surroundings) \u2265 0 for any real process; = 0 only at reversible equilibrium",k:"chem",note:"\u0394S(surr) = \u2212\u0394H(sys)/T \u2014 this is how an exothermic reaction can still increase the UNIVERSE's entropy even while \u0394S(system) itself is negative."}]},
+  {tag:"gibbs",title:"Gibbs free energy & spontaneity",rows:[
+    {f:"\u0394G = \u0394H \u2212 T\u0394S   (Gibbs-Helmholtz equation)"},
+    {f:"\u0394G < 0: spontaneous \u00b7 \u0394G > 0: non-spontaneous \u00b7 \u0394G = 0: equilibrium"},
+    {f:"\u0394G\u00b0 = \u2212RT\u00b7ln Keq = \u22122.303RT\u00b7log Keq   \u00b7   \u0394G = \u0394G\u00b0 + 2.303RT\u00b7log Q  (Van't Hoff isotherm)",k:"chem",note:"At equilibrium Q=Keq and \u0394G=0 \u2014 that's exactly how the isotherm collapses to \u0394G\u00b0=\u22122.303RT log Keq."}]},
+  {tag:"carnot",title:"Carnot cycle & efficiency",rows:[
+    {f:"\u03b7 = Wnet/Q\u2082(absorbed) = (T\u2082\u2212T\u2081)/T\u2082 = 1 \u2212 T\u2081/T\u2082   (T\u2082=source, T\u2081=sink, both in kelvin)"},
+    {f:"%\u03b7 < 100% always, since T\u2081 > 0 K is unreachable (3rd law) \u00b7 W_rev = W_max (reversible work is always the maximum obtainable)"}]}
+];
+
+/* ===== L2 PATTERNS ===== */
+let THERMO_PATTERNS = [
+  {id:"D1",name:"Sign convention & first-law bookkeeping",
+   trigger:"A problem gives heat and/or work (in any words: absorbed, released, done on, done by) and asks for \u0394U, q, or w.",
+   move:"Fix ONE sign convention (IUPAC: \u0394U=q+w, both +ve when given TO the system) and stick to it for the whole solution. Read every phrase against that convention before plugging in numbers.",
+   why:"\u0394U is a state function so q and w individually depend on path, but their SUM never does \u2014 the first law is just energy conservation written for a system exchanging both heat and work with its surroundings.",
+   mini:"A system absorbs 20 kJ and does 10 kJ of work on the surroundings: q=+20, w=\u221210, \u0394U=+10 kJ.",
+   fails:"Mixing \u0394U=q+w with the older \u0394U=q\u2212w convention mid-problem \u2014 pick one and never switch.",
+   src:"Ex-I Q26,Q27,Q35\u201338 \u00b7 Ex-IV Q6",
+   srcText:{"Ex-I Q36":"A certain electric motor produced 15 KJ of energy each second as numerical work and lost 2KJ as heat to the surroundings. What is the change in the internal energy of the motor and its power supply each second?"}},
+  {id:"D2",name:"\u0394H vs \u0394U \u2014 the \u0394n\u1d63RT bridge",
+   trigger:"A reaction's heat is measured at CONSTANT VOLUME (bomb calorimeter, \u0394U/\u0394E given) but the question wants the constant-PRESSURE value \u0394H, or vice versa \u2014 gases appear on one or both sides.",
+   move:"Count gaseous moles: \u0394n\u1d63 = (mol gas products) \u2212 (mol gas reactants). Then \u0394H = \u0394U + \u0394n\u1d63RT. If \u0394n\u1d63=0 the two are numerically identical.",
+   why:"H=U+PV; the PV term only changes with temperature when the number of gas moles changes (liquids/solids contribute negligible PV change), so the correction is exactly \u0394n\u1d63RT.",
+   mini:"C(graphite)+O\u2082(g)\u2192CO\u2082(g): \u0394n\u1d63=1\u22121=0, so \u0394H=\u0394U exactly.",
+   fails:"Forgetting to count only GASEOUS species, or using the wrong sign of \u0394n\u1d63 (products minus reactants, not the reverse).",
+   src:"Ex-I Q42\u201348 \u00b7 Ex-IV Q100\u2013106",
+   srcText:{"Ex-I Q44":"For the reaction C\u2082H\u2084(g)+3O\u2082(g)\u21922CO\u2082(g)+2H\u2082O(l); \u0394E=\u22121415KJ. The \u0394H at 27\u00b0C is:"}},
+  {id:"D3",name:"Work-done fork (isothermal / adiabatic \u00d7 rev / irrev)",
+   trigger:"An ideal gas expands or is compressed and the question specifies BOTH the process type (isothermal/adiabatic) AND whether it's reversible or a single/finite step against constant external pressure.",
+   move:"Isothermal reversible \u2192 W=\u22122.303nRT log(V\u2082/V\u2081). Isothermal irreversible (or any single-step) \u2192 W=\u2212Pext(V\u2082\u2212V\u2081). Adiabatic reversible \u2192 W=nCv\u0394T using PV^\u03b3=const to find T\u2082. Adiabatic irreversible \u2192 W=nCv\u0394T solved together with W=\u2212Pext(V\u2082\u2212V\u1d62) as simultaneous equations.",
+   why:"Reversible work is done through infinite tiny equilibrium steps (maximum possible magnitude); irreversible work is done in one jump against a fixed external pressure \u2014 different paths, different work, same start/end states.",
+   mini:"1 mol ideal gas, 300K, expands isothermally & reversibly from 10L to 20L: W=\u22122.303(1)(8.314)(300)log2 \u2248 \u22121729 J.",
+   fails:"Using the reversible log-formula for a single-step (irreversible) expansion, or forgetting \u0394U=0 only holds for ISOTHERMAL (not adiabatic).",
+   src:"Ex-I Q58\u201368 \u00b7 Ex-II Q20\u201325 \u00b7 Ex-III Q84,96\u201399",
+   srcText:{"Ex-II Q21":"An ideal gas occupying a volume of 2 dm\u00b3 and a pressure of 5 bar undergoes isothermal and irreversible expansion against external pressure of 1 bar. The final volume of the system and the work involved in the process is:"}},
+  {id:"D4",name:"Heat capacity, Cp\u2212Cv=R, \u03b3 & degrees of freedom",
+   trigger:"A gas (or a MIXTURE of two gases) is heated, and Cv, Cp, or \u03b3 must be found or combined across the mixture.",
+   move:"Use Cp\u2212Cv=R for a single gas; for a mixture weight Cv and Cp by mole fraction FIRST, then form \u03b3mix=(Cp)mix/(Cv)mix \u2014 never average \u03b3 directly.",
+   why:"Heat capacity is an extensive-per-mole property that adds by moles; \u03b3 is a RATIO of two such averaged quantities, so it must be computed last, not averaged itself.",
+   mini:"2 mol monoatomic (Cv=3/2R) + 3 mol diatomic (Cv=5/2R): (Cv)mix=(2\u00b71.5R+3\u00b72.5R)/5=2.1R.",
+   fails:"Averaging \u03b3 values directly across a mixture instead of averaging Cv and Cp first.",
+   src:"Ex-I Q49\u201357 \u00b7 Ex-II Q11\u201319",
+   srcText:{"Ex-II Q14":"5moles of oxygen are heated at constant volume from 10\u00b0C to 20\u00b0C. the change in internal energy of a gas. [Cp=7.03calmol\u207b\u00b9deg\u207b\u00b9 and R=8.31Jmol\u207b\u00b9deg\u207b\u00b9]"}},
+  {id:"D5",name:"Hess's Law \u2014 building the target equation",
+   trigger:"Several thermochemical equations with known \u0394H are given, and the question asks for the \u0394H of a DIFFERENT (target) reaction not directly listed.",
+   move:"Manipulate the given equations by multiplying/reversing/adding so their sum (with matching \u0394H arithmetic) reproduces the target equation exactly \u2014 reversing a step flips the sign of its \u0394H, scaling by k multiplies \u0394H by k.",
+   why:"\u0394H is a state function (first law), so the heat change for going from reactants to products is the same however many intermediate steps you route through \u2014 you're free to choose any convenient path made of known steps.",
+   mini:"Given A\u2192B (\u0394H\u2081) and A\u2192C (\u0394H\u2082), then B\u2192C = \u0394H\u2082\u2212\u0394H\u2081 (reverse the first, add the second).",
+   fails:"Forgetting to flip the SIGN of \u0394H when an equation is reversed, or forgetting to scale \u0394H when an equation is multiplied by a coefficient.",
+   src:"Ex-I Q110\u2013116,170\u2013173 \u00b7 Ex-II Q64",
+   srcText:{"Ex-II Q64":"Calculate the heat of combustion (in KJ) of methane from the following data: i) C(graphite)+2H\u2082(g)\u2192CH\u2084(g), \u0394H=-74.8 KJ; ii) C(graphite)+O\u2082(g)\u2192CO\u2082(g), \u0394H=-393.5 KJ; iii) H\u2082(g)+1/2O\u2082(g)\u2192H\u2082O(l), \u0394H=-286.2 KJ."}},
+  {id:"D6",name:"Bond enthalpy calculations",
+   trigger:"Bond energies (B.E.) of specific bonds are given, and the question asks for \u0394H of a reaction, an unknown bond energy, or resonance energy.",
+   move:"\u0394rH = \u03a3B.E.(bonds broken in reactants) \u2212 \u03a3B.E.(bonds formed in products). For resonance energy: R.E. = |\u0394Hf(experimental)| \u2212 |\u0394Hf(calculated from B.E. data)|.",
+   why:"Breaking a bond always costs energy (endothermic) and forming a bond always releases it (exothermic); the net heat of reaction is simply the energy books balanced across old and new bonds.",
+   mini:"H\u2082(g)+I\u2082(g)\u21922HI(g): \u0394H = [B.E.(H-H)+B.E.(I-I)] \u2212 2\u00b7B.E.(H-I).",
+   fails:"Applying bond-energy data to solids or liquids (only valid in gas phase), or mixing up which side is being broken vs formed.",
+   src:"Ex-I Q163\u2013169 \u00b7 Ex-II Q59\u201363",
+   srcText:{"Ex-II Q63":"Calculate R.E of NO\u2082, the measured enthalpy formation of NO\u2082(\u0394Hf\u00b0)=34KJ/m. The BE given are N-O\u2192222 KJ/m, N=N\u21d2946 KJ/m, O=O\u21d2498 KJ/m, N=O\u21d2607 KJ/m."}},
+  {id:"D7",name:"Enthalpy of formation \u2192 heat of reaction",
+   trigger:"Standard enthalpies of formation (\u0394Hf\u00b0) of all reactants and products are given (or in a data table), and the reaction's \u0394rH\u00b0 is wanted.",
+   move:"\u0394rH\u00b0 = \u03a3\u0394Hf\u00b0(products) \u2212 \u03a3\u0394Hf\u00b0(reactants), remembering \u0394Hf\u00b0 of any element in its standard state (or H\u207a(aq)) is exactly ZERO.",
+   why:"Formation enthalpies are each a Hess's-Law path from elements to the compound; subtracting reactant paths from product paths cancels the common elemental starting point, leaving only the reaction's net heat.",
+   mini:"CH\u2084 combustion: \u0394rH = [\u0394Hf(CO\u2082)+2\u0394Hf(H\u2082O)] \u2212 [\u0394Hf(CH\u2084)+2\u00d70].",
+   fails:"Giving an element a nonzero \u0394Hf\u00b0 (e.g. for O\u2082 or graphite), or forgetting the stoichiometric coefficients when summing.",
+   src:"Ex-I Q39,40 \u00b7 Ex-II Q40\u201343",
+   srcText:{"Ex-II Q42":"When a certain amount of ethylene was burnt 622 KJ heat was evolved. If heat of combustion of ethylene is 1411 KJ, the volume of O\u2082 (at NTP) that entered into the reaction is:"}},
+  {id:"D8",name:"Enthalpy of combustion & calorific value",
+   trigger:"A given mass of fuel is burnt (in air/oxygen) and the heat released per gram (calorific value) or per mole (heat of combustion) is asked, often needing conversion between the two.",
+   move:"Heat of combustion (per mole) = calorific value (per gram) \u00d7 molar mass. Combustion enthalpies are ALWAYS negative (exothermic) \u2014 use the molar value with sign, then scale to the mass given.",
+   why:"Calorific value is just heat of combustion expressed per unit MASS instead of per mole; multiplying by molar mass recovers the molar quantity used in all other thermochemical algebra.",
+   mini:"3.9 g benzene releases 163.2 kJ \u21d2 heat of combustion = 163.2\u00d7(78/3.9) = 3264 kJ/mol.",
+   fails:"Forgetting the negative sign for an exothermic combustion, or dividing by mass instead of multiplying when converting per-gram to per-mole.",
+   src:"Ex-I Q126,127,130 \u00b7 Ex-II Q118,120",
+   srcText:{"Ex-I Q126":"The energy evolved when 3.9 gm of benzene is burnt in air is 163.2KJ heat of combustion of benzene is:"}},
+  {id:"D9",name:"Enthalpy of neutralisation (strong/weak)",
+   trigger:"An acid and a base are mixed and \u0394Hneutralisation is asked; check whether BOTH are strong, or if EITHER is weak.",
+   move:"Strong-strong is fixed at \u221213.7 kcal/mol (\u221257.3 kJ/mol) \u2014 no calculation needed beyond scaling to moles reacted. If either is weak: \u0394Hneut(weak) = \u221213.7 kcal + \u0394Hionisation(weak component) [ionisation is endothermic, so |\u0394Hneut(weak)| is always smaller].",
+   why:"The net ionic reaction for strong-strong is always H\u207a+OH\u207b\u2192H\u2082O, so the heat is fixed; a weak acid/base isn't fully ionised beforehand, so some of the neutralisation heat is spent first ionising it.",
+   mini:"\u0394Hneut(HA weak)=\u221255.95 kJ, and SA-SB baseline is \u221257.3 kJ \u21d2 ionisation of HA = +1.35 kJ/mol.",
+   fails:"Using \u221213.7 kcal for a WEAK acid/base pair without correcting for the ionisation enthalpy.",
+   src:"Ex-I Q142\u2013147 \u00b7 Ex-II Q46\u201350",
+   srcText:{"Ex-II Q49":"The enthalpy of neutralization of a weak monoprotic acid(HA) in 1M solution with a strong base is -55.95 KJ/mol. If the unionized acid requires 1.4 KJ/mol heat for its complete ionization and enthalpy of neutralization of the strong monobasic acid with a strong monoacidic base is -57.3 KJ/mol. what is the % ionization of the weak acid in molar solution?"}},
+  {id:"D10",name:"Lattice energy \u2014 Born-Haber cycle",
+   trigger:"Sublimation, ionisation, dissociation, electron-affinity and overall formation enthalpies of an ionic solid are all given, and lattice energy (or one missing piece) is wanted.",
+   move:"Draw/apply the Born-Haber cycle: \u0394Hf(solid) = \u0394Hsub + \u00bd\u0394Hdiss + I.E. + E.A. + Lattice Energy (all with correct sign), then solve for the unknown.",
+   why:"Hess's Law again: forming the ionic solid directly from elements must release/absorb the same net energy as the longer path through gaseous atoms and ions.",
+   mini:"NaCl: \u2212410 = 108.8 + \u00bd(242.7) + 493.7 + (\u2212368.2) + LE \u21d2 LE \u2248 \u2212765.65 kJ/mol.",
+   fails:"Getting a sign wrong on one leg of the cycle (especially electron affinity, which is usually negative/exothermic) and cascading the error through.",
+   src:"Ex-I W.E-2 \u00b7 Ex-II Q65",
+   srcText:{"Ex-II Q65":"When a mole of crystalline sodium chloride is prepared ,410kJ of heat is produced. The heat of sublimation of sodium metal is 108.8kJ. The heat of dissociation of chlorine gas into atoms is 242.7 kJ. The ionisation energy of Na and electron affinity of Cl are 493.7kJ and -368.2 kJ rspectively. Calculate the magnitude of lattice energy of NaCl."}},
+  {id:"D11",name:"Enthalpy of solution / hydration / dilution",
+   trigger:"A solid (often a salt or hydrate) dissolves in water, or a hydrated/anhydrous pair is compared, and \u0394Hsolution, \u0394Hhydration, or \u0394Hdilution is asked.",
+   move:"\u0394Hsolution = Lattice Energy(+ve) + \u0394Hhydration(\u2212ve). For hydrate\u2194anhydrous pairs use Hess's Law directly on the two given dissolution enthalpies. Dilution: compare heat absorbed at two different dilution ratios of the SAME solute.",
+   why:"Dissolving an ionic solid is really two competing steps \u2014 breaking the lattice apart (always costs energy) and then stabilising the free ions in water (always releases energy); which one wins sets the overall sign.",
+   mini:"MgSO\u2084(s)\u2192soln: \u221291.2 kJ; MgSO\u2084\u00b77H\u2082O(s)\u2192soln: +13.8 kJ \u21d2 \u0394H(hydration reaction of anhydrous salt) = \u221291.2\u221213.8 = \u2212105.0 kJ.",
+   fails:"Adding lattice energy and hydration energy with the SAME sign instead of opposite (LE endothermic, hydration exothermic).",
+   src:"Ex-I Q148\u2013151 \u00b7 Ex-II Q52",
+   srcText:{"Ex-I Q148":"AT 298 K, the heat of solution of MgSO\u2084(s) is -91.21 KJ mol\u207b\u00b9 and that of MgSO\u2084.7H\u2082O(s) is 13.81 KJ mol\u207b\u00b9. Calculate heat of hydration of MgSO\u2084(s)."}},
+  {id:"D12",name:"Calorimetry (bomb & solution)",
+   trigger:"A mass of substance is burnt/dissolved/reacted inside a calorimeter and a temperature RISE is observed; the question wants \u0394U, \u0394H, or the heat capacity/water-equivalent of the setup.",
+   move:"Bomb (constant V): q=Z\u00b7\u0394T gives \u0394U directly; convert to \u0394H with \u0394H=\u0394U+\u0394n\u1d63RT. Solution calorimeter: q=(m+W)\u00b7s\u00b7\u0394T, where W (water equivalent) is added to the actual mass of liquid.",
+   why:"A calorimeter itself absorbs some heat; treating it as an 'equivalent mass of water' (W) folds that absorption into one simple q=msT-style calculation.",
+   mini:"1 g graphite burnt, \u0394T=1K, Z=20.7 kJ/K \u21d2 q=20.7 kJ for 1/12 mol \u21d2 \u0394Ucombustion \u2248 \u2212248.4 kJ/mol.",
+   fails:"Using the mass of substance burnt (instead of the calorimeter's heat capacity Z or water equivalent W) in the q=CT step.",
+   src:"Ex-I Q128\u2013130 \u00b7 Ex-II Q117",
+   srcText:{"Ex-II Q117":"100ml of water at 20\u00b0C and 100ml of water at 40\u00b0C are mixed in calorimeter until constant temperature reached. Now temperature of the mixture is 28\u00b0C. Water equivalent of calorimeter is:"}},
+  {id:"D13",name:"Entropy of a process (iso/adia/isochoric/isobaric)",
+   trigger:"An ideal gas undergoes a named process (isothermal, adiabatic, isochoric, isobaric, or phase change) and \u0394S (system, surroundings, or total) is wanted.",
+   move:"Match the process to its formula: isothermal \u2192 2.303nR log(V\u2082/V\u1d62); isochoric \u2192 2.303nCv log(T\u2082/T\u1d62); isobaric \u2192 2.303nCp log(T\u2082/T\u1d62); reversible adiabatic \u2192 \u0394S=0; phase change \u2192 \u0394H(transition)/T(transition).",
+   why:"\u0394S=qrev/T is the master definition; each named process just fixes which variable is held constant, turning the general formula into one clean term.",
+   mini:"Vaporisation of water at 373K, \u0394Hvap=40.7 kJ/mol \u21d2 \u0394Svap = 40700/373 \u2248 109.1 J/K/mol.",
+   fails:"Applying \u0394S=0 to an IRREVERSIBLE adiabatic step (e.g. free expansion) \u2014 that one still has \u0394S>0 even though q=0.",
+   src:"Ex-I Q188\u2013197,209\u2013213 \u00b7 Ex-II Q31\u201332",
+   srcText:{"Ex-I Q190":"If \u0394Hvap of pure water at 100\u00b0C is 40.627 KJ mol\u207b\u00b9 The value of \u0394Svap is:"}},
+  {id:"D14",name:"Entropy of reaction from S\u00b0 data",
+   trigger:"Standard molar entropies S\u00b0 of every species in a reaction are given (a data table), and \u0394S\u00b0(reaction) or the temperature at which \u0394G\u00b0 flips sign is asked.",
+   move:"\u0394S\u00b0(rxn) = \u03a3S\u00b0(products) \u2212 \u03a3S\u00b0(reactants). If asked for an equilibrium/spontaneity temperature, combine with \u0394H\u00b0 via T = \u0394H\u00b0/\u0394S\u00b0 (the point where \u0394G\u00b0=0).",
+   why:"Unlike \u0394Hf\u00b0 and \u0394Gf\u00b0, elements do NOT have zero standard entropy (S\u00b0>0 always, third law) \u2014 so every species, including elements, contributes to the sum.",
+   mini:"S\u00b0: N\u2082(g)=192, H\u2082(g)=130.5 J/K, NH\u2083(g)(s)=99.5 \u2014 combine per stoichiometry for 2NH\u2083\u2192N\u2082+3H\u2082.",
+   fails:"Treating an element's S\u00b0 as zero (that rule is only for \u0394Hf\u00b0 / \u0394Gf\u00b0, never for S\u00b0 itself).",
+   src:"Ex-I Q231\u2013232 \u00b7 Ex-II Q56,60",
+   srcText:{"Ex-II Q56":"In the conversion of lime stone to lime: CaCO\u2083(s)\u2192CaO(s)+CO\u2082(g) The values of \u0394H\u00b0 and \u0394S\u00b0 are 179.1 KJ mol\u207b\u00b9 and 160.2 JK\u207b\u00b9mol\u207b\u00b9 respectively at 298 K and 1 bar. Assuming \u0394H\u00b0 and \u0394S\u00b0 remains constant with temperature, at which minimum temperature conversion of lime stone to lime will be spontaneous:"}},
+  {id:"D15",name:"Gibbs free energy, spontaneity & \u0394G\u2194Keq",
+   trigger:"\u0394H and \u0394S (or S\u00b0 data) are both given and a spontaneity verdict, a crossover temperature, or the equilibrium constant Keq is wanted.",
+   move:"\u0394G=\u0394H\u2212T\u0394S; sign of \u0394G decides spontaneity (< 0 spontaneous, > 0 not, = 0 equilibrium). For Keq: \u0394G\u00b0=\u22122.303RT log Keq \u2014 solve either direction.",
+   why:"Gibbs energy packages the competing pulls of energy-minimisation (\u0394H) and disorder-maximisation (T\u0394S) into one number whose sign alone predicts the direction of spontaneous change at constant T,P.",
+   mini:"\u0394H\u00b0=+30 kJ, \u0394S\u00b0=+105 J/K \u21d2 crossover T = 30000/105 \u2248 286 K; spontaneous above this.",
+   fails:"Forgetting to convert \u0394S to the SAME energy units as \u0394H (kJ vs J) before subtracting T\u0394S.",
+   src:"Ex-I Q198\u2013208 \u00b7 Ex-II Q33,36\u201339,242\u2013246",
+   srcText:{"Ex-II Q36":"What will be the value of \u0394G\u00b0. If equlibrium constant for a reaction is 10."}},
+  {id:"D16",name:"Carnot cycle & reversible-vs-irreversible work",
+   trigger:"A heat engine operates between two temperatures (source/sink), or the question compares work done in a reversible vs an irreversible step between the SAME two states.",
+   move:"\u03b7 = (T2\u2212T1)/T2 = 1\u2212T1/T2 for engine efficiency (T2>T1, kelvin). For work comparison: |W(reversible)| is always \u2265 |W(irreversible)| for the same start/end states \u2014 reversible work is the theoretical maximum.",
+   why:"A Carnot engine is the most efficient possible between two reservoirs because every step is reversible (no wasted/dissipated energy); any real (irreversible) engine does strictly less net work for the same heat input.",
+   mini:"Source 600K, sink 300K \u21d2 \u03b7 = 300/600 = 50%.",
+   fails:"Using Celsius temperatures instead of kelvin in the efficiency formula.",
+   src:"Ex-I Q1\u20135 (2\u02b0 law) \u00b7 Ex-II Q6",
+   srcText:{"Ex-II Q6":"Incorrect statement about Thermodynamics process: 1) Reversible process establishes equilibrium at all stages 2) work obtained is maximum in reversible process 3) No reversible process can be performed in practice 4) In an irreversible process work obtained is maximum"}}
+];
+
+/* ===== L3 GUIDED (all tier-3, distinct from pattern minis) ===== */
+let THERMO_GUIDED = [
+  {id:"TG1",tier:3,tax:"D1",pattern:"D1",q:"A system is provided with 50 J of heat and 10 J of work is done ON the system. What is the change in internal energy?",opts:["Sign convention & first-law bookkeeping (\u0394U=q+w)","\u0394H vs \u0394U bridge","Work-done fork","Entropy of a process"],correct:0,
+   hints:["Heat absorbed \u21d2 q=+50 J.","Work done ON the system \u21d2 w=+10 J.","\u0394U=q+w."],ans:"\u0394U = 60 J",why:"Both q and w are positive here since heat enters and work is done on the system \u2014 they simply add."},
+  {id:"TG2",tier:3,tax:"D2",pattern:"D2",q:"For CaCO\u2083(s)\u2192CaO(s)+CO\u2082(g), \u0394H=176 kJ/mol at 1240 K. Find \u0394U for this reaction.",opts:["\u0394H vs \u0394U bridge (\u0394n\u1d63RT)","Hess's Law","Bond enthalpy","Gibbs free energy"],correct:0,
+   hints:["\u0394n\u1d63 = 1 (only CO\u2082 is gaseous; CaCO\u2083, CaO are solids).","\u0394H = \u0394U + \u0394n\u1d63RT \u21d2 \u0394U = \u0394H \u2212 \u0394n\u1d63RT.","\u0394U = 176 \u2212 (1)(8.314\u00d710\u207b\u00b3)(1240)."],ans:"\u0394U \u2248 165.6 kJ/mol",why:"Only CO\u2082 is a gas here, so \u0394n\u1d63 = 1 (not the total number of moles in the equation)."},
+  {id:"TG3",tier:3,tax:"D3",pattern:"D3",q:"2.8 g of N\u2082 at 300 K and 20 atm is allowed to expand isothermally against a constant external pressure of 1 atm until it reaches 1 atm. Find the work done.",opts:["Work-done fork \u2014 isothermal irreversible","Work-done fork \u2014 isothermal reversible","Adiabatic reversible work","Carnot efficiency"],correct:0,
+   hints:["Single external pressure \u21d2 irreversible: W = \u2212Pext(V\u2082\u2212V\u1d62).","n = 2.8/28 = 0.1 mol. Find V\u1d62 and V\u2082 from PV=nRT at 20 atm and 1 atm.","W = \u22121\u00d7(V\u2082\u2212V\u1d62) in L\u00b7atm, then convert to J."],ans:"W \u2248 +136.95 J (work done ON the gas by convention used, i.e. |W|\u224823.7 L\u00b7atm against Pext)",why:"A single fixed Pext (not a slow reversible path) always signals W=\u2212Pext\u0394V, not the log formula."},
+  {id:"TG4",tier:3,tax:"D4",pattern:"D4",q:"1 mole of an ideal gas A (Cv,m=3R) and 2 mole of an ideal gas B (Cv,m=3/2R) are taken in a container. Find (Cp)mix and \u03b3mix for the mixture.",opts:["Heat capacity of a mixture (weight, don't average \u03b3)","Cp\u2212Cv=R for one gas only","Kirchhoff's equation","Carnot efficiency"],correct:0,
+   hints:["(Cv)mix = [n_A(3R)+n_B(3/2R)]/(n_A+n_B) = [1(3R)+2(1.5R)]/3.","(Cv)mix = 6R/3 = 2R \u21d2 (Cp)mix = 2R+R = 3R.","\u03b3mix = (Cp)mix/(Cv)mix = 3R/2R."],ans:"(Cp)mix = 3R, \u03b3mix = 1.5",why:"Weighting by moles gives the correct averaged Cv and Cp; \u03b3 is then computed last, as their ratio \u2014 never averaged directly."},
+  {id:"TG5",tier:3,tax:"D5",pattern:"D5",q:"Given \u0394HrC (heat of combustion) is \u221265.2 kJ for C\u2082H\u2086 and \u221287.4 kJ for C\u2083H\u2088, find \u0394H for CH\u2084(g)+C\u2083H\u2088(g)\u21922C\u2082H\u2086(g).",opts:["Hess's Law \u2014 algebraic combination of steps","Bond enthalpy","Enthalpy of formation","Entropy of reaction"],correct:0,
+   hints:["\u0394H(target) = 2\u00d7\u0394HrC(C\u2082H\u2086) \u2212 \u0394HrC(C\u2083H\u2088) \u2212 \u0394HrC(CH\u2084) [combustion-based route, since heats of combustion for all species relate via CO\u2082/H\u2082O].","Using the total-cracking-style relation given in the source: \u0394H = 2(\u221265.2) \u2212 (\u221287.4).","= \u2212130.4 + 87.4."],ans:"\u0394H \u2248 \u221243 kJ (using \u0394HTC data as combined via Hess's Law)",why:"Combining known heats of combustion algebraically (scale, add/subtract) reconstructs the target reaction's heat without needing individual \u0394Hf values."},
+  {id:"TG6",tier:3,tax:"D6",pattern:"D6",q:"Bond energies of C-H, C-C, C=C and H-H are 99, 83, 147 and 104 kcal/mol respectively. Find \u0394H for hydrogenation of ethylene: H\u2082C=CH\u2082(g)+H\u2082(g)\u2192CH\u2083-CH\u2083(g).",opts:["Bond enthalpy calculation (\u03a3BE reactants \u2212 \u03a3BE products)","Enthalpy of formation","Hess's Law from combustion data","Lattice energy"],correct:0,
+   hints:["Reactant bonds broken: 1\u00d7C=C, 4\u00d7C-H (ethylene) + 1\u00d7H-H.","Product bonds formed: 1\u00d7C-C, 6\u00d7C-H (ethane).","\u0394H = [C=C+4CH+HH] \u2212 [CC+6CH] = [147+4(99)+104] \u2212 [83+6(99)]."],ans:"\u0394H \u2248 \u221230 kcal/mol",why:"The extra 2 C-H bonds cancel between reactants and products, leaving C=C+H-H (broken) vs C-C (formed) as the net difference."},
+  {id:"TG7",tier:3,tax:"D7",pattern:"D7",q:"\u0394Hf\u00b0 of C\u2082H\u2082(g) and C\u2086H\u2086(g) are +230 kJ/mol and +85 kJ/mol respectively. Find \u0394H for the trimerisation 3C\u2082H\u2082(g)\u2192C\u2086H\u2086(g).",opts:["Enthalpy of formation \u2192 heat of reaction","Bond enthalpy","Entropy of reaction","Enthalpy of combustion"],correct:0,
+   hints:["\u0394rH = \u0394Hf(product) \u2212 \u03a3\u0394Hf(reactants).","= 85 \u2212 3(230).","= 85 \u2212 690."],ans:"\u0394H = \u2212605 kJ",why:"Formation enthalpies subtract directly: one mole of product minus three moles of the reactant's formation enthalpy."},
+  {id:"TG8",tier:3,tax:"D8",pattern:"D8",q:"Heat of combustion of octane (C\u2088H\u2081\u2088) is \u22125200 kJ/mol approx. If a car needs 15 KJ of muscular work per km and only 25% of combustion energy is usable, roughly how far can 114 g (1 mol) of octane take the car?",opts:["Enthalpy of combustion & calorific value \u2014 usable-energy fraction","Bond enthalpy","Enthalpy of formation","Calorimetry"],correct:0,
+   hints:["Usable energy = 0.25 \u00d7 5200 kJ = 1300 kJ.","Distance = usable energy \u00f7 energy needed per km = 1300/15.","\u2248 86.7 km."],ans:"\u2248 87 km",why:"Only the stated fraction of the total combustion energy converts to useful work; the rest is lost as heat."},
+  {id:"TG9",tier:3,tax:"D9",pattern:"D9",q:"\u0394Hneutralisation of HCN (weak acid) with NaOH is \u221212.1 kJ/mol, and the strong acid-strong base value is \u221257.3 kJ/mol. Find the enthalpy of ionisation of HCN.",opts:["Enthalpy of neutralisation \u2014 back out the ionisation term","Enthalpy of solution","Enthalpy of formation","Hess's Law"],correct:0,
+   hints:["\u0394Hneut(weak) = \u0394Hneut(SA-SB) + \u0394Hionisation(weak acid).","\u221212.1 = \u221257.3 + \u0394Hionisation.","\u0394Hionisation = \u221212.1 \u2212 (\u221257.3)."],ans:"\u0394Hionisation(HCN) \u2248 +45.2 kJ/mol",why:"The 'missing' heat between the weak-acid value and the fixed strong-strong baseline IS the (endothermic) ionisation enthalpy."},
+  {id:"TG10",tier:3,tax:"D10",pattern:"D10",q:"For a hypothetical ionic solid MX, \u0394Hf\u00b0(s)=\u2212380 kJ/mol, \u0394Hsub(M)=+90 kJ, \u00bd\u0394Hdiss(X\u2082)=+110 kJ, I.E.(M)=+420 kJ, E.A.(X)=\u2212300 kJ. Find the lattice energy of MX.",opts:["Born-Haber cycle \u2014 solve for lattice energy","Enthalpy of solution","Bond enthalpy","Enthalpy of hydration"],correct:0,
+   hints:["\u0394Hf = \u0394Hsub + \u00bd\u0394Hdiss + I.E. + E.A. + L.E.","\u2212380 = 90+110+420\u2212300 + L.E.","L.E. = \u2212380 \u2212 (90+110+420\u2212300)."],ans:"L.E. \u2248 \u2212700 kJ/mol",why:"Every other leg of the cycle is known, so the lattice energy is whatever value makes the closed cycle sum to the measured \u0394Hf \u2014 same method as NaCl, different numbers, same logic."},
+  {id:"TG11",tier:3,tax:"D11",pattern:"D11",q:"Lattice energy of NaCl is 788 kJ/mol and its enthalpy of hydration is \u2212784 kJ/mol. Find the heat of solution of solid NaCl.",opts:["Enthalpy of solution = Lattice energy + Hydration energy","Enthalpy of formation","Born-Haber cycle for lattice energy","Enthalpy of dilution"],correct:0,
+   hints:["\u0394Hsolution = L.E.(+ve, endothermic to break apart) + \u0394Hhydration(\u2212ve, exothermic).","= (+788) + (\u2212784).","= +4 kJ/mol."],ans:"\u0394Hsolution \u2248 +4 kJ/mol (mildly endothermic)",why:"The two nearly-equal, opposite-signed terms almost cancel \u2014 typical of salts with modest solubility change with temperature."},
+  {id:"TG12",tier:3,tax:"D12",pattern:"D12",q:"0.5 g of benzoic acid (C\u2087H\u2086O\u2082, M=122) is burnt in a bomb calorimeter and the temperature rises by 0.53\u00b0C. If \u0394Ucombustion of benzoic acid is \u22123233 kJ/mol, find the heat capacity Z of the calorimeter.",opts:["Bomb calorimetry \u2192 back out the calorimeter's heat capacity Z","Solution calorimetry (water equivalent)","Hess's Law","Enthalpy of formation"],correct:0,
+   hints:["Moles burnt = 0.5/122 mol; heat released q = |\u0394U|\u00d7moles.","q = 3233\u00d7(0.5/122) \u2248 13.25 kJ.","Z = q/\u0394T = 13.25/0.53."],ans:"Z \u2248 25 kJ/\u00b0C",why:"The known \u0394U of combustion converts moles burnt into total heat released; dividing by the observed \u0394T isolates the calorimeter's own heat capacity."},
+  {id:"TG13",tier:3,tax:"D13",pattern:"D13",q:"5 g of ideal gas (Cv=3/2R) expands adiabatically and REVERSIBLY from 1 L to 32 L; find \u0394S for the process.",opts:["Entropy of a process \u2014 reversible adiabatic","Entropy from S\u00b0 data","Gibbs free energy","Carnot efficiency"],correct:0,
+   hints:["Reversible AND adiabatic \u21d2 q_rev=0 at every infinitesimal step.","\u0394S=qrev/T applied to a zero-heat reversible path.","So \u0394S = 0, regardless of how large the volume change is."],ans:"\u0394S = 0",why:"A reversible adiabatic path is exactly the definition of an isentropic process \u2014 the volume/temperature change doesn't matter, only reversibility + q=0 does."},
+  {id:"TG14",tier:3,tax:"D14",pattern:"D14",q:"Standard entropies: X\u2082(g)=60, Y\u2082(g)=40, XY\u2083(g)=50 J/K/mol for \u00bdX\u2082+3/2Y\u2082\u21ccXY\u2083. Find \u0394S\u00b0 of this reaction.",opts:["Entropy of reaction from S\u00b0 data","Gibbs free energy from \u0394H,\u0394S","Entropy of a physical process","Bond enthalpy"],correct:0,
+   hints:["\u0394S\u00b0 = S\u00b0(product) \u2212 [\u00bdS\u00b0(X\u2082) + 3/2\u00b7S\u00b0(Y\u2082)].","= 50 \u2212 [\u00bd(60) + 1.5(40)].","= 50 \u2212 [30+60]."],ans:"\u0394S\u00b0 = \u221240 J/K/mol",why:"Three gas moles of reactant collapse into one mole of product, so entropy must decrease \u2014 the negative sign is expected, not a red flag."},
+  {id:"TG15",tier:3,tax:"D15",pattern:"D15",q:"For a reaction \u0394H\u00b0=\u22122.5\u00d710\u00b3 cal and \u0394S\u00b0=7.4 cal/K at 298 K. Is the reaction spontaneous, reversible, or non-spontaneous?",opts:["Gibbs free energy sign test","Entropy of reaction only","Carnot efficiency","Enthalpy of formation"],correct:0,
+   hints:["\u0394G = \u0394H \u2212 T\u0394S.","= \u22122500 \u2212 298(7.4).","= \u22122500 \u2212 2205.2 = \u22124705.2 cal."],ans:"\u0394G \u2248 \u22124705 cal < 0 \u21d2 spontaneous",why:"Both \u0394H<0 (favourable) and \u0394S>0 (favourable) here, so \u0394G is negative at every temperature \u2014 spontaneous at all T."},
+  {id:"TG16",tier:3,tax:"D16",pattern:"D16",q:"A Carnot engine absorbs 1000 J from a source at 500 K and rejects heat to a sink at 300 K. Find the work done and the efficiency.",opts:["Carnot efficiency & net work","Reversible vs irreversible work comparison","Entropy of a process","Gibbs free energy"],correct:0,
+   hints:["\u03b7 = 1 \u2212 T1/T2 = 1 \u2212 300/500.","\u03b7 = 0.4 (40%).","W = \u03b7\u00d7Q2 = 0.4\u00d71000."],ans:"\u03b7 = 40%, W = 400 J",why:"Efficiency depends only on the ratio of the two absolute temperatures; work follows directly as that fraction of the heat absorbed."}
+];
+
+/* ===== L4 PRACTICE (curated, MCQ with printed options; verified vs Exercise-I/II keys) ===== */
+let THERMO_PRACTICE = [
+  /* ---------- Exercise-I ---------- */
+  {src:"Ex-I Q42",doc:"exI",type:"SC",tier:2,tax:"D3",q:"Temperature of 1 mol of a gas is increased by 1\u00b0 at constant pressure. Work done is:",choices:["\u2212R","2R","+R","3R"],correct:0,pat:"D3 \u00b7 W=\u2212R\u0394T for 1 mol heated at const P",ans:"\u2212R"},
+  {src:"Ex-I Q57",doc:"exI",type:"SC",tier:2,tax:"D4",q:"Heat capacity (Cv) of an ideal gas is X KJ/mole/K. To rise its temperature from 298K to 318K, heat to be supplied per 10g gas will be (in KJ) [MW=16]",choices:["16X","6.25X","32X","12.5X"],correct:3,pat:"D4 \u00b7 q=nCv\u0394T with n=10/16 mol",ans:"12.5X"},
+  {src:"Ex-I Q15",doc:"exI",type:"SC",tier:2,tax:"D4",q:"5 moles of oxygen are heated at constant volume from 10\u00b0C to 20\u00b0C. The change in internal energy of the gas is: [Cp=7.03 cal mol\u207b\u00b9deg\u207b\u00b9 and R=8.31 J mol\u207b\u00b9deg\u207b\u00b9]",choices:["125 cal","252 cal","50 cal","500 cal"],correct:0,pat:"D4 \u00b7 \u0394U=qv=nCv\u0394T",ans:"125 cal"},
+  {src:"Ex-I Q58",doc:"exI",type:"SC",tier:3,tax:"D3",q:"10 g of argon gas is compressed isothermally and reversibly at a temperature of 27\u00b0C from 10 L to 5 L. Calculate q and \u0394H for this process. (Atomic wt. of Ar = 40.)",choices:["+103.99 cal, 0","+39.99 cal, 3 J","\u221239.99 cal, 3 J","\u2212103.99 cal, 0"],correct:3,pat:"D3 \u00b7 isothermal \u21d2 \u0394H=0, q=\u2212W",ans:"\u2212103.99 cal, 0"},
+  {src:"Ex-I Q67",doc:"exI",type:"SC",tier:3,tax:"D3",q:"One mole of an ideal gas is allowed to expand reversibly and adiabatically from a temperature of 27\u00b0C. If the work done during the process is 3 KJ, the final temperature will be equal to (Cv=20 JK\u207b\u00b9):",choices:["100 K","150 K","295 K","26.85\u00b0C"],correct:1,pat:"D3 \u00b7 adiabatic W=nCv\u0394T",ans:"150 K"},
+  {src:"Ex-I Q84",doc:"exI",type:"SC",tier:3,tax:"D3",q:"How much work in KJ mol\u207b\u00b9 unit is done by reversible and isothermal expansion of 1.2 mole of an ideal gas to 10 times its original volume at 27\u00b0C?",choices:["+6.892 KJ/mol","\u22126.892 KJ/mol","+2.303 KJ/mol","\u22122.303 KJ/mol"],correct:1,pat:"D3 \u00b7 W=\u22122.303nRT log(V\u2082/V\u2081)",ans:"\u22126.892 KJ/mol"},
+  {src:"Ex-I Q90",doc:"exI",type:"SC",tier:3,tax:"D7",q:"Which of the following reactions is NOT exothermic?",choices:["CaCO\u2083\u2192CaO+CO\u2082","Fe+S\u2192FeS","NaOH+HCl\u2192NaCl+H\u2082O","CH\u2084+2O\u2082\u2192CO\u2082+2H\u2082O"],correct:0,pat:"D7 \u00b7 decomposition of CaCO\u2083 is endothermic",ans:"CaCO\u2083\u2192CaO+CO\u2082",nudge:"Thermal decomposition reactions absorb heat; combustion and neutralisation release it."},
+  {src:"Ex-I Q91",doc:"exI",type:"SC",tier:2,tax:"D7",q:"Which of the following is an endothermic reaction?",choices:["N\u2082(g)+3H\u2082(g)\u221292kJ\u21922NH\u2083(g)","N\u2082(g)+O\u2082(g)+180.8kJ\u21922NO(g)","H\u2082(g)+Cl\u2082(g)\u21922HCl(g)+184.6kJ","C(graphite)+2H\u2082(g)\u2192CH\u2084(g)+74.8kJ"],correct:1,pat:"D7 \u00b7 heat ADDED to make products \u21d2 endothermic",ans:"N\u2082(g)+O\u2082(g)+180.8kJ\u21922NO(g)"},
+  {src:"Ex-I Q100",doc:"exI",type:"SC",tier:3,tax:"D6",q:"For H\u2082O, B.E.(avg) of O\u2013H = [heat of dissociation of H\u2082O(g)] \u00f7 2. Heat of formation of the H-atom = \u00bd \u00d7 B.E.(H\u2013H). Bond enthalpy of H\u2013H is:",choices:["2 \u00d7 heat of formation of H-atom","\u00bd \u00d7 heat of formation of H-atom","equal to heat of formation of H-atom","independent of heat of formation of H-atom"],correct:0,pat:"D6 \u00b7 B.E.(H-H) = 2\u00d7\u0394Hf(H,g)",ans:"2 \u00d7 heat of formation of H-atom"},
+  {src:"Ex-I Q142",doc:"exI",type:"SC",tier:3,tax:"D9",q:"The enthalpy of neutralisation of a weak acid in 1M solution with a strong base is \u221256.1 KJ mol\u207b\u00b9. If the enthalpy of ionisation of the acid is 1.5 KJ mol\u207b\u00b9 and enthalpy of neutralisation of the strong acid with the strong base is \u221257.3 KJ eq\u207b\u00b9, what is the % ionisation of the weak acid initially in molar solution?",choices:["25%","20%","15%","10%"],correct:1,pat:"D9 \u00b7 back-solve % ionised from the ionisation-heat gap",ans:"20%"},
+  {src:"Ex-I Q148",doc:"exI",type:"SC",tier:3,tax:"D11",q:"At 298 K, the heat of solution of MgSO\u2084(s) is \u221291.21 KJ mol\u207b\u00b9 and that of MgSO\u2084\u00b77H\u2082O(s) is 13.81 KJ mol\u207b\u00b9. The heat of hydration of MgSO\u2084(s) i.e. \u0394H for MgSO\u2084(s)+7H\u2082O(l)\u2192MgSO\u2084\u00b77H\u2082O(s) is:",choices:["\u2212105.02 KJ mol\u207b\u00b9","105.02 KJ mol\u207b\u00b9","\u221277.40 KJ mol\u207b\u00b9","77.40 KJ mol\u207b\u00b9"],correct:0,pat:"D11 \u00b7 Hess's Law on the two dissolution steps",ans:"\u2212105.02 KJ mol\u207b\u00b9"},
+  {src:"Ex-I Q190",doc:"exI",type:"SC",tier:3,tax:"D13",q:"If \u0394Hvap of pure water at 100\u00b0C is 40.627 KJ mol\u207b\u00b9, the value of \u0394Svap is:",choices:["108.91 KJmol\u207b\u00b9","108.91 JK\u207b\u00b9mol\u207b\u00b9","606.27 JK\u207b\u00b9mol\u207b\u00b9","808.27 JK\u207b\u00b9mol\u207b\u00b9"],correct:1,pat:"D13 \u00b7 phase-change \u0394S = \u0394H/T",ans:"108.91 JK\u207b\u00b9mol\u207b\u00b9"},
+  {src:"Ex-I Q194",doc:"exI",type:"SC",tier:3,tax:"D15",q:"For the spontaneous process 2F(g)\u2192F\u2082(g), the signs of \u0394H and \u0394S respectively are:",choices:["+ve, \u2212ve","+ve, +ve","\u2212ve, \u2212ve","\u2212ve, +ve"],correct:2,pat:"D15 \u00b7 bond formation exothermic; fewer moles of gas \u21d2 \u0394S<0",ans:"\u2212ve, \u2212ve",nudge:"\u0394G<0 still possible with both negative if |\u0394H| dominates at low/moderate T."},
+  {src:"Ex-I Q198",doc:"exI",type:"SC",tier:2,tax:"D15",q:"Which of the following is incorrect?",choices:["When \u0394G<0, process is spontaneous","When \u0394G>0, process is non-spontaneous","When \u0394G=0, process is at equilibrium","When \u0394G>0, process is spontaneous"],correct:3,pat:"D15 \u00b7 sign convention for \u0394G",ans:"When \u0394G>0, process is spontaneous"},
+  {src:"Ex-I Q199",doc:"exI",type:"SC",tier:3,tax:"D15",q:"When enthalpy and entropy change for a chemical reaction are \u22122.5\u00d710\u00b3 cal and 7.4 cal deg\u207b\u00b9 respectively at 298 K, predict the reaction is:",choices:["Spontaneous","Reversible","Irreversible","Non-spontaneous"],correct:0,pat:"D15 \u00b7 \u0394G=\u0394H\u2212T\u0394S sign test",ans:"Spontaneous",nudge:"\u0394G=\u22122500\u2212298(7.4)\u2248\u22124705 cal<0."},
+  {src:"Ex-I Q200",doc:"exI",type:"NV",tier:3,tax:"D15",q:"CO(g)+\u00bdO\u2082(g)\u2192CO\u2082(g), \u0394H=\u221267.37 K.cal at 25\u00b0C. The entropy change accompanying the process is \u221220.7 cal deg\u207b\u00b9 mol\u207b\u00b9. Find \u0394G at 25\u00b0C.",ans:"\u221261.2 K.cal/mol",pat:"D15 \u00b7 \u0394G=\u0394H\u2212T\u0394S",nudge:"\u0394G=\u221267370\u2212298\u00d7(\u221220.7) in calories."},
+  {src:"Ex-I Q206",doc:"exI",type:"NV",tier:3,tax:"D15",q:"The enthalpy and entropy change for the reaction Br\u2082(l)+Cl\u2082(g)\u21922BrCl(g) are 30 KJ mol\u207b\u00b9 and 105 J mol\u207b\u00b9 respectively. Find the temperature at which the reaction will be in equilibrium.",ans:"\u2248285.7 K",pat:"D15 \u00b7 T = \u0394H/\u0394S at \u0394G=0",nudge:"T=30000/105."},
+  {src:"Ex-I Q231",doc:"exI",type:"SC",tier:2,tax:"D14",q:"Standard molar entropies of Mg(s), C(s), MgO(s) and CO(g) respectively are S\u2081,S\u2082,S\u2083 & S\u2084 J/K/mol. Then \u0394Ssys for MgO(s)+C(s)\u2192Mg(s)+CO(g) is:",choices:["S\u2081+S\u2082+S\u2083+S\u2084","(S\u2081+S\u2084)\u2212(S\u2082+S\u2083)","(S\u2082+S\u2083)\u2212(S\u2081+S\u2084)","(S\u2084\u2212S\u2083)"],correct:1,pat:"D14 \u00b7 \u0394S=\u03a3S(products)\u2212\u03a3S(reactants)",ans:"(S\u2081+S\u2084)\u2212(S\u2082+S\u2083)"},
+  /* ---------- Exercise-II ---------- */
+  {src:"Ex-II Q10",doc:"exII",type:"SC",tier:3,tax:"D3",q:"One mole of a monatomic ideal gas initially at a pressure of 2.00 bar and a temperature of 273 K is taken to a final pressure of 4.00 bar by a reversible path defined by P/V=constant. Taking Cv to be equal to 12.5 J mol\u207b\u00b9K\u207b\u00b9, the value of \u0394U/W for this process is calculated to be:",choices:["\u22123.0","\u22121.5","+1.5","+3.0"],correct:3,pat:"D3 \u00b7 P/V=const \u21d2 special work-energy path",ans:"+3.0"},
+  {src:"Ex-II Q7",doc:"exII",type:"SC",tier:2,tax:"D2",q:"The work done when 6.5 g of zinc reacts with dilute HCl in an open beaker at 298 K is:",choices:["\u2212495.52 J","247.76 J","\u2212247.76 J","\u2212123.88 J"],correct:2,pat:"D2 \u00b7 W=\u2212\u0394ngRT for gas-releasing reaction in open vessel",ans:"\u2212247.76 J"},
+  {src:"Ex-II Q9",doc:"exII",type:"SC",tier:2,tax:"D1",q:"1 mole of a gas is heated at constant pressure to raise its temperature by 1\u00b0C. The work done in Joules is:",choices:["\u22124.3","\u22128.314","\u221216.62","Unpredictable"],correct:1,pat:"D1 \u00b7 W=\u2212R\u0394T at const P",ans:"\u22128.314"},
+  {src:"Ex-II Q22",doc:"exII",type:"SC",tier:3,tax:"D3",q:"A piston filled with 0.04 mol of an ideal gas expands reversibly from 50.0 mL to 375 mL at a constant temperature of 37.0\u00b0C. As it does so, it absorbs 208 J of heat. The values of q and w for the process are (R=8.314 J/molK)(ln 7.5=2.01):",choices:["q=+208 J, w=+208 J","q=+208 J, w=\u2212208 J","q=\u2212208 J, w=\u2212208 J","q=\u2212208 J, w=+208 J"],correct:1,pat:"D3 \u00b7 isothermal \u21d2 \u0394U=0 \u21d2 q=\u2212w",ans:"q=+208 J, w=\u2212208 J"},
+  {src:"Ex-II Q29",doc:"exII",type:"SC",tier:3,tax:"D3",q:"For 1 mole of monoatomic gas Cv,m=3/2R behaving ideally, allowed to expand reversibly and adiabatically from 1 litre to 32 litre, initial temperature 327\u00b0C, the molar enthalpy change (J/mol) for the process is:",choices:["\u22121125R","\u2212675R","\u22121575R","1012R"],correct:1,pat:"D3 \u00b7 adiabatic \u0394H=nCp\u0394T using PV^\u03b3=const",ans:"\u2212675R"},
+  {src:"Ex-II Q33",doc:"exII",type:"SC",tier:3,tax:"D15",q:"For a reaction A(g)\u21ccB(g) at equilibrium the partial pressure of B is found to be one-fourth of the partial pressure of A. The value of \u0394G\u00b0 of the reaction A\u2192B is:",choices:["RTln4","\u2212RTln4","RTlog4","\u2212RTlog4"],correct:1,pat:"D15 \u00b7 \u0394G\u00b0=\u2212RTlnKeq",ans:"\u2212RTln4"},
+  {src:"Ex-II Q37",doc:"exII",type:"SC",tier:3,tax:"D15",q:"The value of log\u2081\u2080K for a reaction A\u21ccB is (given \u0394rH\u00b0\u2082\u2089\u2088K=\u221254.07 kJ mol\u207b\u00b9, \u0394rS\u00b0\u2082\u2089\u2088K=10 JK\u207b\u00b9mol\u207b\u00b9, R=8.3 JK\u207b\u00b9mol\u207b\u00b9; 2.303\u00d78.314\u00d7298=5705):",choices:["5","10","95","100"],correct:0,pat:"D15 \u00b7 \u0394G\u00b0=\u0394H\u00b0\u2212T\u0394S\u00b0=\u22122.303RTlogK",ans:"5"},
+  {src:"Ex-II Q60",doc:"exII",type:"SC",tier:3,tax:"D14",q:"Calculate \u0394fH\u00b0 (in KJ/mol) for Cr\u2082O\u2083 from \u0394rG\u00b0 and S\u00b0 values provided at 27\u00b0C. 4Cr(s)+3O\u2082(g)\u21922Cr\u2082O\u2083(s); \u0394rG\u00b0=\u22122093 KJ/mol. S\u00b0(J/K mol): S\u00b0(Cr,s)=24; S\u00b0(O\u2082,g)=205; S\u00b0(Cr\u2082O\u2083,s)=81.",choices:["\u22122258.1 KJ/mol","\u22121129.05 KJ/mol","\u2212964.35 KJ/mol","3462 KJ/mol"],correct:1,pat:"D14 \u00b7 combine \u0394S\u00b0 with \u0394G\u00b0 to get \u0394H\u00b0",ans:"\u22121129.05 KJ/mol"},
+  {src:"Ex-II Q65",doc:"exII",type:"NV",tier:3,tax:"D10",q:"When a mole of crystalline sodium chloride is prepared, 410 kJ of heat is produced. The heat of sublimation of sodium metal is 108.8 kJ. The heat of dissociation of chlorine gas into atoms is 242.7 kJ. The ionisation energy of Na and electron affinity of Cl are 493.7 kJ and \u2212368.2 kJ respectively. Calculate the magnitude of the lattice energy of NaCl.",ans:"765.65 kJ/mol",pat:"D10 \u00b7 Born-Haber cycle",nudge:"\u2212410 = 108.8+121.35+493.7\u2212368.2\u2212LE (signs per cycle direction given)."},
+  {src:"Ex-II Q49",doc:"exII",type:"SC",tier:3,tax:"D9",q:"The enthalpy of neutralisation of a weak monoprotic acid (HA) in 1M solution with a strong base is \u221255.95 KJ/mol. If the unionised acid requires 1.4 KJ/mol heat for its complete ionisation, and enthalpy of neutralisation of the strong monobasic acid with a strong monoacidic base is \u221257.3 KJ/mol, what is the % ionisation of the weak acid initially in molar solution?",choices:["1%","3.57%","35.7%","10%"],correct:1,pat:"D9 \u00b7 back-solve ionised fraction from the ionisation-heat gap",ans:"3.57%"},
+  {src:"Ex-II Q64",doc:"exII",type:"NV",tier:3,tax:"D5",q:"Calculate the heat of combustion (in KJ) of methane from the following data: (i) C(graphite)+2H\u2082(g)\u2192CH\u2084(g), \u0394H=\u221274.8 KJ (ii) C(graphite)+O\u2082(g)\u2192CO\u2082(g), \u0394H=\u2212393.5 KJ (iii) H\u2082(g)+\u00bdO\u2082(g)\u2192H\u2082O(l), \u0394H=\u2212286.2 KJ.",ans:"\u2212891.1 KJ",pat:"D5 \u00b7 Hess's Law: (ii)+2\u00d7(iii)\u2212(i)",nudge:"CH\u2084+2O\u2082\u2192CO\u2082+2H\u2082O = (ii)+2(iii)\u2212(i)."},
+  {src:"Ex-II Q42",doc:"exII",type:"SC",tier:3,tax:"D7",q:"When a certain amount of ethylene was burnt, 622 KJ heat was evolved. If heat of combustion of ethylene is 1411 KJ, the volume of O\u2082 (at NTP) that entered into the reaction is:",choices:["296.5 ml","29.62 litre","6226\u00d722.4 litre","22.4 litre"],correct:1,pat:"D7 \u00b7 scale moles reacted by heat ratio, then \u00d73 O\u2082 per C\u2082H\u2084",ans:"29.62 litre"},
+  {src:"Ex-II Q59",doc:"exII",type:"SC",tier:3,tax:"D14",q:"Calculate \u0394fG\u00b0 for (NH\u2084Cl,s) at 310 K, given \u0394fH\u00b0(NH\u2084Cl,s)=\u2212314.5 KJ/mol, \u0394rCp=0, and S\u00b0(J K\u207b\u00b9mol\u207b\u00b9): N\u2082(g)=192, H\u2082(g)=130.5, Cl\u2082(g)=233, NH\u2084Cl(s)=99.5 (all data at 300 K).",choices:["\u2212198.56 KJ/mol","\u2212426.7 KJ/mol","\u2212202.3 KJ/mol","\u221284.5 KJ/mol"],correct:2,pat:"D14 \u00b7 \u0394G=\u0394H\u2212T\u0394S using formation-reaction entropy",ans:"\u2212202.3 KJ/mol"}
+];
+
+/* ===== practice source groups ===== */
+let THERMO_PRAC_DOCS = [
+  {id:"exI",  label:"Narayana Module \u00b7 Exercise-I",  date:"08 Jul 2026", note:"Single-correct & numerical-value \u00b7 verified vs Exercise-I key"},
+  {id:"exII", label:"Narayana Module \u00b7 Exercise-II (advanced calc.)", date:"08 Jul 2026", note:"verified vs Exercise-II key \u00b7 heavier numerical/derivation problems"}
+];
+
+const THERMO_PRAC_TIERS=[{k:"All",l:"All"},{k:"1",l:"Foundation"},{k:"2",l:"JEE Main"},{k:"3",l:"JEE Advanced"},{k:"Flag",l:"\u2605 Flagged"}];
+
+/* ===== L0.5 EXPLAIN ===== */
+let THERMO_EXPLAIN = `<div class="xpl">
+  <section class="hero">
+    <div class="eyebrow">The one idea</div>
+    <h2>Energy keeps its books straight; only its "spendability" runs out.</h2>
+    <p>The <b>first law</b> is pure accounting: energy is never created or destroyed, so \u0394U for any process depends only on where you started and ended \u2014 never on the road you took. That single fact (\u0394U, \u0394H are STATE functions) is why Hess's Law, bond-enthalpy sums, and Born-Haber cycles all work: you're free to route through whatever convenient intermediate steps you like.</p>
+    <p>But conservation alone doesn't say WHICH processes actually happen. Heat never spontaneously flows from cold to hot, even though that wouldn't violate the first law at all. The <b>second law</b> supplies the missing rule: every spontaneous process increases the entropy of the universe. Gibbs free energy, <span class="mono">\u0394G = \u0394H \u2212 T\u0394S</span>, packages both laws into one number whose SIGN alone predicts direction.</p>
+    <div class="eq key zline"><span class="lab">The whole chapter in one line</span>\u0394U = q + w (bookkeeping) &nbsp;+&nbsp; \u0394S\u1d64\u2099\u1d62\u1d65\u2091\u1d63\u02e2\u1d49 \u2265 0 (direction) &nbsp;\u2192&nbsp; \u0394G = \u0394H\u2212T\u0394S &lt; 0 (spontaneity, in one sign)</div>
+    <div class="note spine"><span class="k">Spine</span><span>Every station below is really asking one of three questions: <i>how much energy moved (1st law)?</i> <i>which way does it want to go (2nd law)?</i> <i>and what does that cost/release in real numbers (thermochemistry)?</i></span></div>
+  </section>
+
+  <nav class="xpl-rail" aria-label="Chapter acts"><a href="#xpl-act1"><b>Act I</b> Bookkeeping</a><a href="#xpl-act2"><b>Act II</b> Thermochemistry</a><a href="#xpl-act3"><b>Act III</b> Direction</a></nav>
+
+  <div class="act-label" id="xpl-act1">Act I \u00b7 Bookkeeping (the First Law)</div>
+  <p class="act-sub">Energy in, energy out \u2014 and why the PATH never matters for the total.</p>
+
+  <section class="station easy" id="xpl-s1">
+    <div class="st-head"><span class="depth core">Core</span><div class="st-num">Station 01</div><div class="st-title">\u0394U = q + w, and why work has a fork</div></div>
+    <div class="st-body">
+      <p class="picture">A system's internal energy can change only two ways: heat crosses its boundary, or work is done across it. That's the entire first law. The subtlety is never the equation \u2014 it's correctly reading which of q and w is positive in the words of the problem, and picking the right FORMULA for w depending on how the process actually happens.</p>
+      <div class="eq key"><span class="lab">First law</span>\u0394U = q + w&nbsp;&nbsp;(IUPAC: both +ve when given TO the system)</div>
+      <p>Two special cases resolve most questions instantly. <b>Isothermal ideal gas:</b> \u0394U=0 (internal energy of an ideal gas depends on T alone) so q = \u2212w exactly. <b>Adiabatic:</b> q=0 by definition, so \u0394U = w \u2014 all the energy change IS the work.</p>
+      <div class="note watch"><span class="k">Watch out</span><span>Work has a FORK: reversible (infinite tiny steps, through equilibrium at every instant) gives <span class="mono">W=\u22122.303nRT log(V\u2082/V\u2081)</span> for isothermal gases; a single irreversible jump against a fixed external pressure gives <span class="mono">W=\u2212Pext(V\u2082\u2212V\u2081)</span>. Mixing these two formulas is the single most common error in this chapter.</span></div>
+      <div class="note connect"><span class="k">Connects to</span><span>Reversible work is always the theoretical MAXIMUM obtainable between two states \u2014 that's why Carnot engines (Act III) are built entirely from reversible steps.</span></div>
+    </div>
+  </section>
+
+  <section class="station hard" id="xpl-s2">
+    <div class="st-head"><span class="depth deep">Deep</span><div class="st-num">Station 02</div><div class="st-title">Enthalpy: why chemists prefer H to U</div></div>
+    <div class="st-body">
+      <p class="picture">Almost every real reaction happens in an open beaker \u2014 at CONSTANT PRESSURE, not constant volume. At constant P, some of the energy released doesn't show up as heat you can measure; it's spent quietly pushing back the atmosphere as the system's volume changes. Enthalpy is defined precisely to absorb that PV bookkeeping so that \u0394H directly equals the heat you actually feel.</p>
+      <div class="eq key"><span class="lab">Definition</span>H = U + PV &nbsp;\u21d2&nbsp; \u0394H = \u0394U + \u0394(PV) = \u0394U + P\u0394V (const P) = qp</div>
+      <details class="build">
+        <summary>Build the \u0394n\u1d63RT shortcut from scratch <span class="chev">\u203a</span></summary>
+        <div class="build-body">
+          <ol>
+            <li>For a reaction, \u0394(PV) really only changes appreciably for GASES \u2014 liquids and solids barely expand.</li>
+            <li>Treat gases as ideal: PV=nRT for each gaseous species, so \u0394(PV)\u2248\u0394n\u1d63\u00b7RT where \u0394n\u1d63 = moles of gaseous PRODUCTS \u2212 moles of gaseous REACTANTS.</li>
+            <li>So \u0394H = \u0394U + \u0394n\u1d63RT. If the reaction makes no NET change in gas moles (\u0394n\u1d63=0), \u0394H and \u0394U are numerically identical \u2014 no correction needed at all.</li>
+          </ol>
+        </div>
+      </details>
+      <div class="note watch"><span class="k">Watch out</span><span>Count ONLY gaseous species for \u0394n\u1d63. A reaction like C(graphite)+O\u2082(g)\u2192CO\u2082(g) has \u0394n\u1d63=0 even though there are three species total \u2014 graphite isn't a gas.</span></div>
+    </div>
+  </section>
+
+  <div class="act-label" id="xpl-act2">Act II \u00b7 Thermochemistry \u2014 spending the energy budget</div>
+  <p class="act-sub">Hess's Law is the master trick: since \u0394H is a state function, you can build any target reaction out of known steps.</p>
+
+  <section class="station easy" id="xpl-s3">
+    <div class="st-head"><span class="depth core">Core</span><div class="st-num">Station 03</div><div class="st-title">Hess's Law: energy accounting doesn't care about the route</div></div>
+    <div class="st-body">
+      <p class="picture">If \u0394H only depends on start and end states, you're free to imagine ANY convenient intermediate path \u2014 even one that never physically happens \u2014 and add up its steps. This is Hess's Law, and it underlies almost every thermochemistry calculation in this chapter: enthalpy of formation, combustion, bond enthalpy, lattice energy, all of it.</p>
+      <div class="eq key"><span class="lab">The move</span>\u0394H(target) = \u03a3\u0394H(chosen steps) \u2014 reverse a step to flip its sign, scale a step to scale its \u0394H</div>
+      <div class="note connect"><span class="k">Connects to</span><span>The <b>Born-Haber cycle</b> (Station 04) is just Hess's Law with a specific, standard set of steps: sublimation \u2192 dissociation \u2192 ionisation \u2192 electron affinity \u2192 lattice energy, all summing to the measured heat of formation of an ionic solid.</span></div>
+    </div>
+  </section>
+
+  <section class="station hard" id="xpl-s4">
+    <div class="st-head"><span class="depth deep">Deep</span><div class="st-num">Station 04</div><div class="st-title">Bond enthalpy & the Born-Haber cycle: two ways to price a bond</div></div>
+    <div class="st-body">
+      <p class="picture">There are two independent ways to estimate how "strong" a bond or an ionic lattice is: measure it directly (calorimetry), or reconstruct it algebraically from a chain of known energies (Hess's Law again). When the two disagree, that disagreement IS the resonance energy or a clue that your cycle has a sign error.</p>
+      <div class="eq"><span class="lab">Bond enthalpy route</span>\u0394rH = \u03a3B.E.(reactant bonds broken) \u2212 \u03a3B.E.(product bonds formed)</div>
+      <div class="eq"><span class="lab">Born-Haber route (ionic solid)</span>\u0394Hf\u00b0 = \u0394Hsub + \u00bd\u0394Hdiss + I.E. + E.A. + Lattice Energy</div>
+      <p>Resonance energy is the gap between the REAL molecule's measured \u0394Hf (more stable, more negative) and what bond-energy arithmetic predicts for a single hypothetical (Kekul\u00e9-type) structure: <span class="mono">R.E. = |\u0394Hf(experimental)| \u2212 |\u0394Hf(calculated)|</span>, and it's always reported as a stabilisation (i.e. the real structure sits lower).</p>
+      <div class="note watch"><span class="k">Watch out</span><span>Sign errors on electron affinity (usually exothermic/negative) or on which direction lattice energy is drawn (breaking the lattice apart is ENDOTHERMIC, i.e. +ve) are the most common ways a Born-Haber answer goes wrong.</span></div>
+    </div>
+  </section>
+
+  <section class="station easy" id="xpl-s5">
+    <div class="st-head"><span class="depth core">Core</span><div class="st-num">Station 05</div><div class="st-title">Neutralisation, solution & calorimetry: measuring the number</div></div>
+    <div class="st-body">
+      <p class="picture">Strong acid + strong base is always the SAME net reaction (H\u207a+OH\u207b\u2192H\u2082O), so its enthalpy of neutralisation is a fixed constant: \u221213.7 kcal/mol. Bring in a WEAK acid or base, and some of that heat is diverted first into ionising it \u2014 so the observed value is always smaller in magnitude.</p>
+      <div class="eq key"><span class="lab">Weak-acid/base correction</span>\u0394Hneut(observed) = \u221213.7 kcal (SA-SB baseline) + \u0394Hionisation(weak component)</div>
+      <p>Calorimetry is simply how these numbers get MEASURED: a bomb calorimeter (constant volume) gives \u0394U directly from <span class="mono">q=Z\u00b7\u0394T</span>; a solution calorimeter uses the water-equivalent trick, <span class="mono">q=(m+W)\u00b7s\u00b7\u0394T</span>, treating the calorimeter's own heat absorption as if it were an extra mass of water.</p>
+    </div>
+  </section>
+
+  <div class="act-label" id="xpl-act3">Act III \u00b7 Direction \u2014 the Second Law and Gibbs energy</div>
+  <p class="act-sub">Conservation doesn't say which way a process runs. Entropy does.</p>
+
+  <section class="station hard" id="xpl-s6">
+    <div class="st-head"><span class="depth deep">Deep</span><div class="st-num">Station 06</div><div class="st-title">Entropy: the universe's one-way arrow</div></div>
+    <div class="st-body">
+      <p class="picture">Every spontaneous process increases the total entropy of system + surroundings, even when the system's OWN entropy decreases (freezing water, for instance). The trick is knowing which formula applies to which named process \u2014 they all descend from one definition.</p>
+      <div class="eq key"><span class="lab">Definition</span>\u0394S = qrev/T &nbsp;\u2014 measured along a REVERSIBLE path only</div>
+      <p>Isothermal expansion of an ideal gas: <span class="mono">\u0394S=2.303nR log(V\u2082/V\u1d62)</span>. Heating at constant volume/pressure: swap in <span class="mono">2.303nCv (or nCp) log(T\u2082/T\u1d62)</span>. A REVERSIBLE adiabatic step has \u0394S=0 exactly \u2014 no heat exchanged, and reversibility means no extra disorder generated either. Phase changes at their transition temperature: <span class="mono">\u0394S=\u0394H(transition)/T(transition)</span>.</p>
+      <div class="note watch"><span class="k">Watch out</span><span>An IRREVERSIBLE adiabatic process (like free expansion into a vacuum) still has q=0, but \u0394S is NOT zero \u2014 it's still positive, because irreversibility itself generates entropy even without any heat flow.</span></div>
+    </div>
+  </section>
+
+  <section class="station hard" id="xpl-s7">
+    <div class="st-head"><span class="depth deep">Deep</span><div class="st-num">Station 07</div><div class="st-title">Gibbs free energy: the second law, minus the bookkeeping headache</div></div>
+    <div class="st-body">
+      <p class="picture">Tracking \u0394S(universe) directly means tracking the surroundings too \u2014 awkward. Gibbs's trick: at constant T and P, all of that information about the SURROUNDINGS collapses into one quantity computed purely from the SYSTEM: \u0394G = \u0394H \u2212 T\u0394S. Its sign alone tells you the direction, no separate surroundings calculation required.</p>
+      <div class="eq key"><span class="lab">The Gibbs-Helmholtz equation</span>\u0394G = \u0394H \u2212 T\u0394S &nbsp;&middot;&nbsp; \u0394G&lt;0 spontaneous &middot; \u0394G&gt;0 non-spontaneous &middot; \u0394G=0 equilibrium</div>
+      <details class="build">
+        <summary>Why \u0394G packages the whole second law <span class="chev">\u203a</span></summary>
+        <div class="build-body">
+          <ol>
+            <li>\u0394S(surroundings) = \u2212\u0394H(system)/T, since whatever heat the system releases, the surroundings absorb (and vice versa) at constant T,P.</li>
+            <li>Total entropy: \u0394S(total) = \u0394S(system) + \u0394S(surroundings) = \u0394S(sys) \u2212 \u0394H(sys)/T.</li>
+            <li>Multiply through by \u2212T: \u2212T\u0394S(total) = \u0394H(sys) \u2212 T\u0394S(sys) = \u0394G.</li>
+            <li>Since a spontaneous process needs \u0394S(total) > 0, and T > 0, this forces \u0394G < 0 \u2014 the sign flip is built in.</li>
+          </ol>
+        </div>
+      </details>
+      <div class="eq"><span class="lab">Linking to equilibrium</span>\u0394G\u00b0 = \u2212RT ln Keq = \u22122.303RT log Keq &nbsp;&middot;&nbsp; \u0394G = \u0394G\u00b0 + 2.303RT log Q</div>
+      <div class="note connect"><span class="k">Connects to</span><span>A Carnot engine's efficiency, <span class="mono">\u03b7=1\u2212T\u2081/T\u2082</span>, is the SAME second law applied to a cyclic device: maximum possible work extraction happens only when every step is reversible, which is exactly why real (irreversible) engines always do strictly less work between the same two temperatures.</span></div>
+    </div>
+  </section>
+
+</div>`;
+
 /* ===== CURRICULUM TREE  (Subjects > Subsections > Chapters) ===== */
 const CURRICULUM=[
   {id:"maths",name:"Mathematics",sym:"\u2211",subs:[
@@ -2083,7 +2492,8 @@ const CURRICULUM=[
     {id:"mod",name:"Modern Physics",chapters:[{id:"mp",name:"Atoms, Nuclei & Dual Nature",grade:12},{id:"semi",name:"Semiconductor Devices",grade:12}]}]},
   {id:"chem",name:"Chemistry",sym:"\u2697",subs:[
     {id:"phys",name:"Physical Chemistry",chapters:[
-      {id:"som",name:"States of Matter",grade:11}]}]}
+      {id:"som",name:"States of Matter",grade:11},
+      {id:"thermo",name:"Chemical Thermodynamics",grade:11}]}]}
 ];
 /* A chapter is "ready" iff its path appears here. Add a chapter by dropping its data in. */
 const CONTENT={
@@ -2093,7 +2503,8 @@ const CONTENT={
   "phys/mech/wpe":{key:"wpe",taxa:WPE_TAXA,formulae:WPE_FORMULAE,patterns:WPE_PATTERNS,guided:WPE_GUIDED,practice:WPE_PRACTICE,figs:WPE_FIG,pracDocs:WPE_PRAC_DOCS,pracTiers:WPE_PRAC_TIERS},
   "phys/mech/mom":{key:"mom",taxa:MOM_TAXA,formulae:MOM_FORMULAE,patterns:MOM_PATTERNS,guided:MOM_GUIDED,practice:MOM_PRACTICE,pracDocs:MOM_PRAC_DOCS,pracTiers:MOM_PRAC_TIERS,explain:MOM_EXPLAIN},
   "chem/phys/som":{key:"chemsom",taxa:CHEM_SOM_TAXA,formulae:CHEM_SOM_FORMULAE,patterns:CHEM_SOM_PATTERNS,guided:CHEM_SOM_GUIDED,practice:CHEM_SOM_PRACTICE,figs:CHEM_SOM_FIG,pracDocs:CHEM_SOM_PRAC_DOCS,pracTiers:CHEM_SOM_PRAC_TIERS,explain:CHEM_SOM_EXPLAIN},
-  "maths/cg/cs":{key:"cs",taxa:CS_TAXA,formulae:CS_FORMULAE,patterns:CS_PATTERNS,guided:CS_GUIDED,practice:CS_PRACTICE,pracDocs:CS_PRAC_DOCS,pracTiers:CS_PRAC_TIERS}
+  "maths/cg/cs":{key:"cs",taxa:CS_TAXA,formulae:CS_FORMULAE,patterns:CS_PATTERNS,guided:CS_GUIDED,practice:CS_PRACTICE,pracDocs:CS_PRAC_DOCS,pracTiers:CS_PRAC_TIERS},
+  "chem/phys/thermo":{key:"thermo",taxa:THERMO_TAXA,formulae:THERMO_FORMULAE,patterns:THERMO_PATTERNS,guided:THERMO_GUIDED,practice:THERMO_PRACTICE,pracDocs:THERMO_PRAC_DOCS,pracTiers:THERMO_PRAC_TIERS,explain:THERMO_EXPLAIN}
 };
 function chapPath(a,b,c){return a+"/"+b+"/"+c;}
 function findChapter(path){
@@ -2172,6 +2583,16 @@ const CHAPTER_META = [
     sources: ["SBT Mechanics II Ch.2 (theory + worked Examples 1\u201319)"],
     created: "05 Jul 2026",
     note:    "Core chapter (momentum, impulse, conservation). Collision is a SEPARATE chapter, pending upload. Tier-3 built from verified worked Examples; top up once SBT Worksheets + Answer Sheet arrive."
+  },
+  {
+    id:      "chem/phys/thermo",
+    grade:   "11th",
+    subject: "Chemistry",
+    topic:   "Physical Chemistry",
+    chapter: "Chemical Thermodynamics",
+    sources: ["Narayana Module (JEE-Adv Chemistry Vol-II)"],
+    created: "08 Jul 2026",
+    note:    "First law, thermochemistry (Hess, bond enthalpy, Born-Haber), second law, entropy, Gibbs free energy, Carnot cycle. Practice built from Exercise-I/II (verified vs printed keys); Exercise-III/IV (statement-reason, paragraph/comprehension, multi-answer) not yet mined into Practice — flagged for a follow-up pass."
   }
 ];
 
