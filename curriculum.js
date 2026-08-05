@@ -3954,7 +3954,13 @@ const CURRICULUM=[
       {id:"thermo",name:"Chemical Thermodynamics",grade:11}]}]},
   {id:"tools",name:"Tools",sym:"\u2699",subs:[
     {id:"calc",name:"Quick Calculation",chapters:[
-      {id:"mental",name:"Mental Math & Quick Calculation",grade:11}]}]}
+      {id:"mental",name:"Mental Math & Quick Calculation",grade:11}]},
+    {id:"mtool",name:"Maths Shortcuts",chapters:[
+      {id:"mtips",name:"Shortcuts & Standard Results",grade:11}]},
+    {id:"ptool",name:"Physics Shortcuts",chapters:[
+      {id:"ptips",name:"Shortcuts & Sanity Checks",grade:11}]},
+    {id:"ctool",name:"Chemistry Shortcuts",chapters:[
+      {id:"ctips",name:"Shortcuts & Sanity Checks",grade:11}]}]}
 ];
 /* A chapter is "ready" iff its path appears here. Add a chapter by dropping its data in. */
 /* ===================== maths/alg/det — DETERMINANTS ===================== */
@@ -6014,6 +6020,1019 @@ let MM_PRAC_DOCS = [
 
 const MM_PRAC_TIERS=[{k:"All",l:"All"},{k:"1",l:"Warm-up"},{k:"2",l:"Fluency"},{k:"3",l:"Exam-applied"},{k:"Flag",l:"\u2605 Flagged"}];
 
+
+/* =========================================================================
+   LESSON: tools/maths/mtips  —  MATHS SHORTCUTS & STANDARD RESULTS
+   A chapter-agnostic tricks lesson for Mathematics. Same design rule as
+   tools/calc/mental: every entry carries the trick, the MECHANISM, and the
+   FAILURE MODE. No shortcut ships without a stated way it breaks.
+   Hand-built 5 Aug 2026 — NOT mined from a printed paper. Every numerical
+   answer verified by direct computation; no MCQ option sets are fabricated,
+   so all practice records are NV type.
+   ========================================================================= */
+
+let MT_TAXA = [
+  {code:"T1", label:"Quadratics: sum, product, discriminant",        group:"Algebra"},
+  {code:"T2", label:"Symmetric functions & Vieta at higher degree",  group:"Algebra"},
+  {code:"T3", label:"AM-GM and quick inequality bounds",             group:"Algebra"},
+  {code:"T4", label:"Binomial: general term, coefficient sums",      group:"Algebra"},
+  {code:"T5", label:"Series: standard sums and telescoping",         group:"Series & Counting"},
+  {code:"T6", label:"Counting: complementary and stars-and-bars",    group:"Series & Counting"},
+  {code:"T7", label:"Trig values and the R-formula range",           group:"Trigonometry"},
+  {code:"T8", label:"Trig identities worth reaching for first",      group:"Trigonometry"},
+  {code:"T9", label:"Coordinate geometry standard results",          group:"Coordinate Geometry"},
+  {code:"T10",label:"Symmetry and special position in geometry",     group:"Coordinate Geometry"},
+  {code:"T11",label:"Determinants: make zeros, spot factors",        group:"Determinants & Matrices"},
+  {code:"T12",label:"Reading trace and determinant off a polynomial",group:"Determinants & Matrices"},
+  {code:"T13",label:"Substitute a special value to test an identity",group:"Verification"},
+  {code:"T14",label:"Degree, symmetry and boundary sanity checks",   group:"Verification"}
+];
+
+let MT_CARDS = [
+  {tag:"quad", title:"Quadratics without solving them", rows:[
+    {f:"For ax\u00b2+bx+c = 0: \u03b1+\u03b2 = \u2212b/a, \u03b1\u03b2 = c/a. Most questions want a symmetric function of the roots, not the roots."},
+    {f:"\u03b1\u00b2+\u03b2\u00b2 = (\u03b1+\u03b2)\u00b2 \u2212 2\u03b1\u03b2;  \u03b1\u00b3+\u03b2\u00b3 = (\u03b1+\u03b2)\u00b3 \u2212 3\u03b1\u03b2(\u03b1+\u03b2);  |\u03b1\u2212\u03b2| = \u221aD/|a| with D = b\u00b2\u22124ac"},
+    {f:"1/\u03b1 + 1/\u03b2 = (\u03b1+\u03b2)/\u03b1\u03b2 \u2014 reciprocal sums cost nothing extra"},
+    {f:"Nature of roots from D alone: D > 0 real distinct, D = 0 equal, D < 0 non-real conjugates (for real a, b, c)"},
+    {f:"MECHANISM: every symmetric polynomial in \u03b1 and \u03b2 can be written in terms of the elementary symmetric functions \u03b1+\u03b2 and \u03b1\u03b2, which the coefficients hand you for free.", k:"why"},
+    {f:"FAILURE MODE: the shortcut only covers SYMMETRIC expressions. \u03b1\u00b2\u03b2 + 3 or \u03b1 \u2212 2\u03b2 is not symmetric, and no amount of Vieta will produce it without actually distinguishing the roots. Also: \u03b1\u00b3+\u03b2\u00b3 needs the sign convention checked \u2014 it is MINUS 3\u03b1\u03b2(\u03b1+\u03b2), a sign that gets dropped constantly.", k:"trap"}
+  ]},
+
+  {tag:"vieta", title:"Vieta at degree 3 and above", rows:[
+    {f:"For x\u00b3 + px\u00b2 + qx + r = 0 with roots \u03b1, \u03b2, \u03b3:  \u03a3\u03b1 = \u2212p,  \u03a3\u03b1\u03b2 = q,  \u03b1\u03b2\u03b3 = \u2212r"},
+    {f:"\u03a3\u03b1\u00b2 = (\u03a3\u03b1)\u00b2 \u2212 2\u03a3\u03b1\u03b2;  \u03a3(1/\u03b1) = \u03a3\u03b1\u03b2 / \u03b1\u03b2\u03b3"},
+    {f:"\u03b1\u00b3+\u03b2\u00b3+\u03b3\u00b3 \u2212 3\u03b1\u03b2\u03b3 = (\u03a3\u03b1)(\u03a3\u03b1\u00b2 \u2212 \u03a3\u03b1\u03b2), so if \u03a3\u03b1 = 0 then \u03a3\u03b1\u00b3 = 3\u03b1\u03b2\u03b3"},
+    {f:"To evaluate \u220f(\u03bb \u2212 \u03b1\u1d62) for a known \u03bb, just compute the monic polynomial AT \u03bb \u2014 that product IS p(\u03bb)"},
+    {f:"MECHANISM: p(x) = \u220f(x \u2212 \u03b1\u1d62) identically, so evaluating the polynomial at any point evaluates the corresponding product of shifted roots. This is what turns 'find \u220f(\u03b1\u1d62 + 5/2)' into one substitution.", k:"why"},
+    {f:"FAILURE MODE: the sign pattern alternates with degree, and it is stated for the MONIC form. If the leading coefficient is not 1, divide through first \u2014 otherwise every symmetric function comes out scaled wrongly.", k:"trap"}
+  ]},
+
+  {tag:"amgm", title:"AM-GM and fast bounds", rows:[
+    {f:"For non-negative reals: (a\u2081+\u2026+a\u2099)/n \u2265 (a\u2081\u2026a\u2099)^(1/n), with equality iff all a\u1d62 are equal"},
+    {f:"Most common use: x + k/x \u2265 2\u221ak for x > 0, minimum at x = \u221ak"},
+    {f:"If the product is FIXED, the sum is minimised when the terms are equal; if the sum is fixed, the product is maximised when the terms are equal"},
+    {f:"a\u00b2+b\u00b2+c\u00b2 \u2265 ab+bc+ca for all reals, from \u00bd[(a\u2212b)\u00b2+(b\u2212c)\u00b2+(c\u2212a)\u00b2] \u2265 0"},
+    {f:"MECHANISM: AM-GM is a statement about convexity; the equality case is the whole answer to 'where is the extremum', which is why the bound and the optimising point arrive together.", k:"why"},
+    {f:"FAILURE MODE: NON-NEGATIVITY is required. Applying x + 1/x \u2265 2 when x < 0 is wrong \u2014 there the expression is \u2264 \u22122. And the equality case must be ACHIEVABLE within the problem's constraints; if x is restricted to integers, the AM-GM minimum may be unattainable and the true minimum sits at a nearby integer.", k:"trap"}
+  ]},
+
+  {tag:"binom", title:"Binomial theorem shortcuts", rows:[
+    {f:"General term of (x+y)\u207f: T\u1d63\u208a\u2081 = \u207fC\u1d63 x\u207f\u207b\u02b3 y\u02b3. Set the exponent you want and solve for r"},
+    {f:"Sum of ALL coefficients of a polynomial = value at x = 1. Sum of coefficients of even-power terms = \u00bd[p(1) + p(\u22121)]"},
+    {f:"\u03a3\u207fC\u1d63 = 2\u207f;  \u03a3(\u22121)\u02b3 \u207fC\u1d63 = 0;  \u03a3 r\u00b7\u207fC\u1d63 = n\u00b72\u207f\u207b\u00b9"},
+    {f:"Middle term: for even n there is one, T_(n/2 + 1); for odd n there are two, T_((n+1)/2) and T_((n+3)/2)"},
+    {f:"MECHANISM: substituting a value into the expanded identity collapses every power of x to a number, so the whole expansion becomes one arithmetic evaluation. x = 1 and x = \u22121 are chosen because they make |x\u207f| = 1.", k:"why"},
+    {f:"FAILURE MODE: 'sum of coefficients' means the NUMERICAL coefficients only \u2014 if the expression carries a second variable, substituting 1 for just one of them gives a polynomial, not a number. Also (x \u2212 y)\u207f has alternating signs built in; putting x = y = 1 gives 0, not 2\u207f.", k:"trap"}
+  ]},
+
+  {tag:"series", title:"Standard sums and telescoping", rows:[
+    {f:"\u03a3n = n(n+1)/2;  \u03a3n\u00b2 = n(n+1)(2n+1)/6;  \u03a3n\u00b3 = [n(n+1)/2]\u00b2 = (\u03a3n)\u00b2"},
+    {f:"AP: S\u2099 = (n/2)(first + last) = (n/2)[2a + (n\u22121)d].  GP: S\u2099 = a(r\u207f\u22121)/(r\u22121); S\u221e = a/(1\u2212r) for |r| < 1"},
+    {f:"Telescoping: if T\u1d63 = f(r) \u2212 f(r+1), then \u03a3(r=1..n) T\u1d63 = f(1) \u2212 f(n+1) \u2014 everything in between cancels"},
+    {f:"Classic splits: 1/(r(r+1)) = 1/r \u2212 1/(r+1);  1/(r(r+2)) = \u00bd[1/r \u2212 1/(r+2)];  r\u00b7r! = (r+1)! \u2212 r!"},
+    {f:"MECHANISM: telescoping works because the sum of a DIFFERENCE is a difference of the endpoints \u2014 the discrete analogue of the fundamental theorem of calculus.", k:"why"},
+    {f:"FAILURE MODE: when the split has a gap wider than 1 (like 1/(r(r+2))), MORE than one term survives at each end \u2014 two at the front and two at the back, not one. Writing down only f(1) \u2212 f(n+1) there loses terms.", k:"trap"}
+  ]},
+
+  {tag:"count", title:"Counting shortcuts", rows:[
+    {f:"Complementary counting: count the complement and subtract from the total whenever 'at least one' appears"},
+    {f:"Stars and bars: the number of non-negative integer solutions of x\u2081+\u2026+x\u1d63 = n is \u207f\u207a\u02b3\u207b\u00b9C\u1d63\u208b\u2081"},
+    {f:"For POSITIVE solutions, substitute y\u1d62 = x\u1d62 \u2212 1 first, giving \u207f\u207b\u00b9C\u1d63\u208b\u2081"},
+    {f:"Arrangements with repeated items: n!/(p!q!\u2026). Circular arrangements of n distinct items: (n\u22121)!"},
+    {f:"MECHANISM: 'at least one' generates an inclusion-exclusion mess, while its negation ('none') is usually a single clean product \u2014 so the complement is almost always the cheaper side to count.", k:"why"},
+    {f:"FAILURE MODE: the complement must be the complement WITHIN the stated universe. If the problem restricts to 5-digit numbers, the total is 90000, not 100000 \u2014 getting the universe wrong corrupts the subtraction even when the complement count is right.", k:"trap"}
+  ]},
+
+  {tag:"trigval", title:"Trig values and the R-formula", rows:[
+    {f:"a sin\u03b8 + b cos\u03b8 = R sin(\u03b8+\u03c6) with R = \u221a(a\u00b2+b\u00b2), so its range is [\u2212\u221a(a\u00b2+b\u00b2), \u221a(a\u00b2+b\u00b2)]"},
+    {f:"sin15\u00b0 = (\u221a3\u22121)/(2\u221a2), cos15\u00b0 = (\u221a3+1)/(2\u221a2), tan15\u00b0 = 2\u2212\u221a3, tan75\u00b0 = 2+\u221a3"},
+    {f:"sin\u00b2\u03b8 has range [0,1]; sin\u03b8\u00b7cos\u03b8 = \u00bdsin2\u03b8 has range [\u2212\u00bd, \u00bd]"},
+    {f:"max/min of a sin\u00b2\u03b8 + b cos\u00b2\u03b8 is just max/min of a and b \u2014 it is a weighted average of the two"},
+    {f:"MECHANISM: a sin\u03b8 + b cos\u03b8 is the dot product of (a,b) with the unit vector (sin\u03b8, cos\u03b8), so its extreme values are \u00b1 the length of (a,b) \u2014 attained when the two vectors align.", k:"why"},
+    {f:"FAILURE MODE: the full range is only achieved if \u03b8 ranges over a complete period. On a restricted domain like [0, \u03c0/2] the extremes may sit at the endpoints instead, and \u00b1R may be unreachable \u2014 always check whether the optimising \u03b8 is inside the allowed interval.", k:"trap"}
+  ]},
+
+  {tag:"trigid", title:"Which trig identity to reach for first", rows:[
+    {f:"Sum of two sines/cosines \u2192 product formulas (sinC + sinD = 2 sin((C+D)/2) cos((C\u2212D)/2))"},
+    {f:"Product of two \u2192 sum formulas, when the angles differ and you want them separated"},
+    {f:"Powers of sin or cos \u2192 double/half-angle to drop the power (sin\u00b2\u03b8 = (1\u2212cos2\u03b8)/2)"},
+    {f:"Everything in tan(\u03b8/2) = t: sin\u03b8 = 2t/(1+t\u00b2), cos\u03b8 = (1\u2212t\u00b2)/(1+t\u00b2) \u2014 turns a trig equation into an algebraic one"},
+    {f:"MECHANISM: each conversion trades one kind of complexity for another; the useful direction is always the one that reduces the NUMBER OF DISTINCT ANGLES, because a single-angle expression can be treated as one variable.", k:"why"},
+    {f:"FAILURE MODE: the t = tan(\u03b8/2) substitution silently loses \u03b8 = \u03c0 (where tan(\u03b8/2) is undefined). Check that value separately, or you will drop a root.", k:"trap"}
+  ]},
+
+  {tag:"cg", title:"Coordinate geometry standard results", rows:[
+    {f:"Area of a triangle from vertices: \u00bd|x\u2081(y\u2082\u2212y\u2083) + x\u2082(y\u2083\u2212y\u2081) + x\u2083(y\u2081\u2212y\u2082)|. Zero area \u21d4 collinear"},
+    {f:"Distance from (x\u2081,y\u2081) to ax+by+c = 0 is |ax\u2081+by\u2081+c|/\u221a(a\u00b2+b\u00b2)"},
+    {f:"Two lines are perpendicular iff m\u2081m\u2082 = \u22121 (neither vertical), parallel iff m\u2081 = m\u2082"},
+    {f:"Any point on a line through (x\u2081,y\u2081) with inclination \u03b8 is (x\u2081 + r cos\u03b8, y\u2081 + r sin\u03b8) \u2014 the parametric form, which turns distance conditions into one equation in r"},
+    {f:"MECHANISM: the parametric form builds the distance INTO the coordinate, so any question phrased as 'the point at distance d' becomes a substitution rather than a simultaneous solve.", k:"why"},
+    {f:"FAILURE MODE: r in the parametric form is SIGNED \u2014 both +r and \u2212r are on the line, on opposite sides. Taking only the positive root loses one of the two valid points.", k:"trap"}
+  ]},
+
+  {tag:"detrix", title:"Determinants: make zeros, spot factors", rows:[
+    {f:"Row/column operations R\u1d62 \u2192 R\u1d62 + kR\u2c7c leave the determinant UNCHANGED; use them to manufacture zeros before expanding"},
+    {f:"R\u1d62 \u2194 R\u2c7c flips the sign; R\u1d62 \u2192 kR\u1d62 multiplies the determinant by k"},
+    {f:"Two identical (or proportional) rows \u21d2 determinant 0. This is the fastest way to spot a factor: if setting a = b makes two rows equal, then (a\u2212b) is a factor"},
+    {f:"det(kA) = k\u207f det(A) for order n \u2014 the scalar comes out of every row"},
+    {f:"MECHANISM: the determinant is an alternating multilinear function of the rows; 'alternating' is exactly why equal rows give zero, and that is what makes the factor-spotting trick valid.", k:"why"},
+    {f:"FAILURE MODE: R\u1d62 \u2192 kR\u1d62 + R\u2c7c is NOT determinant-preserving \u2014 it scales by k. Only adding a multiple of ANOTHER row to a row is free; scaling the target row is not.", k:"trap"}
+  ]},
+
+  {tag:"annih", title:"Reading trace and determinant off an annihilating polynomial", rows:[
+    {f:"Order 2: A\u00b2 \u2212 (tr A)A + |A| I = O. So if you are told A\u00b2 = pA + qI, then tr A = p and |A| = \u2212q"},
+    {f:"Order 3: \u03bb\u00b3 \u2212 t\u2082\u03bb\u00b2 + t\u2081\u03bb \u2212 t\u2080 with t\u2082 = tr A, t\u2081 = sum of principal-diagonal minors, t\u2080 = |A|"},
+    {f:"Multiply the annihilating polynomial by A\u207b\u00b9 to get A\u207b\u00b9 as a polynomial in A \u2014 no cofactors needed"},
+    {f:"Eigenvalue transfer: \u03bb \u2192 p\u03bb for pA, \u03bb+q for A+qI, \u03bb\u207f for A\u207f, 1/\u03bb for A\u207b\u00b9, |A|/\u03bb for adj A"},
+    {f:"MECHANISM: Cayley\u2013Hamilton says a matrix satisfies its own characteristic polynomial, so a monic annihilating polynomial of the same degree as the order IS the characteristic polynomial \u2014 and its coefficients are the symmetric functions of the eigenvalues.", k:"why"},
+    {f:"FAILURE MODE: the polynomial must be MONIC and of degree equal to the order before you read anything off it. 4A\u00b3 \u2212 3A\u00b2 + \u2026 = O must be divided by 4 first. And a degree-2 relation for a 3\u00d73 matrix is not the characteristic polynomial at all.", k:"trap"}
+  ]},
+
+  {tag:"check", title:"Sanity checks that cost five seconds", rows:[
+    {f:"Special value: to test a claimed identity, substitute an easy number (x = 0, 1, \u22121) into both sides. A single mismatch disproves it"},
+    {f:"Degree check: both sides of a polynomial identity must have the same degree, and the leading coefficients must match"},
+    {f:"Symmetry check: if the problem is symmetric in a and b, the answer must be too. An asymmetric answer to a symmetric question is wrong"},
+    {f:"Boundary check: send a parameter to 0 or \u221e and see whether the formula degenerates sensibly (a triangle's area \u2192 0 as it flattens; a GP sum \u2192 a as r \u2192 0)"},
+    {f:"MECHANISM: an identity must hold for EVERY admissible value, so any one value is a valid test. It cannot prove the identity, but it can refute it \u2014 and refutation is what you want when checking your own work.", k:"why"},
+    {f:"FAILURE MODE: passing a special-value check proves nothing. x = 0 will happily accept many wrong expansions. Use at least two unrelated values before trusting it, and never treat a pass as a proof.", k:"trap"}
+  ]}
+];
+
+let MT_PATTERNS = [
+  {id:"T1", name:"Symmetric in the Roots \u2192 Never Find the Roots",
+   trigger:"The question asks for \u03b1\u00b2+\u03b2\u00b2, \u03b1\u00b3+\u03b2\u00b3, 1/\u03b1+1/\u03b2, |\u03b1\u2212\u03b2|, or any expression unchanged when the roots are swapped.",
+   move:"Write down \u03b1+\u03b2 and \u03b1\u03b2 from the coefficients, then rebuild the requested expression out of those two. Never compute the roots themselves.",
+   why:"Every symmetric polynomial in the roots is expressible in the elementary symmetric functions, and the coefficients hand those over for free \u2014 so the quadratic formula is wasted work.",
+   mini:"For 2x\u00b2 \u2212 5x + 1 = 0: \u03b1+\u03b2 = 5/2, \u03b1\u03b2 = \u00bd, so \u03b1\u00b2+\u03b2\u00b2 = 25/4 \u2212 1 = 21/4.",
+   fails:"Reaching for it on a NON-symmetric expression like \u03b1 \u2212 2\u03b2 or \u03b1\u00b2\u03b2. Those genuinely need the roots distinguished, and Vieta alone cannot deliver them.",
+   src:"Card: quad, vieta"},
+
+  {id:"T2", name:"Substitute a Convenient Value",
+   trigger:"An expansion's coefficient sum is wanted, or you need to check a claimed algebraic identity, or a polynomial-valued expression must be evaluated at a specific point.",
+   move:"Put x = 1 for the total coefficient sum, x = \u22121 to isolate the alternating sum, x = 0 for the constant term. To evaluate \u220f(\u03bb \u2212 \u03b1\u1d62), just compute the monic polynomial at \u03bb.",
+   why:"An identity holds for every value, so substituting collapses an entire expansion into one arithmetic evaluation \u2014 and 1, \u22121, 0 are chosen precisely because they make the powers trivial.",
+   mini:"Sum of the coefficients of (2x \u2212 3)\u2075 is (2\u22123)\u2075 = \u22121.",
+   fails:"Treating a PASSED check as a proof. One value can refute an identity but never confirm it \u2014 and with two variables present, substituting into only one leaves a polynomial, not a number.",
+   src:"Card: binom, check, vieta"},
+
+  {id:"T3", name:"Make Zeros Before You Expand",
+   trigger:"A determinant carrying parameters must be evaluated, or a determinant must be shown to vanish, or a factor of a determinant is wanted.",
+   move:"Apply R\u1d62 \u2192 R\u1d62 \u2212 R\u2c7c (or the column version) to create zeros, then expand along the sparse line. To find factors, test whether setting two variables equal makes two rows identical.",
+   why:"Adding a multiple of one row to another leaves the determinant unchanged, so zeros are free \u2014 and the alternating property means equal rows force the value to zero, which is exactly a factor statement.",
+   mini:"If putting a = b makes rows 1 and 2 identical, then (a\u2212b) divides the determinant.",
+   fails:"Scaling the target row while combining \u2014 R\u1d62 \u2192 2R\u1d62 + R\u2c7c multiplies the determinant by 2 and is not free. Only R\u1d62 \u2192 R\u1d62 + kR\u2c7c is.",
+   src:"Card: detrix"},
+
+  {id:"T4", name:"a sin\u03b8 + b cos\u03b8 \u2192 One Amplitude",
+   trigger:"A maximum, minimum or range is asked for on an expression that is linear in sin\u03b8 and cos\u03b8.",
+   move:"Collapse to R sin(\u03b8+\u03c6) with R = \u221a(a\u00b2+b\u00b2). The range is [\u2212R, R]; add any constant term afterwards.",
+   why:"a sin\u03b8 + b cos\u03b8 is the dot product of the fixed vector (a,b) with a unit vector, so its extremes are \u00b1|(a,b)|, reached when the two align.",
+   mini:"3sin\u03b8 + 4cos\u03b8 + 7 has R = 5, so its range is [2, 12].",
+   fails:"Quoting [\u2212R, R] on a RESTRICTED domain. If \u03b8 is confined to, say, [0, \u03c0/2], the aligning angle may lie outside it and the true extremes then sit at the endpoints.",
+   src:"Card: trigval"},
+
+  {id:"T5", name:"Count the Complement",
+   trigger:"'At least one', 'not all', 'at least two' \u2014 any phrasing whose direct count would need inclusion-exclusion.",
+   move:"Count the total, count the negation (usually 'none' or 'all', a single clean product), and subtract.",
+   why:"The negation of 'at least one' is 'exactly zero', which is a single multiplicative count, whereas the direct route splits into overlapping cases that must then be un-overlapped.",
+   mini:"Numbers from 1 to 999 containing at least one digit 7: 999 \u2212 (numbers with no 7) = 999 \u2212 728 = 271.",
+   fails:"Getting the UNIVERSE wrong. The complement must be taken inside the stated set \u2014 if the problem says 5-digit numbers, the total is 90000, not 100000.",
+   src:"Card: count"},
+
+  {id:"T6", name:"Split the Term and Telescope",
+   trigger:"A sum whose general term is a product of consecutive-ish factors in the denominator, or a factorial-times-r shape.",
+   move:"Write T\u1d63 as f(r) \u2212 f(r+1) by partial fractions, then cancel through the sum, keeping only the surviving endpoint terms.",
+   why:"The sum of a difference telescopes to a difference of endpoints \u2014 the discrete analogue of the fundamental theorem of calculus.",
+   mini:"\u03a3(r=1..n) 1/(r(r+1)) = \u03a3(1/r \u2212 1/(r+1)) = 1 \u2212 1/(n+1) = n/(n+1).",
+   fails:"Assuming exactly one term survives at each end. With a gap of 2, as in 1/(r(r+2)), TWO terms survive at the front and two at the back.",
+   src:"Card: series"},
+
+  {id:"T7", name:"Read the Matrix Off Its Own Polynomial",
+   trigger:"You are told a matrix satisfies a polynomial equation and asked for its trace, determinant, inverse, or a high power.",
+   move:"Make the polynomial monic and check its degree equals the order. Then read tr A and |A| straight off the coefficients, multiply by A\u207b\u00b9 to get the inverse, or use the relation as a recurrence to reduce high powers.",
+   why:"Cayley\u2013Hamilton guarantees the characteristic polynomial annihilates the matrix; a monic annihilator of matching degree therefore IS it, and its coefficients are the symmetric functions of the eigenvalues.",
+   mini:"For a 3\u00d73 with 4A\u00b3 \u2212 3A\u00b2 + 2A \u2212 I = O: divide by 4, so tr A = 3/4 and |A| = 1/4.",
+   fails:"Reading coefficients off a NON-monic polynomial, or off one whose degree does not match the order. Both give a scaled or meaningless answer.",
+   src:"Card: annih"},
+
+  {id:"T8", name:"Bound It With AM-GM",
+   trigger:"A minimum of a sum whose product is fixed, or a maximum of a product whose sum is fixed \u2014 typically x + k/x shapes.",
+   move:"Apply AM \u2265 GM to the terms, then locate the optimum from the equality condition (all terms equal). Verify the optimising value is admissible.",
+   why:"AM-GM is a convexity statement, and its equality case pinpoints the extremum \u2014 so the bound and the optimising point come out together.",
+   mini:"For x > 0, x + 9/x \u2265 2\u221a9 = 6, with equality at x = 3.",
+   fails:"Two ways: applying it when a term can be negative (x + 1/x is \u2264 \u22122 for x < 0), or quoting a bound whose equality case is excluded by the problem's constraints \u2014 then the bound is not attained and the true extremum is elsewhere.",
+   src:"Card: amgm"}
+];
+
+let MT_GUIDED = [
+  {id:"MTG1", tier:2, tax:"T1", pattern:"T1",
+   q:"If \u03b1 and \u03b2 are the roots of 3x\u00b2 \u2212 7x + 2 = 0, find \u03b1\u00b3 + \u03b2\u00b3 without solving the equation.",
+   opts:["Symmetric in the Roots \u2192 Never Find the Roots","Substitute a Convenient Value","Bound It With AM-GM","Split the Term and Telescope"], correct:0,
+   hints:["Write down the two things the coefficients give you: \u03b1+\u03b2 = 7/3 and \u03b1\u03b2 = 2/3.",
+          "Use the identity \u03b1\u00b3+\u03b2\u00b3 = (\u03b1+\u03b2)\u00b3 \u2212 3\u03b1\u03b2(\u03b1+\u03b2). Watch the MINUS sign \u2014 it is the most-dropped sign in this identity.",
+          "(7/3)\u00b3 = 343/27, and 3\u00b7(2/3)\u00b7(7/3) = 14/3 = 126/27."],
+   ans:"\u03b1\u00b3 + \u03b2\u00b3 = 343/27 \u2212 126/27 = 217/27",
+   why:"The discriminant here is 49 \u2212 24 = 25, so the roots are actually rational (2 and 1/3) and you COULD have solved it. That is worth noticing precisely because it makes the point: the symmetric-function route did not need to know that, and it would have worked identically had the discriminant been 23. Building the habit on an easy case is what makes it available on the hard one."},
+
+  {id:"MTG2", tier:3, tax:"T4", pattern:"T2",
+   q:"Find the sum of the coefficients of the odd-power terms in the expansion of (1 + 2x \u2212 3x\u00b2)\u2076.",
+   opts:["Substitute a Convenient Value","Symmetric in the Roots \u2192 Never Find the Roots","Count the Complement","Read the Matrix Off Its Own Polynomial"], correct:0,
+   hints:["Call the expansion p(x). p(1) gives the sum of ALL coefficients; p(\u22121) gives the alternating sum.",
+          "Adding those two doubles the even-power coefficients and cancels the odd ones. Subtracting does the reverse.",
+          "So the odd-power sum is \u00bd[p(1) \u2212 p(\u22121)]. Compute p(1) = (1+2\u22123)\u2076 and p(\u22121) = (1\u22122\u22123)\u2076."],
+   ans:"p(1) = 0\u2076 = 0 and p(\u22121) = (\u22124)\u2076 = 4096, so the odd-power coefficient sum is \u00bd(0 \u2212 4096) = \u22122048",
+   why:"p(1) = 0 is the interesting part: the polynomial has 1 as a root of multiplicity 6, which means ALL its coefficients sum to zero, so the even and odd blocks are exact negatives of each other. You could have stopped after computing p(\u22121) and halved it with a sign. Spotting that the base factorises as (1\u2212x)(1+3x) is what makes it obvious."},
+
+  {id:"MTG3", tier:3, tax:"T11", pattern:"T3",
+   q:"Show without expanding that (a\u2212b) is a factor of the determinant |[[1,1,1],[a,b,c],[a\u00b2,b\u00b2,c\u00b2]]|, and hence write down its full factorisation.",
+   opts:["Make Zeros Before You Expand","Substitute a Convenient Value","Bound It With AM-GM","Split the Term and Telescope"], correct:0,
+   hints:["Ask what happens to the matrix when a = b. Compare columns 1 and 2.",
+          "With a = b the first two columns are identical, so the determinant is 0 \u2014 which means (a\u2212b) divides it.",
+          "By the same argument with b = c and with c = a, two more linear factors appear.",
+          "Count degrees: the determinant is degree 3 in total, and you have three linear factors, so the remaining factor is a constant. Test one numerical case to pin its sign."],
+   ans:"The determinant equals (a\u2212b)(b\u2212c)(c\u2212a) \u2014 the Vandermonde determinant",
+   why:"The degree count is what closes the argument: three linear factors already account for all three degrees, so nothing but a constant can remain, and one substitution fixes that constant. Without the degree check you would only know the factors divide it, not that you had them all. Note the cyclic ORDER matters for the sign \u2014 (a\u2212b)(b\u2212c)(c\u2212a) and (a\u2212b)(b\u2212c)(a\u2212c) differ by \u22121."},
+
+  {id:"MTG4", tier:3, tax:"T7", pattern:"T4",
+   q:"Find the maximum and minimum values of 5cos\u03b8 + 3cos(\u03b8 + \u03c0/3) + 3 for \u03b8 \u2208 R.",
+   opts:["a sin\u03b8 + b cos\u03b8 \u2192 One Amplitude","Bound It With AM-GM","Substitute a Convenient Value","Symmetric in the Roots \u2192 Never Find the Roots"], correct:0,
+   hints:["First expand the shifted cosine so that everything is in terms of the SAME angle \u03b8.",
+          "cos(\u03b8+\u03c0/3) = cos\u03b8\u00b7\u00bd \u2212 sin\u03b8\u00b7(\u221a3/2), so the expression becomes (5 + 3/2)cos\u03b8 \u2212 (3\u221a3/2)sin\u03b8 + 3.",
+          "That is 6.5cos\u03b8 \u2212 (3\u221a3/2)sin\u03b8 + 3. Compute R = \u221a(a\u00b2+b\u00b2) on the two coefficients.",
+          "R\u00b2 = (13/2)\u00b2 + (3\u221a3/2)\u00b2 = 169/4 + 27/4 = 196/4 = 49."],
+   ans:"R = 7, so the expression ranges over [\u22127+3, 7+3] = [\u22124, 10]: maximum 10, minimum \u22124",
+   why:"The whole difficulty was the two DIFFERENT angles; once both were rewritten in \u03b8, the R-formula applied mechanically. That is the general lesson for this family \u2014 reduce to a single angle first, and only then reach for the amplitude. The clean R\u00b2 = 49 is a hint the problem was constructed backwards from R = 7, which is a useful sign you have not slipped."},
+
+  {id:"MTG5", tier:2, tax:"T6", pattern:"T5",
+   q:"How many three-digit numbers contain at least one digit equal to 5?",
+   opts:["Count the Complement","Split the Term and Telescope","Substitute a Convenient Value","Bound It With AM-GM"], correct:0,
+   hints:["Direct counting would need inclusion-exclusion over three positions. Count the negation instead.",
+          "First fix the universe: three-digit numbers run from 100 to 999, so there are 900 of them.",
+          "Now count those with NO digit 5: the leading digit has 8 choices (1\u20139 minus 5), and each of the other two has 9 (0\u20139 minus 5).",
+          "8 \u00d7 9 \u00d7 9 = 648."],
+   ans:"900 \u2212 648 = 252",
+   why:"The place where this goes wrong is almost never the complement count \u2014 it is the universe. Using 1000 instead of 900, or giving the leading digit 9 choices instead of 8, silently corrupts an otherwise correct subtraction. Fixing the universe explicitly BEFORE counting anything is the discipline that makes complementary counting safe."},
+
+  {id:"MTG6", tier:3, tax:"T5", pattern:"T6",
+   q:"Evaluate \u03a3(r=1 to n) 1/(r(r+2)) in closed form.",
+   opts:["Split the Term and Telescope","Count the Complement","a sin\u03b8 + b cos\u03b8 \u2192 One Amplitude","Make Zeros Before You Expand"], correct:0,
+   hints:["Partial-fraction the general term. Because the gap is 2, expect a factor of \u00bd.",
+          "1/(r(r+2)) = \u00bd[1/r \u2212 1/(r+2)].",
+          "Write out the first few and last few terms. The cancellation now skips one place, so it is 1/r against 1/(r+2).",
+          "That means TWO terms survive at the front (r = 1 and r = 2) and two at the back (r = n+1 and r = n+2)."],
+   ans:"\u00bd[1 + \u00bd \u2212 1/(n+1) \u2212 1/(n+2)] = 3/4 \u2212 \u00bd[1/(n+1) + 1/(n+2)]",
+   why:"This is the exact case that breaks the reflex 'first term minus last term'. With a gap of 1 that reflex is right; with a gap of 2 it drops half the surviving boundary terms. The safe habit is to physically write three terms from each end before cancelling \u2014 the pattern of what survives then becomes visible instead of assumed. Sanity check: as n \u2192 \u221e the sum \u2192 3/4, which matches the known infinite value."},
+
+  {id:"MTG7", tier:3, tax:"T12", pattern:"T7",
+   q:"A 2\u00d72 matrix A satisfies A\u00b2 = 3A \u2212 2I. Find tr(A), |A|, A\u207b\u00b9 in terms of A, and A\u2074 in terms of A and I.",
+   opts:["Read the Matrix Off Its Own Polynomial","Make Zeros Before You Expand","Substitute a Convenient Value","Symmetric in the Roots \u2192 Never Find the Roots"], correct:0,
+   hints:["Rearrange to the standard annihilating form A\u00b2 \u2212 3A + 2I = O, and compare with A\u00b2 \u2212 (tr A)A + |A|I = O.",
+          "That reads off tr A = 3 and |A| = 2 directly.",
+          "For the inverse, multiply the relation through by A\u207b\u00b9: A \u2212 3I + 2A\u207b\u00b9 = O.",
+          "For A\u2074, use A\u00b2 = 3A \u2212 2I as a rewrite rule: compute A\u00b3 first, then A\u2074, substituting for A\u00b2 each time it appears."],
+   ans:"tr A = 3, |A| = 2, A\u207b\u00b9 = \u00bd(3I \u2212 A), A\u00b3 = 7A \u2212 6I, A\u2074 = 15A \u2212 14I",
+   why:"One relation delivered four different answers, which is why this pattern is worth drilling. The eigenvalues here are 1 and 2 (roots of \u03bb\u00b2\u22123\u03bb+2), so A\u2074 has eigenvalues 1 and 16 \u2014 and indeed tr(A\u2074) = 15\u00b73 \u2212 14\u00b72 = 17 = 1 + 16, and |A\u2074| = 2\u2074 = 16. That cross-check costs seconds and catches an arithmetic slip in the power reduction."},
+
+  {id:"MTG8", tier:3, tax:"T3", pattern:"T8",
+   q:"For x > 0, find the minimum value of (x\u00b2 + 8x + 20)/(x + 2), and state the value of x at which it occurs.",
+   opts:["Bound It With AM-GM","Substitute a Convenient Value","Count the Complement","Make Zeros Before You Expand"], correct:0,
+   hints:["The expression is not yet in a p + q/p shape. Substitute t = x + 2 to make it one.",
+          "With x = t \u2212 2: the numerator becomes (t\u22122)\u00b2 + 8(t\u22122) + 20 = t\u00b2 + 4t + 8.",
+          "So the expression is (t\u00b2 + 4t + 8)/t = t + 8/t + 4.",
+          "Now apply AM-GM to t + 8/t \u2014 but first check the admissible range of t, since x > 0 means t > 2."],
+   ans:"AM-GM gives t + 8/t \u2265 2\u221a8 = 4\u221a2 at t = 2\u221a2 \u2248 2.83, which satisfies t > 2. So the minimum is 4\u221a2 + 4, at x = 2\u221a2 \u2212 2",
+   why:"The constraint check is the whole point of this one. t = 2\u221a2 \u2248 2.83 does clear t > 2, so the AM-GM minimum is genuinely attained \u2014 but had the substitution produced t + 1/t with x > 0 forcing t > 2, the equality point t = 1 would have been OUT of range and the true minimum would sit at the boundary instead. Always locate the equality point and then ask whether the problem allows it."}
+];
+
+let MT_PRACTICE = [
+  {src:"MT-01", type:"NV", tier:1, tax:"T1", pat:"T1", q:"If \u03b1, \u03b2 are the roots of x\u00b2 \u2212 6x + 4 = 0, find \u03b1\u00b2 + \u03b2\u00b2.", ans:"28", note:"(\u03b1+\u03b2)\u00b2 \u2212 2\u03b1\u03b2 = 36 \u2212 8 = 28.", doc:"core"},
+  {src:"MT-02", type:"NV", tier:1, tax:"T1", pat:"T1", q:"If \u03b1, \u03b2 are the roots of 2x\u00b2 + 5x \u2212 3 = 0, find 1/\u03b1 + 1/\u03b2.", ans:"5/3", note:"(\u03b1+\u03b2)/\u03b1\u03b2 = (\u22125/2)/(\u22123/2) = 5/3.", doc:"core"},
+  {src:"MT-03", type:"NV", tier:2, tax:"T1", pat:"T1", q:"If \u03b1, \u03b2 are the roots of x\u00b2 \u2212 5x + 2 = 0, find |\u03b1 \u2212 \u03b2|.", ans:"\u221a17", note:"|\u03b1\u2212\u03b2| = \u221aD/|a| with D = 25 \u2212 8 = 17.", doc:"core"},
+  {src:"MT-04", type:"NV", tier:2, tax:"T2", pat:"T1", q:"If \u03b1, \u03b2, \u03b3 are the roots of x\u00b3 \u2212 4x\u00b2 + 5x \u2212 2 = 0, find \u03b1\u00b2 + \u03b2\u00b2 + \u03b3\u00b2.", ans:"6", note:"(\u03a3\u03b1)\u00b2 \u2212 2\u03a3\u03b1\u03b2 = 16 \u2212 10 = 6.", doc:"core"},
+  {src:"MT-05", type:"NV", tier:3, tax:"T2", pat:"T2", q:"If \u03b1, \u03b2, \u03b3 are the roots of x\u00b3 \u2212 2x\u00b2 + 3x \u2212 4 = 0, evaluate (1+\u03b1)(1+\u03b2)(1+\u03b3).", ans:"10", note:"\u220f(\u22121 \u2212 \u03b1\u1d62) = \u2212p(\u22121) for a monic cubic; p(\u22121) = \u22121\u22122\u22123\u22124 = \u221210, so the product is 10. Equivalently 1 + \u03a3\u03b1 + \u03a3\u03b1\u03b2 + \u03b1\u03b2\u03b3 = 1+2+3+4.", doc:"core"},
+  {src:"MT-06", type:"NV", tier:2, tax:"T4", pat:"T2", q:"Find the sum of all the coefficients in the expansion of (3x \u2212 4y)\u2077 when y is set to 1.", ans:"\u22121", note:"Substituting x = 1, y = 1 gives (3\u22124)\u2077 = \u22121.", doc:"core"},
+  {src:"MT-07", type:"NV", tier:3, tax:"T4", pat:"T2", q:"For p(x) = (1 + x + x\u00b2)\u2075, find the sum of the coefficients of the even-power terms.", ans:"122", note:"p(1) = 3\u2075 = 243 and p(\u22121) = 1\u2075 = 1; even-power sum = \u00bd(243+1) = 122.", doc:"core"},
+  {src:"MT-08", type:"NV", tier:2, tax:"T4", pat:"T2", q:"Find the coefficient of x\u2074 in the expansion of (x\u00b2 + 2/x)\u2075.", ans:"40", note:"T\u1d63\u208a\u2081 = \u2075C\u1d63 (x\u00b2)\u2075\u207b\u02b3(2/x)\u02b3 has exponent 10 \u2212 3r; setting 10\u22123r = 4 gives r = 2, so the coefficient is \u2075C\u2082\u00b72\u00b2 = 10\u00b74.", doc:"core"},
+  {src:"MT-09", type:"NV", tier:1, tax:"T5", pat:"T6", q:"Evaluate \u03a3(r=1 to 20) r\u00b3.", ans:"44100", note:"[n(n+1)/2]\u00b2 = 210\u00b2.", doc:"core"},
+  {src:"MT-10", type:"NV", tier:2, tax:"T5", pat:"T6", q:"Evaluate \u03a3(r=1 to n) 1/(r(r+1)).", ans:"n/(n+1)", note:"Telescopes as \u03a3(1/r \u2212 1/(r+1)) = 1 \u2212 1/(n+1).", doc:"core"},
+  {src:"MT-11", type:"NV", tier:3, tax:"T5", pat:"T6", q:"Evaluate \u03a3(r=1 to n) 1/(r(r+3)) in closed form.", ans:"(1/3)[1 + 1/2 + 1/3 \u2212 1/(n+1) \u2212 1/(n+2) \u2212 1/(n+3)]", note:"1/(r(r+3)) = (1/3)[1/r \u2212 1/(r+3)]; with a gap of 3, THREE terms survive at each end. As n\u2192\u221e the sum \u2192 11/18.", doc:"core"},
+  {src:"MT-12", type:"NV", tier:3, tax:"T5", pat:"T6", q:"Evaluate \u03a3(r=1 to n) r\u00b7r!.", ans:"(n+1)! \u2212 1", note:"r\u00b7r! = (r+1)! \u2212 r!, which telescopes to (n+1)! \u2212 1!.", doc:"core"},
+  {src:"MT-13", type:"NV", tier:2, tax:"T6", pat:"T5", q:"How many four-digit numbers contain at least one digit 9?", ans:"3168", note:"Universe 9000; with no 9 the leading digit has 8 choices and the rest 9 each: 8\u00b79\u00b3 = 5832; 9000 \u2212 5832 = 3168.", doc:"core"},
+  {src:"MT-14", type:"NV", tier:2, tax:"T6", pat:"T5", q:"A die is rolled 3 times. In how many outcomes does at least one 6 appear?", ans:"91", note:"6\u00b3 \u2212 5\u00b3 = 216 \u2212 125.", doc:"core"},
+  {src:"MT-15", type:"NV", tier:2, tax:"T6", pat:"T5", q:"How many non-negative integer solutions does x + y + z = 12 have?", ans:"91", note:"Stars and bars: \u00b9\u00b2\u207a\u00b3\u207b\u00b9C\u2083\u208b\u2081 = \u00b9\u2074C\u2082 = 91.", doc:"core"},
+  {src:"MT-16", type:"NV", tier:3, tax:"T6", pat:"T5", q:"How many POSITIVE integer solutions does x + y + z + w = 15 have?", ans:"364", note:"Substitute y\u1d62 = x\u1d62 \u2212 1 to get a non-negative sum of 11 in 4 parts: \u00b9\u2074C\u2083 = 364.", doc:"core"},
+  {src:"MT-17", type:"NV", tier:1, tax:"T7", pat:"T4", q:"Find the range of 5sin\u03b8 \u2212 12cos\u03b8.", ans:"[\u221213, 13]", note:"R = \u221a(25+144) = 13.", doc:"core"},
+  {src:"MT-18", type:"NV", tier:2, tax:"T7", pat:"T4", q:"Find the maximum value of 7 + 4sin\u03b8 + 3cos\u03b8.", ans:"12", note:"R = \u221a(16+9) = 5, so the maximum is 7 + 5.", doc:"core"},
+  {src:"MT-19", type:"NV", tier:3, tax:"T7", pat:"T4", q:"Find the minimum value of 2sin\u03b8 + 3cos\u03b8 on the restricted domain \u03b8 \u2208 [0, \u03c0/2], and explain why it is not \u2212\u221a13.", ans:"2 \u2014 attained at \u03b8 = \u03c0/2", note:"On [0, \u03c0/2] both sin\u03b8 and cos\u03b8 are non-negative, so the expression never goes negative and \u2212\u221a13 is unreachable \u2014 that value needs a third-quadrant angle. The interior is where the MAXIMUM \u221a13 sits, so the minimum must be at an endpoint: \u03b8=0 gives 3, \u03b8=\u03c0/2 gives 2. This is exactly the restricted-domain failure mode.", doc:"core"},
+  {src:"MT-20", type:"NV", tier:2, tax:"T7", pat:"T4", q:"Find the range of 4sin\u00b2\u03b8 + 9cos\u00b2\u03b8.", ans:"[4, 9]", note:"It is a weighted average of 4 and 9 with weights sin\u00b2\u03b8 and cos\u00b2\u03b8 summing to 1, so it lies between them.", doc:"core"},
+  {src:"MT-21", type:"NV", tier:2, tax:"T8", pat:"T4", q:"Express sin75\u00b0 \u2212 sin15\u00b0 as a single term and evaluate it.", ans:"1/\u221a2", note:"sinC \u2212 sinD = 2cos((C+D)/2)sin((C\u2212D)/2) = 2cos45\u00b0sin30\u00b0 = 2\u00b7(1/\u221a2)\u00b7\u00bd.", doc:"core"},
+  {src:"MT-22", type:"NV", tier:3, tax:"T8", pat:"T2", q:"Verify or refute the claimed identity cos3\u03b8 = 3cos\u03b8 \u2212 4cos\u00b3\u03b8 using a single substitution, and state the correct form.", ans:"Refuted. At \u03b8 = 0 the left side is 1 but the right side is 3 \u2212 4 = \u22121. The correct identity is cos3\u03b8 = 4cos\u00b3\u03b8 \u2212 3cos\u03b8.", note:"One well-chosen value kills a sign-flipped identity instantly. Note sin3\u03b8 = 3sin\u03b8 \u2212 4sin\u00b3\u03b8 DOES have that order \u2014 which is exactly why the two get confused.", doc:"core"},
+  {src:"MT-23", type:"NV", tier:1, tax:"T9", pat:"T3", q:"Find the area of the triangle with vertices (1,2), (4,6) and (\u22123,5).", ans:"12.5", note:"\u00bd|1(6\u22125) + 4(5\u22122) + (\u22123)(2\u22126)| = \u00bd|1 + 12 + 12| = 12.5.", doc:"core"},
+  {src:"MT-24", type:"NV", tier:2, tax:"T9", pat:"T3", q:"For what value of k are the points (2,1), (5,4) and (k,7) collinear?", ans:"k = 8", note:"Set the area determinant to zero: the three points lie on the line y = x \u2212 1.", doc:"core"},
+  {src:"MT-25", type:"NV", tier:2, tax:"T9", pat:"T4", q:"Find the distance from (3,\u22124) to the line 5x \u2212 12y + 2 = 0.", ans:"5", note:"|15 + 48 + 2|/\u221a(25+144) = 65/13.", doc:"core"},
+  {src:"MT-26", type:"NV", tier:3, tax:"T10", pat:"T3", q:"A line through (2,3) makes an angle of 45\u00b0 with the positive x-axis. Find BOTH points on it at a distance 3\u221a2 from (2,3).", ans:"(5,6) and (\u22121,0)", note:"Parametric form (2 + r cos45\u00b0, 3 + r sin45\u00b0) with r = \u00b13\u221a2. Taking only r > 0 loses the second point \u2014 the signed-r failure mode.", doc:"core"},
+  {src:"MT-27", type:"NV", tier:2, tax:"T11", pat:"T3", q:"Evaluate |[[1,2,3],[4,5,6],[7,8,9]]| by making zeros first.", ans:"0", note:"R\u2082\u2192R\u2082\u2212R\u2081 and R\u2083\u2192R\u2083\u2212R\u2082 both give (3,3,3), so two rows become identical and the determinant vanishes.", doc:"core"},
+  {src:"MT-28", type:"NV", tier:3, tax:"T11", pat:"T3", q:"Without expanding, factorise |[[1,1,1],[a,b,c],[a\u00b3,b\u00b3,c\u00b3]]|.", ans:"(a\u2212b)(b\u2212c)(c\u2212a)(a+b+c)", note:"Setting any two variables equal makes two columns identical, giving the three linear factors; the determinant has total degree 4, so one symmetric linear factor remains, fixed as (a+b+c) by a numerical test.", doc:"core"},
+  {src:"MT-29", type:"NV", tier:2, tax:"T11", pat:"T3", q:"If A is a 4\u00d74 matrix with |A| = 3, find |2A|.", ans:"48", note:"det(kA) = k\u207f det A, so 2\u2074\u00b73 = 48. Writing 2\u00b73 = 6 is the standard error.", doc:"core"},
+  {src:"MT-30", type:"NV", tier:3, tax:"T12", pat:"T7", q:"A 2\u00d72 matrix A satisfies A\u00b2 = 4A \u2212 3I. Find tr(A), |A| and A\u207b\u00b9 in terms of A.", ans:"tr A = 4, |A| = 3, A\u207b\u00b9 = (1/3)(4I \u2212 A)", note:"Compare A\u00b2 \u2212 4A + 3I = O with A\u00b2 \u2212 (tr A)A + |A|I = O; multiply by A\u207b\u00b9 for the inverse. Eigenvalues are 1 and 3, consistent with tr 4 and det 3.", doc:"core"},
+  {src:"MT-31", type:"NV", tier:3, tax:"T12", pat:"T7", q:"A 3\u00d73 matrix satisfies 2A\u00b3 \u2212 5A\u00b2 + 4A \u2212 6I = O. Find tr(A) and |A|.", ans:"tr A = 5/2 and |A| = 3", note:"Divide by 2 for monic form: A\u00b3 \u2212 (5/2)A\u00b2 + 2A \u2212 3I = O, so t\u2082 = 5/2 and t\u2080 = 3. Skipping the division gives 5 and 6, both wrong.", doc:"core"},
+  {src:"MT-32", type:"NV", tier:2, tax:"T3", pat:"T8", q:"For x > 0, find the minimum value of x + 16/x.", ans:"8, at x = 4", note:"AM-GM: x + 16/x \u2265 2\u221a16.", doc:"core"},
+  {src:"MT-33", type:"NV", tier:3, tax:"T3", pat:"T8", q:"For x > 0, find the minimum of 2x + 27/x\u00b2, and explain why the 2x must be split into x + x before applying AM-GM.", ans:"9, at x = 3", note:"Two-term AM-GM on 2x and 27/x\u00b2 gives a bound that is not tight, because equality would need 2x = 27/x\u00b2 while the powers of x do not cancel in the product. Splitting into three terms x + x + 27/x\u00b2 makes the product x\u00b7x\u00b727/x\u00b2 = 27 independent of x, so AM-GM gives \u2265 3\u00b7\u221b27 = 9, with equality when all three are equal: x = 27/x\u00b2 \u21d2 x = 3. Check: 6 + 3 = 9.", doc:"core"},
+  {src:"MT-34", type:"NV", tier:3, tax:"T3", pat:"T8", q:"State why AM-GM cannot be used to claim x + 1/x \u2265 2 for all non-zero real x, and give the correct statement for x < 0.", ans:"AM-GM requires non-negative terms. For x < 0 both x and 1/x are negative and x + 1/x \u2264 \u22122, with equality at x = \u22121.", note:"Apply AM-GM to (\u2212x) + (\u22121/x) \u2265 2 and negate. The unrestricted claim is the single most common misuse of this inequality.", doc:"core"},
+  {src:"MT-35", type:"NV", tier:2, tax:"T13", pat:"T2", q:"A student expands (a + b)\u00b3 as a\u00b3 + b\u00b3. Refute it with one substitution and give the correct expansion.", ans:"At a = b = 1 the left side is 8 and the right is 2. Correct: a\u00b3 + 3a\u00b2b + 3ab\u00b2 + b\u00b3.", note:"a = b = 1 is the cheapest refuting substitution for almost every dropped-cross-term error.", doc:"core"},
+  {src:"MT-36", type:"NV", tier:3, tax:"T14", pat:"T2", q:"A problem symmetric in a and b yields the candidate answer (a\u00b2 + 2ab)/(a+b). State whether it can be correct, and why.", ans:"It cannot. Swapping a and b gives (b\u00b2 + 2ab)/(a+b), which differs from the original, so an answer to a symmetric problem cannot take this form.", note:"The symmetry check is a refutation tool only \u2014 a symmetric-looking answer can still be wrong for other reasons \u2014 but it costs nothing and catches a whole class of algebra slips.", doc:"core"}
+];
+
+let MT_PRAC_DOCS = [
+  {id:"core", label:"Maths shortcuts core set \u2014 curated drills", date:"5 Aug 2026", note:"Hand-built, NOT from a test paper. Every answer verified by direct computation. All records are NV type: no MCQ option sets are fabricated for this lesson. MT-19 and MT-33 are deliberately retained as counter-examples where the shortcut over-reaches."}
+];
+
+const MT_PRAC_TIERS=[{k:"All",l:"All"},{k:"1",l:"Warm-up"},{k:"2",l:"Fluency"},{k:"3",l:"Exam-applied"},{k:"Flag",l:"\u2605 Flagged"}];
+
+/* =========================================================================
+   LESSON: tools/phys/ptips  —  PHYSICS SHORTCUTS & SANITY CHECKS
+   Chapter-agnostic tricks lesson for Physics. Same design rule: trick +
+   MECHANISM + FAILURE MODE on every entry.
+   Hand-built 5 Aug 2026 — NOT mined from a printed paper. Every numerical
+   answer verified by direct computation; all practice records are NV type,
+   since fabricating MCQ option sets would violate the L4 convention.
+   ========================================================================= */
+
+let PT_TAXA = [
+  {code:"F1", label:"Dimensional analysis and unit sanity",            group:"Checking"},
+  {code:"F2", label:"Limiting and special cases",                      group:"Checking"},
+  {code:"F3", label:"Order-of-magnitude estimation",                   group:"Checking"},
+  {code:"F4", label:"Symmetry arguments",                              group:"Setting Up"},
+  {code:"F5", label:"Frame choice and relative motion",                group:"Setting Up"},
+  {code:"F6", label:"Free-body diagrams and constraint relations",     group:"Setting Up"},
+  {code:"F7", label:"Energy vs force-and-kinematics: which to use",    group:"Choosing the Law"},
+  {code:"F8", label:"Conservation triage: momentum, energy, angular",  group:"Choosing the Law"},
+  {code:"F9", label:"Impulse and the collision shortcut",              group:"Choosing the Law"},
+  {code:"F10",label:"Standard moments of inertia and both axis theorems", group:"Standard Results"},
+  {code:"F11",label:"Standard results worth memorising (rolling, SHM, projectile)", group:"Standard Results"},
+  {code:"F12",label:"Reduced mass and two-body reduction",             group:"Standard Results"},
+  {code:"F13",label:"Graph reading: slope and area",                   group:"Representation"},
+  {code:"F14",label:"Small-quantity and binomial approximation",       group:"Representation"}
+];
+
+let PT_CARDS = [
+  {tag:"dim", title:"Dimensional analysis", rows:[
+    {f:"Base dimensions: [M], [L], [T], plus [A] for current and [K] for temperature. Every term added or equated must carry identical dimensions"},
+    {f:"Useful dimensions: force MLT\u207b\u00b2, energy ML\u00b2T\u207b\u00b2, power ML\u00b2T\u207b\u00b3, pressure ML\u207b\u00b9T\u207b\u00b2, momentum MLT\u207b\u00b9, angular momentum ML\u00b2T\u207b\u00b9, torque ML\u00b2T\u207b\u00b2"},
+    {f:"Anything inside sin, cos, exp, ln MUST be dimensionless \u2014 this often fixes an unknown exponent for free"},
+    {f:"Torque and energy share dimensions ML\u00b2T\u207b\u00b2 but are physically different \u2014 dimensions constrain, they do not identify"},
+    {f:"MECHANISM: physical laws must hold regardless of the size of the units chosen, so both sides must scale identically under a change of units \u2014 which is exactly dimensional consistency.", k:"why"},
+    {f:"FAILURE MODE: dimensional analysis cannot recover dimensionless factors. It will never tell you the \u00bd in \u00bdmv\u00b2 or the 2\u03c0 in T = 2\u03c0\u221a(l/g). It also cannot distinguish two quantities with the same dimensions, so a dimensionally-correct answer can still be physically wrong.", k:"trap"}
+  ]},
+
+  {tag:"limit", title:"Push to the limiting case", rows:[
+    {f:"Test a derived formula by sending a parameter to an extreme where you already know the answer: m \u2192 0, m \u2192 \u221e, \u03b8 \u2192 0, \u03b8 \u2192 90\u00b0, \u03bc \u2192 0, R \u2192 \u221e"},
+    {f:"On an Atwood machine, m\u2081 = m\u2082 must give a = 0; m\u2082 \u2192 0 must give a \u2192 g"},
+    {f:"On an incline, \u03b8 \u2192 0 must give a \u2192 0 and N \u2192 mg; \u03b8 \u2192 90\u00b0 must give a \u2192 g and N \u2192 0"},
+    {f:"For a rolling body, I \u2192 0 must recover the frictionless-sliding result a = g sin\u03b8"},
+    {f:"MECHANISM: a correct general formula must reduce to every known special case it contains, so each limit is an independent test of the algebra at no extra cost.", k:"why"},
+    {f:"FAILURE MODE: some limits are OUTSIDE the derivation's assumptions. Sending \u03b8 \u2192 90\u00b0 in a rolling problem breaks the no-slip condition the derivation assumed, so a 'wrong' limit there may indicate a broken assumption rather than broken algebra \u2014 check which before rewriting the solution.", k:"trap"}
+  ]},
+
+  {tag:"ordmag", title:"Order of magnitude and unit sanity", rows:[
+    {f:"g \u2248 10 m/s\u00b2, c \u2248 3\u00d710\u2078 m/s, electron charge \u2248 1.6\u00d710\u207b\u00b9\u2079 C, N_A \u2248 6\u00d710\u00b2\u00b3, R \u2248 8.3 J/mol\u00b7K"},
+    {f:"Everyday speeds are 1\u201310\u00b9 m/s; free-fall from a few metres lands near 5\u201310 m/s; a car crash is tens of m/s"},
+    {f:"1 eV \u2248 1.6\u00d710\u207b\u00b9\u2079 J. Atomic energies are a few eV; nuclear energies are MeV \u2014 a factor of 10\u2076 apart"},
+    {f:"Before reporting, ask: is this answer the right SIZE? A block sliding at 10\u2074 m/s or a pendulum with period 10\u207b\u2076 s is a flagged arithmetic error"},
+    {f:"MECHANISM: physical quantities cluster by regime, so an answer that lands several decades outside its regime is far more likely an exponent slip than a surprising result.", k:"why"},
+    {f:"FAILURE MODE: the check is one-directional \u2014 it catches gross errors, never subtle ones. An answer of 4.2 m/s when the truth is 4.8 m/s passes every plausibility test, so this is a screen and not a verification.", k:"trap"}
+  ]},
+
+  {tag:"symm", title:"Symmetry arguments", rows:[
+    {f:"If the setup is symmetric about an axis, any net vector quantity perpendicular to that axis must vanish \u2014 pair up the contributions and they cancel"},
+    {f:"On a uniform ring, the field at the centre is zero by symmetry; on the axis, only the axial component survives"},
+    {f:"For a symmetric mass distribution, the centre of mass sits on every axis of symmetry, so it lies at their intersection"},
+    {f:"In a symmetric circuit, nodes at equal potential can be merged or the connecting branch removed"},
+    {f:"MECHANISM: if a transformation leaves the physical setup unchanged, it must leave the answer unchanged too \u2014 so any component that flips sign under that transformation has to be zero.", k:"why"},
+    {f:"FAILURE MODE: the symmetry must hold for the WHOLE setup, including boundary conditions and any external field. A symmetric object in an asymmetric external field has no such cancellation, and assuming it does is a common and expensive error.", k:"trap"}
+  ]},
+
+  {tag:"frame", title:"Choosing the frame", rows:[
+    {f:"Work in the frame that makes the most terms vanish. The COM frame sets total momentum to zero; the ground frame is best when a constraint is fixed to the ground"},
+    {f:"In a non-inertial frame accelerating at a\u20d7, add a pseudo-force \u2212ma\u20d7 to every mass, then apply Newton's laws normally"},
+    {f:"Relative velocity: v\u20d7_AB = v\u20d7_A \u2212 v\u20d7_B. For a collision problem the relative velocity of approach and separation are what the restitution coefficient relates"},
+    {f:"For two-body problems under a mutual force, the relative coordinate obeys \u03bc\u00b7a\u20d7_rel = F\u20d7 with \u03bc = m\u2081m\u2082/(m\u2081+m\u2082)"},
+    {f:"MECHANISM: Newton's laws are form-invariant between inertial frames, so any inertial frame is legal \u2014 which makes frame choice a pure convenience decision.", k:"why"},
+    {f:"FAILURE MODE: KINETIC ENERGY is frame-dependent, so an energy equation written in one frame cannot be mixed with a momentum equation written in another. Pick one frame per equation set and stay in it.", k:"trap"}
+  ]},
+
+  {tag:"energyforce", title:"Energy or force-and-kinematics?", rows:[
+    {f:"Use ENERGY when the question relates two positions or two speeds and does not ask about time, and when the forces involved are conservative or do computable work"},
+    {f:"Use FORCE + KINEMATICS when time appears, when the acceleration is asked for, or when you need a normal or tension at a specific instant"},
+    {f:"Use IMPULSE-MOMENTUM when a large force acts for a short time and the detailed force law is unknown \u2014 collisions, hits, jerks"},
+    {f:"Energy gives speed but not direction; momentum is a vector and keeps direction information"},
+    {f:"MECHANISM: the work-energy theorem is the time-integral of Newton's second law over displacement, so it deliberately discards time; impulse-momentum is the same law integrated over time, discarding displacement. Choose the one that discards what you do not need.", k:"why"},
+    {f:"FAILURE MODE: energy conservation silently fails when friction, plastic deformation or a sticking collision is present. Momentum survives all of those provided no EXTERNAL impulse acts \u2014 which is why momentum, not energy, is the tool for inelastic collisions.", k:"trap"}
+  ]},
+
+  {tag:"conserve", title:"Conservation triage \u2014 what survives what", rows:[
+    {f:"Linear momentum is conserved when the net EXTERNAL force is zero (or negligible during a short impulse)"},
+    {f:"Angular momentum about a point is conserved when the net external TORQUE about that point is zero \u2014 which can hold even when momentum is not"},
+    {f:"Mechanical energy is conserved only when all acting forces are conservative and there is no sliding friction or plastic deformation"},
+    {f:"In an explosion or a sticking collision: momentum yes, kinetic energy no. In an elastic collision: both"},
+    {f:"A common combination: during the impact conserve momentum; after the impact conserve energy"},
+    {f:"MECHANISM: each conservation law is the integrated form of a balance equation, so each one dies exactly when its own source term (external force, external torque, non-conservative work) is non-zero \u2014 and they die independently.", k:"why"},
+    {f:"FAILURE MODE: applying energy conservation across a collision that is not stated to be elastic. Also: angular momentum must be taken about a SPECIFIED point, and a choice that makes the external torque non-zero kills the conservation you were relying on \u2014 pick the point where the unknown impulsive force acts.", k:"trap"}
+  ]},
+
+  {tag:"mi", title:"Standard moments of inertia and the two theorems", rows:[
+    {f:"About the central/symmetry axis: ring MR\u00b2; disc or solid cylinder \u00bdMR\u00b2; solid sphere (2/5)MR\u00b2; hollow sphere (2/3)MR\u00b2"},
+    {f:"Thin rod about its centre, perpendicular to the rod: ML\u00b2/12. About one end: ML\u00b2/3"},
+    {f:"Parallel-axis: I = I_cm + Md\u00b2, where d is the distance between the parallel axes"},
+    {f:"Perpendicular-axis (PLANAR bodies only): I_z = I_x + I_y, with z perpendicular to the plane"},
+    {f:"Rectangular plate about a central axis in its plane parallel to a side of length a: Ma\u00b2/12"},
+    {f:"MECHANISM: I = \u03a3mr\u00b2 is a sum over the mass distribution; the parallel-axis theorem falls out of expanding (r\u20d7 + d\u20d7)\u00b2 and noting the cross term vanishes at the centre of mass.", k:"why"},
+    {f:"FAILURE MODE: the perpendicular-axis theorem applies ONLY to plane laminas \u2014 using it on a sphere or a cylinder is invalid. And the parallel-axis theorem measures d from the CENTRE-OF-MASS axis, not from any convenient axis; applying it twice from a non-COM starting point double-counts.", k:"trap"}
+  ]},
+
+  {tag:"standard", title:"Standard results worth having ready", rows:[
+    {f:"Rolling without slipping down an incline: a = g sin\u03b8/(1 + I/MR\u00b2). Ring 1, disc \u00bd, solid sphere 2/5, hollow sphere 2/3 for I/MR\u00b2"},
+    {f:"So the acceleration ordering downhill is: solid sphere > disc > hollow sphere > ring, independent of mass and radius"},
+    {f:"Fraction of KE that is rotational while rolling = (I/MR\u00b2)/(1 + I/MR\u00b2): ring \u00bd, disc 1/3, solid sphere 2/7"},
+    {f:"Projectile: range u\u00b2sin2\u03b8/g, max height u\u00b2sin\u00b2\u03b8/2g, time of flight 2u sin\u03b8/g; range is maximum at 45\u00b0 and equal for \u03b8 and (90\u00b0\u2212\u03b8)"},
+    {f:"SHM: T = 2\u03c0\u221a(m/k) for a spring, 2\u03c0\u221a(l/g) for a simple pendulum; v = \u03c9\u221a(A\u00b2\u2212x\u00b2); a = \u2212\u03c9\u00b2x"},
+    {f:"MECHANISM: the rolling result comes from combining the translational and rotational equations with the no-slip constraint v = \u03c9R, which is why only the DIMENSIONLESS ratio I/MR\u00b2 survives \u2014 mass and radius cancel.", k:"why"},
+    {f:"FAILURE MODE: the rolling formula assumes NO SLIPPING, which needs sufficient friction; above a critical \u03b8 the body slips and the formula is void. The projectile results assume no air resistance and level ground \u2014 an elevated launch breaks the symmetric range formula.", k:"trap"}
+  ]},
+
+  {tag:"graph", title:"Reading a graph: slope and area", rows:[
+    {f:"On a position-time graph the slope is velocity. On a velocity-time graph the slope is acceleration and the AREA is displacement"},
+    {f:"On a force-displacement graph the area is work. On a force-time graph the area is impulse"},
+    {f:"On a P-V diagram the area under the curve is the work done by the gas; the area enclosed by a cycle is the net work per cycle"},
+    {f:"Area below the axis counts as negative \u2014 signed area, not geometric area"},
+    {f:"MECHANISM: every one of these is a definite integral of the plotted quantity, and the area under a curve IS that integral \u2014 so 'slope' and 'area' are just derivative and integral read off geometrically.", k:"why"},
+    {f:"FAILURE MODE: confusing signed with unsigned area. A velocity-time graph that goes negative gives DISPLACEMENT as signed area but DISTANCE as unsigned \u2014 reporting one when asked for the other is a routine loss of marks.", k:"trap"}
+  ]},
+
+  {tag:"approx", title:"Small-quantity approximation", rows:[
+    {f:"For |x| \u226a 1: (1+x)\u207f \u2248 1 + nx;  1/(1+x) \u2248 1 \u2212 x;  \u221a(1+x) \u2248 1 + x/2"},
+    {f:"For small \u03b8 in RADIANS: sin\u03b8 \u2248 \u03b8, tan\u03b8 \u2248 \u03b8, cos\u03b8 \u2248 1 \u2212 \u03b8\u00b2/2"},
+    {f:"e\u02e3 \u2248 1 + x and ln(1+x) \u2248 x for small x"},
+    {f:"Use it for percentage-change questions: a small fractional change \u03b4 in x produces a fractional change n\u03b4 in x\u207f"},
+    {f:"MECHANISM: these are the first terms of the Taylor expansion about 0, so the discarded terms are of order x\u00b2 \u2014 negligible precisely when x is small.", k:"why"},
+    {f:"FAILURE MODE: sin\u03b8 \u2248 \u03b8 holds in RADIANS only; using degrees is off by a factor of 57. And keeping only the linear term is wrong when the linear term CANCELS \u2014 in that case the \u03b8\u00b2/2 term in cos\u03b8 is the leading behaviour and must be kept.", k:"trap"}
+  ]}
+];
+
+let PT_PATTERNS = [
+  {id:"F1", name:"Check the Dimensions First",
+   trigger:"You have derived or been offered a formula and want to test it, or an unknown exponent must be found, or an option list contains dimensionally different candidates.",
+   move:"Reduce both sides to M, L, T powers and compare. In a multiple-choice setting, discard every option whose dimensions do not match before doing any physics.",
+   why:"A physical law must hold under any choice of units, which forces both sides to scale identically \u2014 so dimensional mismatch is an outright disproof.",
+   mini:"T = 2\u03c0\u221a(l/g) checks out: \u221a(L / LT\u207b\u00b2) = \u221a(T\u00b2) = T.",
+   fails:"Expecting it to supply numerical factors. It cannot produce the \u00bd in \u00bdmv\u00b2 or distinguish torque from energy \u2014 both are ML\u00b2T\u207b\u00b2.",
+   src:"Card: dim"},
+
+  {id:"F2", name:"Push to the Limiting Case",
+   trigger:"A messy symbolic answer has been obtained and you want to test it, or the question itself asks what happens in an extreme.",
+   move:"Send one parameter to an extreme where the answer is independently obvious (m \u2192 0, \u03b8 \u2192 0 or 90\u00b0, \u03bc \u2192 0, I \u2192 0) and check the formula reduces correctly.",
+   why:"A correct general result must contain every special case it covers, so each limit is a free, independent test of the algebra.",
+   mini:"a = g sin\u03b8/(1 + I/MR\u00b2) with I \u2192 0 gives g sin\u03b8, the frictionless-slide answer \u2014 as it must.",
+   fails:"Testing a limit that violates the derivation's own assumptions. \u03b8 \u2192 90\u00b0 in a rolling problem breaks the no-slip condition, so a strange result there may be the assumption failing, not the algebra.",
+   src:"Card: limit"},
+
+  {id:"F3", name:"Pick the Frame That Kills a Term",
+   trigger:"Two bodies interact, or the problem is set on an accelerating platform, or the algebra in the ground frame is turning ugly.",
+   move:"Switch to the COM frame (total momentum zero) or to the frame of one body, adding a pseudo-force \u2212ma\u20d7 if that frame accelerates. For a mutual two-body force, reduce to the relative coordinate with \u03bc = m\u2081m\u2082/(m\u2081+m\u2082).",
+   why:"Newton's laws keep their form in any inertial frame, so frame choice is free \u2014 and the right choice can zero out an entire term before you write anything down.",
+   mini:"In the COM frame, a two-body collision has equal and opposite momenta throughout, halving the unknowns.",
+   fails:"Mixing frames between equations. Kinetic energy is frame-dependent, so an energy equation in the COM frame cannot be combined with a momentum equation in the ground frame.",
+   src:"Card: frame"},
+
+  {id:"F4", name:"Energy If Time Never Appears",
+   trigger:"The question relates two positions or two speeds and says nothing about how long anything takes.",
+   move:"Write the work-energy theorem or mechanical-energy conservation between the two states. Reach for force-and-kinematics only if time, acceleration or an instantaneous normal force is actually wanted.",
+   why:"The work-energy theorem is Newton's second law integrated over displacement, so it deliberately throws away time \u2014 which is exactly the variable you do not need here.",
+   mini:"'Speed at the bottom of a smooth track of height h' is \u221a(2gh) by energy in one line, whatever the track's shape.",
+   fails:"Using energy conservation across friction, plastic deformation or a sticking collision. Mechanical energy is not conserved there \u2014 momentum is.",
+   src:"Card: energyforce"},
+
+  {id:"F5", name:"Conservation Triage",
+   trigger:"A collision, explosion, sudden sticking, or any interaction where you must decide which conserved quantity to write down.",
+   move:"Ask three separate questions: is the net external FORCE zero (momentum), is the net external TORQUE about my chosen point zero (angular momentum), are all forces conservative with no sliding (energy)? Use whichever survive \u2014 they die independently.",
+   why:"Each conservation law is a balance equation whose source term is different, so knocking out one does not knock out the others.",
+   mini:"Bullet embeds in a hanging block: momentum during impact (external force negligible over the short time), then energy for the swing afterwards.",
+   fails:"Assuming kinetic energy survives a collision that was never stated to be elastic. Also: choosing the point for angular momentum carelessly \u2014 pick the point where the unknown impulsive force acts, so its torque is zero.",
+   src:"Card: conserve, energyforce"},
+
+  {id:"F6", name:"Slope and Area on Any Graph",
+   trigger:"Information is presented as a graph rather than a formula, or a quantity must be extracted from a plotted curve.",
+   move:"Identify what the slope means (the derivative of the y-quantity with respect to the x-quantity) and what the area means (their integral), then read off whichever the question wants.",
+   why:"Both are read directly off the definitions: slope is the derivative, area under the curve is the integral, so the graph already contains the calculus.",
+   mini:"Area under a force-time graph is impulse, hence the change in momentum \u2014 no force law needed.",
+   fails:"Treating area below the axis as positive. Signed area gives displacement or net work; unsigned area gives distance or total magnitude, and the question decides which.",
+   src:"Card: graph"},
+
+  {id:"F7", name:"Let Symmetry Kill the Components",
+   trigger:"A summation or integral over a symmetric distribution of mass, charge or current.",
+   move:"Identify the symmetry axis, pair each element with its mirror image, and cancel every component perpendicular to the axis before integrating. Integrate only the surviving component.",
+   why:"If a transformation leaves the setup unchanged it must leave the answer unchanged, so any component that reverses sign under it is forced to zero.",
+   mini:"On the axis of a uniform ring, every radial contribution is cancelled by the diametrically opposite element, leaving only the axial component.",
+   fails:"Overlooking that an external field or boundary breaks the symmetry. The argument needs the WHOLE configuration symmetric, not just the object.",
+   src:"Card: symm"},
+
+  {id:"F8", name:"Approximate the Small Correction",
+   trigger:"'Small change', 'percentage change', 'for small oscillations', or an expression of the form (1 + small)\u207f.",
+   move:"Expand to first order: (1+x)\u207f \u2248 1 + nx, sin\u03b8 \u2248 \u03b8 in radians, cos\u03b8 \u2248 1 \u2212 \u03b8\u00b2/2. Keep the leading non-vanishing term and drop the rest.",
+   why:"These are truncated Taylor series about zero; the discarded terms are of order x\u00b2, which is negligible exactly when x is small.",
+   mini:"If l increases by 2%, then T = 2\u03c0\u221a(l/g) increases by about 1% \u2014 the exponent \u00bd halves the fractional change.",
+   fails:"Working in degrees for the small-angle forms, and dropping the quadratic term when the linear one cancels \u2014 for cos\u03b8 near zero the \u03b8\u00b2/2 term IS the answer.",
+   src:"Card: approx"}
+];
+
+let PT_GUIDED = [
+  {id:"PTG1", tier:2, tax:"F1", pattern:"F1",
+   q:"A student writes the period of a mass-spring oscillator as T = 2\u03c0\u221a(k/m). Test the formula dimensionally and correct it.",
+   opts:["Check the Dimensions First","Push to the Limiting Case","Pick the Frame That Kills a Term","Slope and Area on Any Graph"], correct:0,
+   hints:["Get the dimensions of the spring constant first. From F = kx, k has dimensions of force per length.",
+          "[k] = MLT\u207b\u00b2/L = MT\u207b\u00b2. Now form k/m.",
+          "[k/m] = T\u207b\u00b2, so \u221a(k/m) has dimensions T\u207b\u00b9 \u2014 a frequency, not a period.",
+          "Invert the ratio and check again."],
+   ans:"\u221a(k/m) is a frequency (T\u207b\u00b9), so the correct period is T = 2\u03c0\u221a(m/k)",
+   why:"The check took two lines and did not require remembering the formula at all \u2014 which is the point, since under exam pressure the m/k versus k/m flip is one of the most common single-symbol errors. Note what the check could NOT do: it happily accepts 2\u03c0, 4\u03c0 or any dimensionless prefactor, so it verifies structure only."},
+
+  {id:"PTG2", tier:3, tax:"F11", pattern:"F2",
+   q:"A body of moment of inertia I about its central axis rolls without slipping down an incline of angle \u03b8. Its acceleration is a = g sin\u03b8/(1 + I/MR\u00b2). Test this against three limiting cases and use it to order a solid sphere, a disc and a ring.",
+   opts:["Push to the Limiting Case","Let Symmetry Kill the Components","Approximate the Small Correction","Conservation Triage"], correct:0,
+   hints:["First limit: I \u2192 0. What object has negligible rotational inertia, and what should its acceleration be?",
+          "With I = 0 the formula gives g sin\u03b8 \u2014 the frictionless sliding result, correct for a body with all its mass at the axis.",
+          "Second limit: \u03b8 \u2192 0 must give a \u2192 0. It does. Third: larger I/MR\u00b2 must mean SLOWER, since more of the energy goes into spin.",
+          "Now insert I/MR\u00b2 = 2/5, \u00bd and 1 and compare the three denominators."],
+   ans:"Solid sphere a = 5g sin\u03b8/7, disc a = 2g sin\u03b8/3, ring a = g sin\u03b8/2. Ordering: solid sphere > disc > ring, independent of mass and radius",
+   why:"The mass-and-radius independence is the result students most often disbelieve, and the formula shows exactly why: only the dimensionless ratio I/MR\u00b2 appears, so M and R cancel. That also tells you the ordering is a statement about SHAPE alone. The limiting-case checks cost about fifteen seconds and would have caught an inverted denominator immediately."},
+
+  {id:"PTG3", tier:3, tax:"F8", pattern:"F5",
+   q:"A bullet of mass m travelling at speed u embeds itself in a block of mass M hanging at rest from a light string. Find the maximum height the block-plus-bullet rises to, and state where energy conservation would have gone wrong.",
+   opts:["Conservation Triage","Check the Dimensions First","Slope and Area on Any Graph","Let Symmetry Kill the Components"], correct:0,
+   hints:["Split the problem into two phases and treat them with different laws. Phase 1 is the embedding; phase 2 is the swing.",
+          "Phase 1 is a perfectly inelastic collision over a very short time, so the external forces (gravity, tension) deliver negligible impulse: conserve MOMENTUM. mu = (M+m)v.",
+          "Phase 2 has no friction and only gravity acting, so now mechanical energy IS conserved: \u00bd(M+m)v\u00b2 = (M+m)gh.",
+          "Substitute v = mu/(M+m) into the energy equation."],
+   ans:"h = m\u00b2u\u00b2 / (2g(M+m)\u00b2)",
+   why:"Applying energy conservation to phase 1 would give h = mu\u00b2/(2g(M+m)) \u2014 too large, because it pretends none of the bullet's kinetic energy went into heat and deformation. In fact the fraction retained is m/(M+m), which for a light bullet in a heavy block is tiny. Getting the phase split right is the entire problem; the algebra afterwards is two lines. Dimension check: m\u00b2u\u00b2/(g(M+m)\u00b2) is (M\u00b2L\u00b2T\u207b\u00b2)/(LT\u207b\u00b2\u00b7M\u00b2) = L. \u2713"},
+
+  {id:"PTG4", tier:2, tax:"F13", pattern:"F6",
+   q:"A particle's velocity-time graph is a straight line from v = +6 m/s at t = 0 down to v = \u22124 m/s at t = 5 s. Find its displacement and the total distance travelled over those 5 seconds.",
+   opts:["Slope and Area on Any Graph","Push to the Limiting Case","Approximate the Small Correction","Pick the Frame That Kills a Term"], correct:0,
+   hints:["Displacement is the SIGNED area under the v-t graph; distance is the UNSIGNED area. Find where the line crosses zero first.",
+          "The slope is (\u22124 \u2212 6)/5 = \u22122 m/s\u00b2, so v = 0 at t = 3 s.",
+          "From 0 to 3 s the area is a triangle above the axis: \u00bd\u00b73\u00b76 = +9 m. From 3 to 5 s it is a triangle below: \u00bd\u00b72\u00b74 = 4 m of area, counted as \u22124.",
+          "Add with signs for displacement; add magnitudes for distance."],
+   ans:"Displacement = 9 \u2212 4 = +5 m; total distance = 9 + 4 = 13 m",
+   why:"The two answers differ, which is the whole reason the question is worth asking \u2014 and a graph that never crosses the axis would have made them identical and hidden the distinction. The zero-crossing is the only thing you actually needed to compute; everything after it is triangle area. Note the slope also handed you the acceleration for free, so one graph answered three possible questions."},
+
+  {id:"PTG5", tier:3, tax:"F10", pattern:"F2",
+   q:"Find the moment of inertia of a uniform thin rod of mass M and length L about an axis perpendicular to the rod through one end, using the parallel-axis theorem, and check the result two ways.",
+   opts:["Push to the Limiting Case","Let Symmetry Kill the Components","Conservation Triage","Approximate the Small Correction"], correct:0,
+   hints:["Start from the known centre-of-mass value: I_cm = ML\u00b2/12 about a perpendicular axis through the midpoint.",
+          "The end is a distance d = L/2 from the centre of mass. Apply I = I_cm + Md\u00b2.",
+          "ML\u00b2/12 + M(L/2)\u00b2 = ML\u00b2/12 + ML\u00b2/4.",
+          "Check 1: the answer must be LARGER than I_cm, since the centre-of-mass axis always minimises I. Check 2: direct integration \u222b\u2080^L x\u00b2(M/L)dx."],
+   ans:"I_end = ML\u00b2/12 + ML\u00b2/4 = ML\u00b2/3, confirmed by \u222b\u2080^L x\u00b2(M/L)dx = ML\u00b2/3",
+   why:"The 'must be larger' check is the cheap one and it generalises: the parallel-axis theorem adds Md\u00b2 \u2265 0 always, so the COM axis is the global minimum of I over all parallel axes. If you ever get a smaller value after shifting the axis, you have applied the theorem in the wrong direction. Note also that you may NOT apply it from the end axis to some third axis directly \u2014 the theorem measures d from the centre of mass, always."},
+
+  {id:"PTG6", tier:3, tax:"F4", pattern:"F7",
+   q:"A uniform ring of mass M and radius R lies in the xy-plane centred at the origin. Explain using symmetry why the gravitational field at the centre is zero, and why on the z-axis only the z-component survives.",
+   opts:["Let Symmetry Kill the Components","Slope and Area on Any Graph","Check the Dimensions First","Approximate the Small Correction"], correct:0,
+   hints:["Pair each mass element with the element diametrically opposite it. What do their two field contributions look like at the centre?",
+          "At the centre the two contributions are equal in magnitude and exactly opposite in direction, so every pair cancels \u2014 and the pairing covers the whole ring.",
+          "Now move to a point on the z-axis. Take the same diametrically opposite pair and resolve each contribution into a radial (in-plane) part and a z-part.",
+          "The radial parts still point oppositely and cancel; the z-parts both point the same way and add."],
+   ans:"At the centre the field is zero. On the axis only the z-component survives, and it is directed toward the ring's plane",
+   why:"The pairing argument does the work that an integral would otherwise have to do, and it does it before any calculus is written \u2014 which is why identifying the symmetry axis is the first move, not a check at the end. The same argument transfers verbatim to a uniformly charged ring. The limitation is worth stating: introduce an external field, or break the ring, and the pairing collapses along with the conclusion."},
+
+  {id:"PTG7", tier:3, tax:"F14", pattern:"F8",
+   q:"The length of a simple pendulum is increased by 4%. By approximately what percentage does its period change? Then state what the same 4% increase does to the period of a mass-spring oscillator.",
+   opts:["Approximate the Small Correction","Push to the Limiting Case","Conservation Triage","Pick the Frame That Kills a Term"], correct:0,
+   hints:["T = 2\u03c0\u221a(l/g), so T \u221d l^(1/2). A fractional change \u03b4 in l produces what fractional change in T?",
+          "For T \u221d l\u207f, \u0394T/T \u2248 n\u00b7\u0394l/l. Here n = \u00bd.",
+          "So \u0394T/T \u2248 \u00bd \u00d7 4% = 2%.",
+          "For the spring, T = 2\u03c0\u221a(m/k) \u2014 does l appear at all?"],
+   ans:"The pendulum's period increases by about 2%. The spring oscillator's period does not depend on any length l, so it is unchanged",
+   why:"The exact factor is \u221a1.04 = 1.0198, so 2% is accurate to two decimal places \u2014 the first-order approximation earns its keep here. The second half is the real trap: the 'increase the length' instinct carries over from the pendulum to the spring, where length is not a parameter at all. Knowing WHICH variables a standard result actually contains is as important as knowing the result."},
+
+  {id:"PTG8", tier:3, tax:"F5", pattern:"F3",
+   q:"Two blocks of masses 2 kg and 3 kg approach each other on a frictionless surface at 4 m/s and 1 m/s respectively. Find the velocity of the centre of mass, and describe what the collision looks like in the COM frame.",
+   opts:["Pick the Frame That Kills a Term","Slope and Area on Any Graph","Check the Dimensions First","Let Symmetry Kill the Components"], correct:0,
+   hints:["Set up a sign convention first: take the 2 kg block's direction as positive, so the 3 kg block has velocity \u22121 m/s.",
+          "v_cm = (m\u2081v\u2081 + m\u2082v\u2082)/(m\u2081+m\u2082) = (2\u00b74 + 3\u00b7(\u22121))/5.",
+          "That gives v_cm = 5/5 = 1 m/s in the positive direction.",
+          "Now subtract v_cm from each velocity to get the COM-frame velocities: 4 \u2212 1 = 3 m/s and \u22121 \u2212 1 = \u22122 m/s."],
+   ans:"v_cm = 1 m/s. In the COM frame the blocks approach at 3 m/s and \u22122 m/s, carrying momenta +6 and \u22126 kg\u00b7m/s \u2014 equal and opposite, summing to zero as required",
+   why:"The momentum check is the reason to bother with the frame at all: total momentum is identically zero in the COM frame, so writing down one block's momentum immediately gives the other's. In an elastic collision the COM frame also makes the outcome trivial \u2014 both velocities simply reverse. The standing hazard is mixing frames: kinetic energy differs between the two, so an energy equation written here cannot be paired with a momentum equation written in the ground frame."}
+,
+
+  {id:"PTG9", tier:3, tax:"F7", pattern:"F4",
+   q:"A 0.5 kg ball is released from rest at the top of a smooth curved ramp of height 2.5 m, then slides onto a rough horizontal floor with \u03bc = 0.2 and comes to rest. Find its speed at the bottom of the ramp and the distance it travels on the floor. Take g = 10 m/s\u00b2.",
+   opts:["Energy If Time Never Appears","Pick the Frame That Kills a Term","Slope and Area on Any Graph","Approximate the Small Correction"], correct:0,
+   hints:["Neither part of the question mentions time, so reach for energy in both \u2014 but notice the two halves need DIFFERENT energy statements.",
+          "On the smooth ramp, mechanical energy is conserved: \u00bdmv\u00b2 = mgh. The ramp's shape is irrelevant because the normal force does no work.",
+          "That gives v = \u221a(2\u00b710\u00b72.5) = \u221a50 \u2248 7.07 m/s \u2014 and note the mass cancelled.",
+          "On the rough floor mechanical energy is NOT conserved. Use the work-energy theorem instead: the friction work \u2212\u03bcmgd must equal 0 \u2212 \u00bdmv\u00b2."],
+   ans:"v = \u221a50 \u2248 7.07 m/s at the bottom; d = v\u00b2/(2\u03bcg) = 50/4 = 12.5 m on the floor",
+   why:"The same tool is used twice but with a different justification each time, and conflating them is the standard error. On the ramp, energy is CONSERVED because every force is either conservative or does no work; on the floor it is DISSIPATED, and only the work-energy theorem \u2014 which counts friction's negative work explicitly \u2014 still applies. Notice the mass cancels in both halves, so neither answer depends on it, and time never entered the problem at all."}
+];
+
+let PT_PRACTICE = [
+  {src:"PT-01", type:"NV", tier:1, tax:"F1", pat:"F1", q:"Find the dimensions of the gravitational constant G from F = Gm\u2081m\u2082/r\u00b2.", ans:"M\u207b\u00b9L\u00b3T\u207b\u00b2", note:"G = Fr\u00b2/(m\u2081m\u2082) = (MLT\u207b\u00b2)(L\u00b2)/M\u00b2.", doc:"core"},
+  {src:"PT-02", type:"NV", tier:1, tax:"F1", pat:"F1", q:"Are torque and work dimensionally distinguishable? State their common dimensional formula.", ans:"No \u2014 both are ML\u00b2T\u207b\u00b2", note:"A clean illustration of the failure mode: dimensions constrain but do not identify. Torque is a vector, work a scalar.", doc:"core"},
+  {src:"PT-03", type:"NV", tier:2, tax:"F1", pat:"F1", q:"In the equation y = A sin(kx \u2212 \u03c9t), find the dimensions of k and \u03c9.", ans:"[k] = L\u207b\u00b9 and [\u03c9] = T\u207b\u00b9", note:"The argument of sine must be dimensionless, which fixes both immediately.", doc:"core"},
+  {src:"PT-04", type:"NV", tier:2, tax:"F1", pat:"F1", q:"A student writes v = \u221a(2gh) for the speed at the bottom of a smooth slide, and another writes v = \u221a(2gh\u00b2). Use dimensions to decide between them.", ans:"v = \u221a(2gh); the second gives \u221a(LT\u207b\u00b2\u00b7L\u00b2) = L^(3/2)T\u207b\u00b9, which is not a speed", note:"Dimensions settle it without any physics. They would not, however, have caught a missing factor of 2.", doc:"core"},
+  {src:"PT-05", type:"NV", tier:3, tax:"F1", pat:"F1", q:"The van der Waals equation is (P + a/V\u00b2)(V \u2212 b) = RT for one mole. Find the dimensions of a and b.", ans:"[b] = L\u00b3 (a volume) and [a] = ML\u2075T\u207b\u00b2 (pressure \u00d7 volume\u00b2)", note:"b must subtract from V, and a/V\u00b2 must add to P \u2014 the additivity rule fixes both.", doc:"core"},
+  {src:"PT-06", type:"NV", tier:2, tax:"F2", pat:"F2", q:"For an Atwood machine, a = (m\u2081 \u2212 m\u2082)g/(m\u2081 + m\u2082). Test it at m\u2081 = m\u2082 and at m\u2082 \u2192 0.", ans:"m\u2081 = m\u2082 gives a = 0 \u2713; m\u2082 \u2192 0 gives a \u2192 g \u2713 (free fall of the remaining mass)", note:"Two independent checks of one formula, costing one line each.", doc:"core"},
+  {src:"PT-07", type:"NV", tier:2, tax:"F2", pat:"F2", q:"For a block on a rough incline, a = g(sin\u03b8 \u2212 \u03bccos\u03b8). Check the limits \u03b8 \u2192 0 and \u03bc \u2192 0, and say what \u03b8 \u2192 0 implies physically.", ans:"\u03bc \u2192 0 gives g sin\u03b8 \u2713. \u03b8 \u2192 0 gives a = \u2212\u03bcg, which is negative \u2014 meaning the block does not spontaneously start moving; the formula assumes motion is already occurring down the incline", note:"A 'wrong-looking' limit that actually flags a broken ASSUMPTION rather than broken algebra.", doc:"core"},
+  {src:"PT-08", type:"NV", tier:3, tax:"F11", pat:"F2", q:"For a body rolling without slipping down an incline, a = g sin\u03b8/(1 + I/MR\u00b2). Compute a for a solid sphere, a disc, a hollow sphere and a ring, and order them.", ans:"5g sin\u03b8/7, 2g sin\u03b8/3, 3g sin\u03b8/5, g sin\u03b8/2 \u2014 solid sphere > disc > hollow sphere > ring", note:"Only the ratio I/MR\u00b2 appears, so mass and radius cancel: the ordering is a statement about shape alone.", doc:"core"},
+  {src:"PT-09", type:"NV", tier:2, tax:"F11", pat:"F2", q:"What fraction of a rolling body's total kinetic energy is rotational, for a disc and for a ring?", ans:"Disc 1/3; ring 1/2", note:"The fraction is (I/MR\u00b2)/(1 + I/MR\u00b2), which is \u00bd/(3/2) and 1/2 respectively.", doc:"core"},
+  {src:"PT-10", type:"NV", tier:1, tax:"F3", pat:"F1", q:"A student computes the speed of a ball dropped from 5 m as 100 m/s. Use an order-of-magnitude check to flag the error and give the correct value.", ans:"\u221a(2\u00b710\u00b75) \u2248 10 m/s. 100 m/s is a factor of 10 too large \u2014 almost certainly a lost square root", note:"Everyday free-fall speeds are single-digit to low-double-digit m/s; 100 m/s is a rifle bullet, not a dropped ball.", doc:"core"},
+  {src:"PT-11", type:"NV", tier:2, tax:"F3", pat:"F1", q:"Convert 1 eV to joules and state the typical order of magnitude of atomic versus nuclear binding energies.", ans:"1 eV = 1.6\u00d710\u207b\u00b9\u2079 J; atomic energies are a few eV, nuclear energies are MeV \u2014 a factor of about 10\u2076", note:"An 'atomic' answer that lands in MeV is a units error, not a discovery.", doc:"core"},
+  {src:"PT-12", type:"NV", tier:2, tax:"F5", pat:"F3", q:"Blocks of 2 kg at +4 m/s and 3 kg at \u22121 m/s move on a frictionless surface. Find v_cm and both velocities in the COM frame.", ans:"v_cm = 1 m/s; COM-frame velocities are +3 m/s and \u22122 m/s", note:"Momenta in the COM frame are +6 and \u22126 kg\u00b7m/s, summing to zero as they must \u2014 a free check.", doc:"core"},
+  {src:"PT-13", type:"NV", tier:3, tax:"F5", pat:"F3", q:"Two masses m\u2081 = 2 kg and m\u2082 = 6 kg interact through a spring. Find the reduced mass, and state what equation it lets you write.", ans:"\u03bc = (2\u00b76)/(2+6) = 1.5 kg; the relative coordinate then obeys \u03bc\u00b7a_rel = F, turning a two-body problem into a one-body problem", note:"\u03bc is always smaller than either mass, and tends to the smaller mass when the other becomes very large \u2014 a useful limiting check.", doc:"core"},
+  {src:"PT-14", type:"NV", tier:2, tax:"F5", pat:"F3", q:"A lift accelerates upward at 2 m/s\u00b2. Find the apparent weight of a 50 kg person inside, taking g = 10 m/s\u00b2.", ans:"600 N", note:"In the lift frame add a downward pseudo-force ma: N = m(g + a) = 50\u00b712.", doc:"core"},
+  {src:"PT-15", type:"NV", tier:2, tax:"F7", pat:"F4", q:"A block slides from rest down a smooth curved track of height 1.8 m. Find its speed at the bottom, and say why the track's shape is irrelevant.", ans:"6 m/s", note:"\u221a(2gh) with g = 10. Energy relates only the two endpoints, and the normal force does no work because it is always perpendicular to the motion \u2014 so the path drops out.", doc:"core"},
+  {src:"PT-16", type:"NV", tier:3, tax:"F8", pat:"F5", q:"A 10 g bullet at 400 m/s embeds in a 1.99 kg block hanging at rest. Find the speed just after impact and the height risen. Take g = 10 m/s\u00b2.", ans:"v = 2 m/s and h = 0.2 m", note:"Momentum during impact: 0.01\u00d7400 = 2.00\u00d7v. Then energy for the swing: h = v\u00b2/2g. Using energy for the impact instead would overestimate h by a factor of 200.", doc:"core"},
+  {src:"PT-17", type:"NV", tier:3, tax:"F8", pat:"F5", q:"For the previous collision, compute the fraction of the bullet's kinetic energy retained as kinetic energy of the block-plus-bullet.", ans:"0.5%", note:"KE before = \u00bd(0.01)(400)\u00b2 = 800 J; KE after = \u00bd(2.00)(2)\u00b2 = 4 J. The retained fraction is m/(M+m) = 0.01/2.00.", doc:"core"},
+  {src:"PT-18", type:"NV", tier:2, tax:"F8", pat:"F5", q:"State which quantities are conserved in (a) an explosion, (b) a perfectly inelastic collision, (c) a perfectly elastic collision.", ans:"(a) momentum yes, KE no (it increases) (b) momentum yes, KE no (it decreases) (c) both", note:"An explosion is the one case where kinetic energy goes UP, since stored chemical energy is released.", doc:"core"},
+  {src:"PT-19", type:"NV", tier:3, tax:"F8", pat:"F5", q:"A skater pulls her arms in, halving her moment of inertia. Find the factor by which her angular velocity and her kinetic energy change, and say where the extra energy comes from.", ans:"\u03c9 doubles; KE doubles. The extra energy comes from the work she does pulling her arms inward against the centripetal requirement", note:"L = I\u03c9 is conserved (no external torque), but KE = L\u00b2/2I rises as I falls \u2014 energy is NOT conserved here, and noticing that is the point.", doc:"core"},
+  {src:"PT-20", type:"NV", tier:1, tax:"F10", pat:"F2", q:"State the moment of inertia about the central axis for a ring, a disc, a solid sphere and a hollow sphere, each of mass M and radius R.", ans:"MR\u00b2, \u00bdMR\u00b2, (2/5)MR\u00b2, (2/3)MR\u00b2", note:"The ordering tracks how far the mass sits from the axis.", doc:"core"},
+  {src:"PT-21", type:"NV", tier:2, tax:"F10", pat:"F2", q:"Find the moment of inertia of a uniform rod of mass M and length L about a perpendicular axis through one end, and verify it exceeds the central value.", ans:"ML\u00b2/3, which exceeds ML\u00b2/12 as the parallel-axis theorem requires", note:"ML\u00b2/12 + M(L/2)\u00b2. The COM axis always minimises I among parallel axes.", doc:"core"},
+  {src:"PT-22", type:"NV", tier:3, tax:"F10", pat:"F2", q:"A uniform disc of mass M and radius R lies in the xy-plane. Use the perpendicular-axis theorem to find its moment of inertia about a diameter.", ans:"MR\u00b2/4", note:"I_z = \u00bdMR\u00b2 and by symmetry I_x = I_y, so each is \u00bcMR\u00b2. Note this theorem is valid ONLY because the disc is a plane lamina.", doc:"core"},
+  {src:"PT-23", type:"NV", tier:3, tax:"F10", pat:"F2", q:"Explain why the perpendicular-axis theorem may not be applied to a solid sphere.", ans:"It holds only for plane laminas \u2014 bodies whose mass all lies in a single plane. A sphere has mass distributed in three dimensions, so the derivation's z\u1d62 = 0 step fails.", note:"Applying it anyway to a sphere gives (2/5)MR\u00b2 = 2I_diameter, i.e. I_diameter = MR\u00b2/5, which contradicts the correct (2/5)MR\u00b2.", doc:"core"},
+  {src:"PT-24", type:"NV", tier:2, tax:"F13", pat:"F6", q:"A velocity-time graph runs in a straight line from +6 m/s at t = 0 to \u22124 m/s at t = 5 s. Find the acceleration, the displacement and the total distance.", ans:"a = \u22122 m/s\u00b2, displacement = +5 m, distance = 13 m", note:"Zero crossing at t = 3 s; areas +9 and \u22124. Signed area gives displacement, unsigned gives distance.", doc:"core"},
+  {src:"PT-25", type:"NV", tier:2, tax:"F13", pat:"F6", q:"A force-time graph is a triangle rising from 0 to 20 N over 0.1 s and back to 0 over the next 0.1 s. Find the impulse delivered and the resulting speed of a 0.5 kg ball initially at rest.", ans:"Impulse = 2 N\u00b7s, final speed = 4 m/s", note:"Area of the triangle = \u00bd\u00d70.2\u00d720 = 2. No knowledge of the force law is needed \u2014 only the area.", doc:"core"},
+  {src:"PT-26", type:"NV", tier:3, tax:"F13", pat:"F6", q:"A gas is taken around a closed cycle on a P-V diagram enclosing an area of 250 J, traversed clockwise. State the net work done by the gas per cycle and the net change in internal energy.", ans:"Net work by the gas = +250 J; \u0394U = 0 over a complete cycle", note:"Clockwise means net work done BY the gas. Internal energy is a state function, so it returns to its starting value \u2014 hence Q = W for the cycle.", doc:"core"},
+  {src:"PT-27", type:"NV", tier:2, tax:"F4", pat:"F7", q:"State the gravitational field at the centre of a uniform ring of mass M and radius R, and justify it in one line.", ans:"Zero \u2014 each mass element is cancelled by the diametrically opposite element", note:"The pairing covers the entire ring, so nothing survives. No integration required.", doc:"core"},
+  {src:"PT-28", type:"NV", tier:3, tax:"F4", pat:"F7", q:"A uniform ring of mass M and radius R has a small piece of mass m removed. State the field at the centre now, and explain why the symmetry argument no longer applies.", ans:"The field is now Gm/R\u00b2, directed from the centre toward the gap. Removing the piece destroys the diametric pairing, so the cancellation fails", note:"Equivalently: complete ring (field 0) minus the removed piece (field Gm/R\u00b2 toward it) leaves the negative of that piece's contribution.", doc:"core"},
+  {src:"PT-29", type:"NV", tier:2, tax:"F14", pat:"F8", q:"The length of a simple pendulum increases by 4%. Find the approximate percentage change in its period.", ans:"About 2%", note:"T \u221d l^(1/2), so \u0394T/T \u2248 \u00bd\u00d74%. The exact value \u221a1.04 = 1.0198 confirms it.", doc:"core"},
+  {src:"PT-30", type:"NV", tier:3, tax:"F14", pat:"F8", q:"The radius of a sphere is measured with a 1% error. Find the approximate percentage errors in its surface area and its volume.", ans:"About 2% in area and 3% in volume", note:"For y \u221d x\u207f the fractional error scales by n: n = 2 for area, n = 3 for volume.", doc:"core"},
+  {src:"PT-31", type:"NV", tier:3, tax:"F14", pat:"F8", q:"For a simple pendulum of length 1 m displaced by 5\u00b0, compare sin\u03b8 with \u03b8 in radians and state the resulting percentage error in the restoring force.", ans:"\u03b8 = 0.08727 rad, sin\u03b8 = 0.08716 \u2014 an error of about 0.13%", note:"This is why the small-angle approximation is safe below about 10\u00b0. Using \u03b8 = 5 (degrees, unconverted) instead would be wrong by a factor of about 57.", doc:"core"},
+  {src:"PT-32", type:"NV", tier:2, tax:"F11", pat:"F2", q:"A projectile is launched at 20 m/s at 30\u00b0 above the horizontal on level ground. Find its range, maximum height and time of flight. Take g = 10 m/s\u00b2.", ans:"Range \u2248 34.6 m, max height 5 m, time of flight 2 s", note:"R = u\u00b2sin2\u03b8/g = 400\u00b7sin60\u00b0/10; H = u\u00b2sin\u00b2\u03b8/2g; T = 2u sin\u03b8/g.", doc:"core"},
+  {src:"PT-33", type:"NV", tier:2, tax:"F11", pat:"F2", q:"Two projectiles are launched at the same speed at 25\u00b0 and 65\u00b0 on level ground. Compare their ranges and their maximum heights.", ans:"Equal ranges (since 25\u00b0 + 65\u00b0 = 90\u00b0); the 65\u00b0 projectile reaches the greater height", note:"sin2\u03b8 is unchanged by \u03b8 \u2192 90\u00b0\u2212\u03b8, but sin\u00b2\u03b8 is not \u2014 which is why range pairs up and height does not.", doc:"core"},
+  {src:"PT-34", type:"NV", tier:3, tax:"F7", pat:"F4", q:"A 2 kg block is pushed 3 m along a rough horizontal floor by a 20 N horizontal force, with \u03bc = 0.25 and g = 10 m/s\u00b2. Starting from rest, find its final speed, and state why mechanical-energy conservation would fail here.", ans:"\u221a45 \u2248 6.7 m/s", note:"Friction = \u03bcmg = 5 N, so the net force is 15 N and the net work over 3 m is 45 J. Then \u00bd\u00b72\u00b7v\u00b2 = 45 gives v = \u221a45. MECHANICAL energy is not conserved \u2014 friction dissipates 15 J as heat \u2014 but the WORK-ENERGY theorem still holds, because it counts the work of every force including friction's negative contribution.", doc:"core"}
+];
+
+let PT_PRAC_DOCS = [
+  {id:"core", label:"Physics shortcuts core set \u2014 curated drills", date:"5 Aug 2026", note:"Hand-built, NOT from a test paper. Every answer verified by direct computation. All records are NV type: no MCQ option sets are fabricated for this lesson."}
+];
+
+const PT_PRAC_TIERS=[{k:"All",l:"All"},{k:"1",l:"Warm-up"},{k:"2",l:"Fluency"},{k:"3",l:"Exam-applied"},{k:"Flag",l:"\u2605 Flagged"}];
+
+/* =========================================================================
+   LESSON: tools/chem/ctips  —  CHEMISTRY SHORTCUTS & SANITY CHECKS
+   Chapter-agnostic tricks lesson for Chemistry, weighted to Physical
+   Chemistry (the branch currently built out in Pattern Lab). Same design
+   rule: trick + MECHANISM + FAILURE MODE on every entry.
+   Hand-built 5 Aug 2026 — NOT mined from a printed paper. Every numerical
+   answer verified by direct computation; all practice records are NV type.
+   ========================================================================= */
+
+let CT_TAXA = [
+  {code:"C1", label:"The mole as the universal bridge",              group:"Stoichiometry"},
+  {code:"C2", label:"Limiting reagent by dividing through coefficients", group:"Stoichiometry"},
+  {code:"C3", label:"Empirical vs molecular formula",                group:"Stoichiometry"},
+  {code:"C4", label:"Concentration conversions",                     group:"Solutions"},
+  {code:"C5", label:"Dilution and mixing",                           group:"Solutions"},
+  {code:"C6", label:"Ideal gas law and the combined-law shortcut",   group:"Gases"},
+  {code:"C7", label:"Molecular speeds and their ordering",           group:"Gases"},
+  {code:"C8", label:"Real gases: reading the van der Waals corrections", group:"Gases"},
+  {code:"C9", label:"Thermodynamic sign conventions",                group:"Thermodynamics"},
+  {code:"C10",label:"State vs path functions",                       group:"Thermodynamics"},
+  {code:"C11",label:"\u0394H vs \u0394U and the \u0394n_g bridge",     group:"Thermodynamics"},
+  {code:"C12",label:"Hess's law and formation enthalpies",           group:"Thermodynamics"},
+  {code:"C13",label:"Significant figures and unit discipline",       group:"Checking"},
+  {code:"C14",label:"Order-of-magnitude sanity in chemistry",        group:"Checking"}
+];
+
+let CT_CARDS = [
+  {tag:"mole", title:"The mole is the only bridge", rows:[
+    {f:"moles = mass/molar mass = volume(L)/22.4 at STP for an ideal gas = number of particles/N_A = molarity \u00d7 volume(L)"},
+    {f:"Route for essentially every stoichiometry question: given quantity \u2192 MOLES \u2192 (multiply by the coefficient ratio) \u2192 moles of target \u2192 requested quantity"},
+    {f:"N_A = 6.022\u00d710\u00b2\u00b3; molar volume at STP (273.15 K, 1 bar) is 22.7 L, and 22.4 L at 1 atm \u2014 check which standard the question uses"},
+    {f:"Never convert mass to mass directly through a balanced equation. The coefficients are ratios of MOLES, not of grams"},
+    {f:"MECHANISM: a balanced equation is a statement about numbers of particles, and the mole is the only unit that counts particles \u2014 so it is the mandatory intermediate.", k:"why"},
+    {f:"FAILURE MODE: applying the 22.4 L shortcut to a liquid, a solid, or a gas that is not at STP. It is a molar-volume result for ideal gases at one specific condition, not a general conversion.", k:"trap"}
+  ]},
+
+  {tag:"limiting", title:"Limiting reagent in one division", rows:[
+    {f:"Convert every reactant to moles, then DIVIDE each by its stoichiometric coefficient. The smallest quotient identifies the limiting reagent"},
+    {f:"All product amounts follow from the limiting reagent alone; the excess reagent's leftover = initial \u2212 consumed"},
+    {f:"Percentage yield = (actual/theoretical) \u00d7 100, where theoretical comes from the limiting reagent"},
+    {f:"MECHANISM: dividing by the coefficient converts each reactant into 'how many times the reaction can run on this reactant alone', which puts them on a common scale that can be compared directly.", k:"why"},
+    {f:"FAILURE MODE: comparing raw moles without dividing by coefficients. In N\u2082 + 3H\u2082 \u2192 2NH\u2083, having more moles of H\u2082 than N\u2082 does not make N\u2082 limiting \u2014 H\u2082 is consumed three times as fast, and only the division reveals that.", k:"trap"}
+  ]},
+
+  {tag:"formula", title:"Empirical and molecular formula", rows:[
+    {f:"From percentage composition: divide each percentage by the atomic mass, then divide all results by the smallest, then scale to whole numbers"},
+    {f:"Molecular formula = (empirical formula) \u00d7 n, where n = molar mass / empirical formula mass"},
+    {f:"If a ratio lands near .5, multiply everything by 2; near .33 or .67, multiply by 3"},
+    {f:"MECHANISM: dividing by atomic masses converts mass ratios into mole ratios, and a formula is by definition a whole-number mole ratio of atoms.", k:"why"},
+    {f:"FAILURE MODE: rounding too early. A ratio of 1.5 rounded to 2 turns C\u2082H\u2083 into C\u2082H\u2084 and gives the wrong compound; only round once the whole set is scaled to near-integers.", k:"trap"}
+  ]},
+
+  {tag:"conc", title:"Concentration conversions", rows:[
+    {f:"Molarity M = moles of solute / litres of SOLUTION. Molality m = moles of solute / kg of SOLVENT"},
+    {f:"Mole fraction x_A = n_A/(n_A + n_B), and the mole fractions of all components sum to 1"},
+    {f:"%w/w = (mass of solute / mass of solution) \u00d7 100; ppm = (mass of solute / mass of solution) \u00d7 10\u2076"},
+    {f:"To convert molarity to molality you need the DENSITY of the solution; without it the conversion is impossible"},
+    {f:"MECHANISM: molarity is per-volume and molality is per-mass-of-solvent; density is exactly the quantity that relates volume to mass, which is why it is the missing link.", k:"why"},
+    {f:"FAILURE MODE: mixing up 'solution' and 'solvent' in the denominators. Molarity uses solution volume, molality uses solvent mass \u2014 and for dilute aqueous solutions the two are numerically close, which lets the error hide until the solution is concentrated.", k:"trap"}
+  ]},
+
+  {tag:"dilute", title:"Dilution and mixing", rows:[
+    {f:"Dilution: M\u2081V\u2081 = M\u2082V\u2082, because the moles of solute do not change when solvent is added"},
+    {f:"Mixing two solutions of the same solute: M_final = (M\u2081V\u2081 + M\u2082V\u2082)/(V\u2081 + V\u2082)"},
+    {f:"Normality N = M \u00d7 n-factor; for titrations, N\u2081V\u2081 = N\u2082V\u2082 at the equivalence point"},
+    {f:"MECHANISM: all three are the same statement \u2014 moles (or equivalents) are conserved on dilution and mixing, so the product of concentration and volume is the invariant.", k:"why"},
+    {f:"FAILURE MODE: applying M\u2081V\u2081 = M\u2082V\u2082 across a REACTION. It holds only for dilution of an unreacting solute; once a reaction consumes the solute, moles are not conserved and you must go through the balanced equation instead.", k:"trap"}
+  ]},
+
+  {tag:"gas", title:"Ideal gas law and the combined-law shortcut", rows:[
+    {f:"PV = nRT with R = 0.0821 L\u00b7atm/mol\u00b7K = 8.314 J/mol\u00b7K \u2014 pick the R that matches your units"},
+    {f:"For a fixed amount of gas changing state: P\u2081V\u2081/T\u2081 = P\u2082V\u2082/T\u2082. Cancel whatever is held constant and the individual gas laws fall out"},
+    {f:"Density of an ideal gas: d = PM/RT, so at fixed P and T density is proportional to molar mass"},
+    {f:"Dalton: P_total = \u03a3P\u1d62, and the partial pressure of a component is P_total \u00d7 its mole fraction"},
+    {f:"TEMPERATURE MUST BE IN KELVIN in every one of these",k:"trap"},
+    {f:"MECHANISM: the combined law is just PV = nRT written twice and divided, with n and R cancelling \u2014 which is why it applies only when the amount of gas is fixed.", k:"why"},
+    {f:"FAILURE MODE: using the combined law when gas is added, removed or produced by reaction. Then n changes and does not cancel, so you must use PV = nRT directly on each state.", k:"trap"}
+  ]},
+
+  {tag:"speeds", title:"Molecular speeds", rows:[
+    {f:"v_rms = \u221a(3RT/M), v_avg = \u221a(8RT/\u03c0M), v_mp = \u221a(2RT/M) \u2014 M in kg/mol when R = 8.314"},
+    {f:"Ordering is always v_mp < v_avg < v_rms, in the ratio \u221a2 : \u221a(8/\u03c0) : \u221a3 \u2248 1.414 : 1.596 : 1.732"},
+    {f:"All three scale as \u221aT and as 1/\u221aM \u2014 so quadrupling T doubles every speed"},
+    {f:"Graham's law of effusion: rate \u221d 1/\u221aM, so a lighter gas effuses faster by the square root of the mass ratio"},
+    {f:"MECHANISM: all three speeds are different averages over the same Maxwell\u2013Boltzmann distribution, which is why their ratio is a fixed set of numbers independent of gas and temperature.", k:"why"},
+    {f:"FAILURE MODE: using M in g/mol with R = 8.314 J/mol\u00b7K. That inflates every speed by \u221a1000 \u2248 31.6. Either convert M to kg/mol or use R in the matching units.", k:"trap"}
+  ]},
+
+  {tag:"vdw", title:"Reading the van der Waals corrections", rows:[
+    {f:"(P + an\u00b2/V\u00b2)(V \u2212 nb) = nRT. The 'a' term corrects for intermolecular ATTRACTION; the 'b' term for the finite VOLUME of the molecules"},
+    {f:"Large a means strong attractions and easier liquefaction; large b means bulky molecules"},
+    {f:"At high temperature and low pressure both corrections become negligible and the gas behaves ideally"},
+    {f:"Compressibility factor Z = PV/nRT: Z < 1 means attractions dominate, Z > 1 means molecular volume dominates"},
+    {f:"MECHANISM: the pressure a real gas exerts is reduced by attractions pulling molecules back from the wall, and the volume available is reduced by the molecules themselves \u2014 so P gets a positive correction and V a negative one.", k:"why"},
+    {f:"FAILURE MODE: assuming Z < 1 always. At high pressure the b term wins and Z rises above 1 \u2014 hydrogen and helium sit above 1 across most of the ordinary range.", k:"trap"}
+  ]},
+
+  {tag:"signs", title:"Thermodynamic sign conventions", rows:[
+    {f:"\u0394U = q + w, with w = work done ON the system (the modern IUPAC convention used throughout JEE)"},
+    {f:"q > 0 means heat absorbed by the system; w > 0 means work done on the system (compression)"},
+    {f:"Expansion work at constant external pressure: w = \u2212P_ext\u0394V, so expansion (\u0394V > 0) gives negative w"},
+    {f:"Exothermic means \u0394H < 0; endothermic means \u0394H > 0"},
+    {f:"MECHANISM: the convention is a bookkeeping choice about which direction counts as positive; the physics is identical either way, but every term in every equation must use the SAME choice.", k:"why"},
+    {f:"FAILURE MODE: mixing conventions between sources. Older texts write \u0394U = q \u2212 w with w = work done BY the system, which flips the sign of every work term. Fix the convention once at the top of the page and never switch mid-problem.", k:"trap"}
+  ]},
+
+  {tag:"state", title:"State functions vs path functions", rows:[
+    {f:"State functions depend only on the current state: U, H, S, G, P, V, T. Path functions depend on the route taken: q and w"},
+    {f:"For any cyclic process, every state function returns to its starting value: \u0394U = \u0394H = \u0394S = 0 over a complete cycle"},
+    {f:"Because U is a state function, you may compute \u0394U along ANY convenient imaginary path between the same two states"},
+    {f:"For an ideal gas, U and H depend on temperature ALONE \u2014 so any isothermal change of an ideal gas has \u0394U = \u0394H = 0"},
+    {f:"MECHANISM: a state function is by definition a property of the state, so the difference between two states cannot depend on how you travelled between them \u2014 which is exactly what licenses substituting a convenient path.", k:"why"},
+    {f:"FAILURE MODE: substituting a convenient path for q or w. Those are path functions, and their values genuinely differ between routes even when \u0394U is identical \u2014 which is why an isothermal expansion has \u0394U = 0 but q and w are both non-zero.", k:"trap"}
+  ]},
+
+  {tag:"dhdu", title:"\u0394H, \u0394U and the \u0394n_g bridge", rows:[
+    {f:"\u0394H = \u0394U + \u0394(PV). For reactions involving ideal gases this becomes \u0394H = \u0394U + \u0394n_g RT"},
+    {f:"\u0394n_g = (moles of GASEOUS products) \u2212 (moles of GASEOUS reactants). Solids and liquids do not count"},
+    {f:"If \u0394n_g = 0 then \u0394H = \u0394U exactly"},
+    {f:"q at constant volume = \u0394U; q at constant pressure = \u0394H. Bomb calorimeter measures \u0394U; open-flask measures \u0394H"},
+    {f:"MECHANISM: H = U + PV, and for ideal gases PV = n_gRT, so the difference between the two enthalpy-like quantities is entirely the work associated with the change in gas moles.", k:"why"},
+    {f:"FAILURE MODE: counting condensed phases in \u0394n_g, and forgetting that RT is in J/mol while \u0394H is often quoted in kJ/mol \u2014 a factor of 1000 that silently corrupts the correction.", k:"trap"}
+  ]},
+
+  {tag:"hess", title:"Hess's law and formation enthalpies", rows:[
+    {f:"\u0394H for a reaction is the same whether it happens in one step or many \u2014 so target equations can be built by adding and scaling known ones"},
+    {f:"Reversing an equation flips the sign of \u0394H; multiplying an equation by k multiplies \u0394H by k"},
+    {f:"\u0394H\u00b0_rxn = \u03a3\u0394H\u00b0_f(products) \u2212 \u03a3\u0394H\u00b0_f(reactants), each weighted by its stoichiometric coefficient"},
+    {f:"\u0394H\u00b0_f of an element in its standard state is ZERO by definition \u2014 O\u2082(g), C(graphite), H\u2082(g) all contribute nothing"},
+    {f:"MECHANISM: Hess's law is a direct consequence of H being a state function; the enthalpy change between fixed endpoints cannot depend on the route.", k:"why"},
+    {f:"FAILURE MODE: forgetting to multiply \u0394H\u00b0_f by the coefficient, and using the wrong allotrope's value \u2014 C(diamond) does NOT have \u0394H\u00b0_f = 0, only C(graphite) does.", k:"trap"}
+  ]},
+
+  {tag:"sigfig", title:"Significant figures and unit discipline", rows:[
+    {f:"Multiplication and division: the answer carries the FEWEST significant figures of any input"},
+    {f:"Addition and subtraction: the answer carries the fewest DECIMAL PLACES of any input"},
+    {f:"Exact numbers (stoichiometric coefficients, counted objects, defined conversions) have infinite significant figures and never limit the answer"},
+    {f:"Carry extra digits through the intermediate steps and round only at the very end"},
+    {f:"MECHANISM: significant figures approximate how measurement uncertainty propagates \u2014 relative error compounds under multiplication, absolute error under addition, which is why the two rules differ.", k:"why"},
+    {f:"FAILURE MODE: rounding at every intermediate step. Three roundings in a chain can shift the final digit, so the reported precision becomes a fiction. Round once, at the end.", k:"trap"}
+  ]},
+
+  {tag:"chemag", title:"Order-of-magnitude sanity in chemistry", rows:[
+    {f:"A mole of anything is 6\u00d710\u00b2\u00b3 particles; a mole of a light gas weighs a few grams to tens of grams"},
+    {f:"Bond enthalpies are hundreds of kJ/mol; lattice energies are hundreds to thousands; hydrogen bonds are tens"},
+    {f:"Typical aqueous concentrations run 10\u207b\u00b3 to 10 M; pH runs 0\u201314 for ordinary solutions"},
+    {f:"An answer of 10\u2074 mol from a gram-scale sample, or a bond energy of 5 kJ/mol, is a flagged arithmetic error"},
+    {f:"MECHANISM: chemical quantities cluster tightly by type, so an answer several decades outside its band is far more likely a unit slip than a discovery.", k:"why"},
+    {f:"FAILURE MODE: it is a screen, not a proof. A bond enthalpy of 350 kJ/mol when the truth is 410 kJ/mol passes every plausibility test, so this catches gross errors only.", k:"trap"}
+  ]}
+];
+
+let CT_PATTERNS = [
+  {id:"R1", name:"Everything Goes Through Moles",
+   trigger:"Any quantitative question relating one substance to another \u2014 mass to mass, volume to mass, particles to volume.",
+   move:"Convert the given quantity to moles, apply the stoichiometric coefficient ratio from the BALANCED equation, then convert the resulting moles into whatever unit is asked for.",
+   why:"A balanced equation counts particles, and the mole is the only unit that counts particles \u2014 so it is a mandatory waypoint, never an optional one.",
+   mini:"4.4 g CO\u2082 is 0.1 mol, which contains 0.1 mol C and 0.2 mol O.",
+   fails:"Attempting a direct mass-to-mass ratio using the coefficients. Coefficients are mole ratios, and using them on grams gives an answer wrong by the ratio of molar masses.",
+   src:"Card: mole"},
+
+  {id:"R2", name:"Divide by the Coefficients",
+   trigger:"Two or more reactant amounts are given, so one of them must run out first.",
+   move:"Convert each reactant to moles, divide each by its own stoichiometric coefficient, and take the smallest quotient. That reactant is limiting; base every product calculation on it alone.",
+   why:"Dividing by the coefficient rescales each reactant into 'how many times the reaction could run on this one alone', which is the only fair comparison.",
+   mini:"With 3 mol N\u2082 and 6 mol H\u2082 in N\u2082 + 3H\u2082 \u2192 2NH\u2083: quotients are 3 and 2, so H\u2082 limits despite being more abundant.",
+   fails:"Comparing raw mole counts. More moles does not mean more reaction \u2014 a reactant with a large coefficient is consumed proportionally faster.",
+   src:"Card: limiting"},
+
+  {id:"R3", name:"Cancel What's Constant",
+   trigger:"A fixed amount of gas changes its pressure, volume or temperature.",
+   move:"Write P\u2081V\u2081/T\u2081 = P\u2082V\u2082/T\u2082, strike out whatever is held constant, and solve. Convert every temperature to Kelvin before substituting.",
+   why:"The combined law is PV = nRT written for two states and divided, with n and R cancelling \u2014 so it holds exactly when the amount of gas is unchanged.",
+   mini:"At constant P, doubling the absolute temperature doubles the volume.",
+   fails:"Using it when the number of moles changes \u2014 gas added, removed, or produced by reaction. Then n does not cancel and you must apply PV = nRT to each state separately.",
+   src:"Card: gas"},
+
+  {id:"R4", name:"Fix the Sign Convention First",
+   trigger:"Any first-law problem involving q, w or \u0394U.",
+   move:"Write \u0394U = q + w at the top of the page with w defined as work done ON the system, and keep that convention for every term. Expansion then gives w = \u2212P_ext\u0394V < 0.",
+   why:"The convention is a bookkeeping choice, not physics \u2014 but every term in the equation must share it, or the signs stop adding up.",
+   mini:"A gas expanding against 2 atm by 5 L does w = \u2212P\u0394V = \u221210 L\u00b7atm on itself, i.e. it does 10 L\u00b7atm of work on the surroundings.",
+   fails:"Importing a formula written under the older \u0394U = q \u2212 w convention. That flips the work sign and produces an answer wrong by exactly 2w.",
+   src:"Card: signs"},
+
+  {id:"R5", name:"Any Path Will Do \u2014 For State Functions Only",
+   trigger:"\u0394U, \u0394H, \u0394S or \u0394G is wanted for a complicated or irreversible process.",
+   move:"Replace the actual process with any convenient imaginary path between the SAME two states, and compute the state function along that. Do not do this for q or w.",
+   why:"A state function depends only on the endpoints, so the route cannot matter \u2014 which is precisely what makes an easier route legitimate.",
+   mini:"For an ideal gas held at constant temperature, \u0394U = 0 whatever the path, because U depends only on T.",
+   fails:"Extending the substitution to q or w. Those are path functions and genuinely differ between routes \u2014 an isothermal ideal-gas expansion has \u0394U = 0 while q and w are both non-zero and equal in magnitude.",
+   src:"Card: state, hess"},
+
+  {id:"R6", name:"Bridge \u0394H and \u0394U with \u0394n_g",
+   trigger:"A reaction enthalpy must be converted between constant-pressure and constant-volume conditions, or a bomb-calorimeter result must be reported as \u0394H.",
+   move:"Compute \u0394n_g by counting gas moles on each side only, then apply \u0394H = \u0394U + \u0394n_gRT. If \u0394n_g = 0 the two are equal.",
+   why:"H = U + PV, and for ideal gases PV = n_gRT \u2014 so the entire difference is the pressure-volume work associated with the change in gaseous moles.",
+   mini:"For N\u2082(g) + 3H\u2082(g) \u2192 2NH\u2083(g), \u0394n_g = 2 \u2212 4 = \u22122, so \u0394H is LESS than \u0394U by 2RT.",
+   fails:"Counting solids and liquids in \u0394n_g, and unit mismatch \u2014 RT comes out in J/mol while \u0394H is usually quoted in kJ/mol.",
+   src:"Card: dhdu"},
+
+  {id:"R7", name:"Build the Target from Known Equations",
+   trigger:"A reaction enthalpy is wanted but is not directly measurable, and other reactions' \u0394H values are supplied.",
+   move:"Reverse and scale the given equations so that adding them reproduces the target equation exactly. Apply the same reversal (sign flip) and scaling to each \u0394H, then add.",
+   why:"Enthalpy is a state function, so the total change between fixed endpoints is route-independent \u2014 which is exactly Hess's law.",
+   mini:"Reversing an equation flips its \u0394H sign; halving an equation halves its \u0394H.",
+   fails:"Forgetting to scale \u0394H by the same factor used on the equation, and assuming every element has \u0394H\u00b0_f = 0 \u2014 only the standard-state allotrope does, so C(graphite) qualifies and C(diamond) does not.",
+   src:"Card: hess"}
+];
+
+let CT_GUIDED = [
+  {id:"CTG1", tier:2, tax:"C1", pattern:"R1",
+   q:"How many grams of oxygen are required for the complete combustion of 8 g of methane, CH\u2084 + 2O\u2082 \u2192 CO\u2082 + 2H\u2082O?",
+   opts:["Everything Goes Through Moles","Divide by the Coefficients","Cancel What's Constant","Fix the Sign Convention First"], correct:0,
+   hints:["Do not try to scale grams directly by the coefficient 2. Convert to moles first.",
+          "Molar mass of CH\u2084 is 16 g/mol, so 8 g is 0.5 mol.",
+          "The equation says 1 mol CH\u2084 needs 2 mol O\u2082, so 0.5 mol needs 1 mol O\u2082.",
+          "Convert back: 1 mol O\u2082 weighs 32 g."],
+   ans:"32 g of O\u2082",
+   why:"The tempting shortcut \u2014 'twice as much oxygen, so 16 g' \u2014 is wrong by exactly the ratio of the molar masses, and it is wrong in a way that looks plausible. That is why the mole detour is non-negotiable rather than merely recommended: the coefficients are statements about particle counts, and grams do not count particles."},
+
+  {id:"CTG2", tier:3, tax:"C2", pattern:"R2",
+   q:"28 g of N\u2082 is mixed with 6 g of H\u2082 and allowed to react as N\u2082 + 3H\u2082 \u2192 2NH\u2083. Identify the limiting reagent, find the mass of NH\u2083 formed, and find the mass of excess reagent left over.",
+   opts:["Divide by the Coefficients","Everything Goes Through Moles","Build the Target from Known Equations","Bridge \u0394H and \u0394U with \u0394n_g"], correct:0,
+   hints:["Convert both to moles: N\u2082 is 28 g/mol and H\u2082 is 2 g/mol.",
+          "That gives 1 mol N\u2082 and 3 mol H\u2082. Now divide each by its coefficient.",
+          "N\u2082: 1/1 = 1. H\u2082: 3/3 = 1. The quotients are EQUAL \u2014 so neither is in excess.",
+          "With both exactly consumed, use either to find the NH\u2083: 1 mol N\u2082 gives 2 mol NH\u2083 at 17 g/mol."],
+   ans:"Neither is limiting \u2014 the mixture is exactly stoichiometric. 34 g of NH\u2083 forms, with no reagent left over",
+   why:"The equal-quotient case is worth meeting deliberately, because the instinct is to name a limiting reagent whether or not one exists. Note how badly the raw-mole comparison misleads here: there are three times as many moles of H\u2082, which looks like a large excess, yet H\u2082 is consumed three times as fast and the two run out together. The division is what makes that visible."},
+
+  {id:"CTG3", tier:3, tax:"C6", pattern:"R3",
+   q:"A sealed rigid vessel contains a gas at 27\u00b0C and 3 atm. It is heated to 127\u00b0C. Find the new pressure. Then state what changes if the vessel instead has a movable piston holding the pressure constant.",
+   opts:["Cancel What's Constant","Everything Goes Through Moles","Any Path Will Do \u2014 For State Functions Only","Divide by the Coefficients"], correct:0,
+   hints:["Convert both temperatures to Kelvin BEFORE doing anything else: 27\u00b0C = 300 K, 127\u00b0C = 400 K.",
+          "The vessel is rigid and sealed, so V and n are constant. Strike them out of P\u2081V\u2081/T\u2081 = P\u2082V\u2082/T\u2082.",
+          "That leaves P\u2081/T\u2081 = P\u2082/T\u2082, so P\u2082 = 3 \u00d7 400/300.",
+          "For the piston case, P is constant instead and V\u2082/V\u2081 = T\u2082/T\u2081."],
+   ans:"P\u2082 = 4 atm in the rigid vessel. With a movable piston at constant pressure, the volume instead rises by the factor 400/300 = 4/3",
+   why:"Using Celsius would have given 3 \u00d7 127/27 = 14.1 atm \u2014 not slightly wrong but wildly wrong, and the error grows as the temperatures approach zero Celsius. Note also that the combined law applied here only because the vessel is SEALED; had gas been vented or generated, n would not cancel and the whole approach would collapse."},
+
+  {id:"CTG4", tier:3, tax:"C9", pattern:"R4",
+   q:"An ideal gas expands isothermally and reversibly at 300 K from 2 L to 6 L, with n = 1 mol. Find \u0394U, w and q, stating the sign convention you are using. Take R = 8.314 J/mol\u00b7K.",
+   opts:["Fix the Sign Convention First","Cancel What's Constant","Bridge \u0394H and \u0394U with \u0394n_g","Build the Target from Known Equations"], correct:0,
+   hints:["Declare the convention first: \u0394U = q + w with w = work done ON the system.",
+          "For an ideal gas, U depends only on temperature. The process is isothermal, so what is \u0394U?",
+          "\u0394U = 0. Reversible isothermal work on the system is w = \u2212nRT ln(V\u2082/V\u2081).",
+          "ln(6/2) = ln3 \u2248 1.0986. Then q follows immediately from \u0394U = q + w."],
+   ans:"\u0394U = 0; w = \u2212(1)(8.314)(300)(1.0986) \u2248 \u22122740 J; q = \u2212w \u2248 +2740 J",
+   why:"\u0394U = 0 while q and w are both large and non-zero is the cleanest demonstration in the subject that state functions and path functions behave differently \u2014 the endpoints fix \u0394U completely, but the route determines how much heat and work were exchanged getting there. The negative w says the gas did work on its surroundings; had you imported the older \u0394U = q \u2212 w convention, you would have reported +2740 J and been wrong by 5480 J."},
+
+  {id:"CTG5", tier:3, tax:"C11", pattern:"R6",
+   q:"For the combustion C(s) + O\u2082(g) \u2192 CO\u2082(g), \u0394U is measured in a bomb calorimeter as \u2212393.0 kJ/mol at 298 K. Find \u0394H. Then repeat for CO(g) + \u00bdO\u2082(g) \u2192 CO\u2082(g), given \u0394U = \u2212282.0 kJ/mol.",
+   opts:["Bridge \u0394H and \u0394U with \u0394n_g","Fix the Sign Convention First","Build the Target from Known Equations","Everything Goes Through Moles"], correct:0,
+   hints:["Count only the GASEOUS species on each side. Carbon is a solid and contributes nothing.",
+          "First reaction: 1 mol gas in, 1 mol gas out, so \u0394n_g = 0.",
+          "Second reaction: gaseous reactants are 1 + \u00bd = 1.5 mol, products 1 mol, so \u0394n_g = \u22120.5.",
+          "\u0394H = \u0394U + \u0394n_gRT with RT = 8.314 \u00d7 298 = 2477 J/mol \u2014 note that is JOULES, while \u0394U is in kJ."],
+   ans:"First reaction: \u0394H = \u0394U = \u2212393.0 kJ/mol. Second: \u0394H = \u2212282.0 + (\u22120.5)(2.477) \u2248 \u2212283.2 kJ/mol",
+   why:"The first reaction is the case worth noticing \u2014 \u0394n_g = 0 makes \u0394H and \u0394U identical, so the bomb-calorimeter number can be quoted directly with no correction at all. The second shows the unit trap in action: RT is 2477 J/mol, and adding that number to a kJ figure without dividing by 1000 would shift the answer by three orders of magnitude, turning a 1.2 kJ correction into a 2477 kJ one."},
+
+  {id:"CTG6", tier:3, tax:"C12", pattern:"R7",
+   q:"Given \u0394H\u00b0_f values of \u2212393.5 kJ/mol for CO\u2082(g), \u2212285.8 kJ/mol for H\u2082O(l) and \u221274.8 kJ/mol for CH\u2084(g), find \u0394H\u00b0 for CH\u2084(g) + 2O\u2082(g) \u2192 CO\u2082(g) + 2H\u2082O(l).",
+   opts:["Build the Target from Known Equations","Bridge \u0394H and \u0394U with \u0394n_g","Divide by the Coefficients","Cancel What's Constant"], correct:0,
+   hints:["Use \u0394H\u00b0_rxn = \u03a3\u0394H\u00b0_f(products) \u2212 \u03a3\u0394H\u00b0_f(reactants), weighting each by its coefficient.",
+          "What is \u0394H\u00b0_f for O\u2082(g)? It is an element in its standard state.",
+          "Products: (\u2212393.5) + 2(\u2212285.8). Reactants: (\u221274.8) + 2(0).",
+          "Do not forget the factor of 2 on the water term."],
+   ans:"\u0394H\u00b0 = [\u2212393.5 + 2(\u2212285.8)] \u2212 [\u221274.8] = \u2212965.1 + 74.8 = \u2212890.3 kJ/mol",
+   why:"Two failure modes are both live here. Dropping the coefficient on water gives \u2212604.5 kJ/mol \u2014 a third of the energy missing, and still a plausible-looking exothermic number. And assigning O\u2082 a non-zero formation enthalpy would corrupt the reactant sum, when by definition it is exactly zero. Sanity check: methane combustion releases roughly 890 kJ/mol, which is the right order for a hydrocarbon burning."},
+
+  {id:"CTG7", tier:2, tax:"C7", pattern:"R1",
+   q:"Compute v_rms for O\u2082 at 300 K, taking R = 8.314 J/mol\u00b7K, and state the order of v_mp, v_avg and v_rms.",
+   opts:["Everything Goes Through Moles","Cancel What's Constant","Fix the Sign Convention First","Build the Target from Known Equations"], correct:0,
+   hints:["v_rms = \u221a(3RT/M). The critical step is the units of M.",
+          "With R in J/mol\u00b7K, M must be in kg/mol. For O\u2082 that is 0.032 kg/mol, not 32.",
+          "3 \u00d7 8.314 \u00d7 300 = 7482.6. Divide by 0.032.",
+          "\u221a233831 \u2248 483."],
+   ans:"v_rms \u2248 483 m/s. The ordering is always v_mp < v_avg < v_rms, in the fixed ratio \u221a2 : \u221a(8/\u03c0) : \u221a3",
+   why:"Using M = 32 instead of 0.032 gives about 15 m/s \u2014 slower than a cyclist, and instantly implausible for gas molecules at room temperature, which is exactly what the order-of-magnitude screen is for. The ratio of the three speeds is worth committing to memory because it is a pure number, independent of both the gas and the temperature \u2014 the three quantities are just different averages over the same distribution."},
+
+  {id:"CTG8", tier:3, tax:"C4", pattern:"R1",
+   q:"A 2.0 M aqueous solution of a solute of molar mass 60 g/mol has density 1.10 g/mL. Find its molality.",
+   opts:["Everything Goes Through Moles","Cancel What's Constant","Any Path Will Do \u2014 For State Functions Only","Divide by the Coefficients"], correct:0,
+   hints:["Start from a convenient basis: take exactly 1 L of solution, which contains 2.0 mol of solute.",
+          "Mass of that solution = 1000 mL \u00d7 1.10 g/mL = 1100 g.",
+          "Mass of solute = 2.0 mol \u00d7 60 g/mol = 120 g. So the SOLVENT mass is 1100 \u2212 120 = 980 g.",
+          "Molality = moles of solute per kg of SOLVENT, not per kg of solution."],
+   ans:"m = 2.0 / 0.980 \u2248 2.04 mol/kg",
+   why:"Density is the only bridge between a per-volume concentration and a per-mass one, which is why the conversion is impossible without it \u2014 worth knowing so you stop hunting for a shortcut that does not exist. Notice how close 2.04 is to 2.0: for dilute aqueous solutions molarity and molality nearly coincide, which lets the solution-versus-solvent error hide undetected until the solution is concentrated."}
+,
+
+  {id:"CTG9", tier:3, tax:"C10", pattern:"R5",
+   q:"One mole of an ideal gas at 300 K expands irreversibly against a constant external pressure of 1 atm from 5 L to 15 L, the temperature being held at 300 K throughout. Find \u0394U and \u0394H, and then find w. Explain why the first two required no knowledge of the path.",
+   opts:["Any Path Will Do \u2014 For State Functions Only","Fix the Sign Convention First","Bridge \u0394H and \u0394U with \u0394n_g","Cancel What\u2019s Constant"], correct:0,
+   hints:["Deal with the state functions first. For an ideal gas, on what does U depend? And H?",
+          "Both depend on temperature ALONE. The process is isothermal, so \u0394U = 0 and \u0394H = 0 \u2014 irreversibility is irrelevant to them.",
+          "Now w. This is a path function, so the irreversibility matters: w = \u2212P_ext\u0394V with the CONSTANT external pressure, not the gas pressure.",
+          "\u0394V = 10 L and P_ext = 1 atm, so w = \u221210 L\u00b7atm. Convert with 1 L\u00b7atm = 101.3 J."],
+   ans:"\u0394U = 0 and \u0394H = 0; w = \u221210 L\u00b7atm \u2248 \u22121013 J, and hence q = +1013 J",
+   why:"Had the same expansion been carried out reversibly between the same two states, \u0394U and \u0394H would still be exactly zero \u2014 but w would be \u2212nRT ln(15/5) \u2248 \u22122740 J, nearly three times larger. That contrast is the whole content of the state-versus-path distinction: the endpoints fix \u0394U and \u0394H completely, while q and w record how you got there. It is also why reversible work is the maximum obtainable from a given expansion."}
+];
+
+let CT_PRACTICE = [
+  {src:"CT-01", type:"NV", tier:1, tax:"C1", pat:"R1", q:"How many moles are there in 11 g of CO\u2082?", ans:"0.25 mol", note:"Molar mass 44 g/mol.", doc:"core"},
+  {src:"CT-02", type:"NV", tier:1, tax:"C1", pat:"R1", q:"How many oxygen atoms are present in 0.5 mol of H\u2082SO\u2084?", ans:"1.2\u00d710\u00b2\u2074", note:"0.5 mol \u00d7 4 O per formula unit = 2 mol O; \u00d7 6.022\u00d710\u00b2\u00b3 = 1.204\u00d710\u00b2\u2074.", doc:"core"},
+  {src:"CT-03", type:"NV", tier:2, tax:"C1", pat:"R1", q:"What mass of O\u2082 is needed for complete combustion of 8 g of CH\u2084, given CH\u2084 + 2O\u2082 \u2192 CO\u2082 + 2H\u2082O?", ans:"32 g", note:"0.5 mol CH\u2084 needs 1 mol O\u2082. Scaling grams directly by 2 would give 16 g \u2014 the classic error.", doc:"core"},
+  {src:"CT-04", type:"NV", tier:2, tax:"C1", pat:"R1", q:"What volume does 3.2 g of O\u2082 occupy at STP, taking the molar volume as 22.4 L/mol?", ans:"2.24 L", note:"0.1 mol \u00d7 22.4 L/mol. The shortcut applies only to gases at STP.", doc:"core"},
+  {src:"CT-05", type:"NV", tier:3, tax:"C2", pat:"R2", q:"28 g of N\u2082 reacts with 6 g of H\u2082 as N\u2082 + 3H\u2082 \u2192 2NH\u2083. Identify the limiting reagent and the mass of NH\u2083 formed.", ans:"Neither \u2014 the mixture is exactly stoichiometric; 34 g of NH\u2083 forms", note:"Both quotients equal 1. Comparing raw moles (1 vs 3) misleadingly suggests a large H\u2082 excess.", doc:"core"},
+  {src:"CT-06", type:"NV", tier:3, tax:"C2", pat:"R2", q:"2 mol of Al reacts with 2 mol of O\u2082 as 4Al + 3O\u2082 \u2192 2Al\u2082O\u2083. Find the limiting reagent, the moles of Al\u2082O\u2083 formed, and the moles of excess reagent left.", ans:"Al is limiting; 1 mol Al\u2082O\u2083 forms; 0.5 mol O\u2082 remains", note:"Quotients: Al 2/4 = 0.5, O\u2082 2/3 = 0.67. Al wins as smaller. 2 mol Al consumes 1.5 mol O\u2082.", doc:"core"},
+  {src:"CT-07", type:"NV", tier:2, tax:"C2", pat:"R2", q:"In N\u2082 + 3H\u2082 \u2192 2NH\u2083, a vessel holds 4 mol N\u2082 and 9 mol H\u2082. Which is limiting?", ans:"H\u2082", note:"Quotients 4/1 = 4 and 9/3 = 3. H\u2082 is limiting even though there are more than twice as many moles of it.", doc:"core"},
+  {src:"CT-08", type:"NV", tier:2, tax:"C3", pat:"R1", q:"A compound is 40.0% C, 6.7% H and 53.3% O by mass. Find its empirical formula.", ans:"CH\u2082O", note:"Divide by atomic masses: 3.33, 6.7, 3.33; divide by the smallest: 1, 2, 1.", doc:"core"},
+  {src:"CT-09", type:"NV", tier:2, tax:"C3", pat:"R1", q:"A compound with empirical formula CH\u2082O has molar mass 180 g/mol. Find its molecular formula.", ans:"C\u2086H\u2081\u2082O\u2086", note:"Empirical mass 30, so n = 180/30 = 6.", doc:"core"},
+  {src:"CT-10", type:"NV", tier:3, tax:"C3", pat:"R1", q:"A hydrocarbon is 92.3% C and 7.7% H by mass, with molar mass 78 g/mol. Find its molecular formula.", ans:"C\u2086H\u2086", note:"Ratio 7.69 : 7.7 \u2248 1:1 gives CH; empirical mass 13, n = 6.", doc:"core"},
+  {src:"CT-11", type:"NV", tier:2, tax:"C4", pat:"R1", q:"What mass of NaOH is needed to prepare 250 mL of 0.20 M solution? (NaOH = 40 g/mol)", ans:"2.0 g", note:"0.25 L \u00d7 0.20 M = 0.05 mol; \u00d7 40 g/mol.", doc:"core"},
+  {src:"CT-12", type:"NV", tier:3, tax:"C4", pat:"R1", q:"A 2.0 M solution of a solute of molar mass 60 g/mol has density 1.10 g/mL. Find its molality.", ans:"\u2248 2.04 mol/kg", note:"Per litre: solution 1100 g, solute 120 g, solvent 980 g. Molality uses SOLVENT mass.", doc:"core"},
+  {src:"CT-13", type:"NV", tier:3, tax:"C4", pat:"R1", q:"Find the mole fraction of ethanol in a solution containing 46 g ethanol (46 g/mol) and 54 g water (18 g/mol).", ans:"0.25", note:"1 mol ethanol and 3 mol water, so 1/4.", doc:"core"},
+  {src:"CT-14", type:"NV", tier:1, tax:"C5", pat:"R1", q:"What volume of 6 M HCl is needed to prepare 500 mL of 0.5 M HCl?", ans:"41.7 mL", note:"M\u2081V\u2081 = M\u2082V\u2082: V\u2081 = 0.5\u00d7500/6.", doc:"core"},
+  {src:"CT-15", type:"NV", tier:2, tax:"C5", pat:"R1", q:"200 mL of 0.5 M NaCl is mixed with 300 mL of 1.0 M NaCl. Find the final molarity.", ans:"0.8 M", note:"(0.5\u00d70.2 + 1.0\u00d70.3)/0.5 = 0.4/0.5.", doc:"core"},
+  {src:"CT-16", type:"NV", tier:1, tax:"C6", pat:"R3", q:"A sealed rigid vessel holds gas at 27\u00b0C and 3 atm. Find the pressure at 127\u00b0C.", ans:"4 atm", note:"P\u2081/T\u2081 = P\u2082/T\u2082 with T in KELVIN: 3\u00d7400/300. Using Celsius gives 14.1 atm \u2014 wildly wrong.", doc:"core"},
+  {src:"CT-17", type:"NV", tier:2, tax:"C6", pat:"R3", q:"A gas occupies 5 L at 2 atm and 300 K. Find its volume at 4 atm and 400 K.", ans:"3.33 L", note:"P\u2081V\u2081/T\u2081 = P\u2082V\u2082/T\u2082 gives V\u2082 = 5\u00d7(2/4)\u00d7(400/300).", doc:"core"},
+  {src:"CT-18", type:"NV", tier:2, tax:"C6", pat:"R3", q:"Find the density of O\u2082 at 1 atm and 273 K, taking R = 0.0821 L\u00b7atm/mol\u00b7K.", ans:"\u2248 1.43 g/L", note:"d = PM/RT = (1\u00d732)/(0.0821\u00d7273).", doc:"core"},
+  {src:"CT-19", type:"NV", tier:3, tax:"C6", pat:"R3", q:"A vessel contains 2 mol N\u2082 and 3 mol O\u2082 at a total pressure of 5 atm. Find the partial pressure of O\u2082.", ans:"3 atm", note:"Mole fraction 3/5 \u00d7 5 atm.", doc:"core"},
+  {src:"CT-20", type:"NV", tier:2, tax:"C7", pat:"R1", q:"Compute v_rms for O\u2082 at 300 K with R = 8.314 J/mol\u00b7K.", ans:"\u2248 483 m/s", note:"\u221a(3\u00d78.314\u00d7300/0.032). Using M = 32 g/mol instead of 0.032 kg/mol gives \u224815 m/s \u2014 implausible on sight.", doc:"core"},
+  {src:"CT-21", type:"NV", tier:2, tax:"C7", pat:"R1", q:"State the ratio v_mp : v_avg : v_rms as decimals.", ans:"1.414 : 1.596 : 1.732", note:"\u221a2 : \u221a(8/\u03c0) : \u221a3 \u2014 a pure number, independent of gas and temperature.", doc:"core"},
+  {src:"CT-22", type:"NV", tier:3, tax:"C7", pat:"R1", q:"By what factor does v_rms change if the absolute temperature is quadrupled?", ans:"It doubles", note:"v \u221d \u221aT.", doc:"core"},
+  {src:"CT-23", type:"NV", tier:2, tax:"C7", pat:"R1", q:"Compare the effusion rates of H\u2082 and O\u2082 under identical conditions.", ans:"H\u2082 effuses 4 times faster", note:"Graham: rate \u221d 1/\u221aM, so \u221a(32/2) = 4.", doc:"core"},
+  {src:"CT-24", type:"NV", tier:3, tax:"C8", pat:"R3", q:"State what Z < 1 and Z > 1 indicate about a real gas, and name a gas with Z > 1 across most ordinary conditions.", ans:"Z < 1 means attractive forces dominate; Z > 1 means finite molecular volume dominates. Hydrogen (and helium) have Z > 1 over most of the ordinary range", note:"Assuming Z < 1 always is the standard error \u2014 at high pressure the b term wins for every gas.", doc:"core"},
+  {src:"CT-25", type:"NV", tier:3, tax:"C8", pat:"R3", q:"In the van der Waals equation, which constant corrects for intermolecular attraction and which for molecular size? State the units of each for one mole.", ans:"a corrects for attraction (units L\u00b2\u00b7atm\u00b7mol\u207b\u00b2); b corrects for molecular volume (units L\u00b7mol\u207b\u00b9)", note:"a adds to P and b subtracts from V, which fixes both sets of units by the additivity rule.", doc:"core"},
+  {src:"CT-26", type:"NV", tier:2, tax:"C9", pat:"R4", q:"A gas is compressed, absorbing 50 J of heat while 80 J of work is done on it. Find \u0394U using \u0394U = q + w.", ans:"+130 J", note:"Both terms are positive under the 'work done ON the system' convention.", doc:"core"},
+  {src:"CT-27", type:"NV", tier:3, tax:"C9", pat:"R4", q:"An ideal gas expands isothermally and reversibly at 300 K from 2 L to 6 L with n = 1 mol. Find \u0394U, w and q. Take R = 8.314 J/mol\u00b7K.", ans:"\u0394U = 0; w \u2248 \u22122740 J; q \u2248 +2740 J", note:"w = \u2212nRT ln(V\u2082/V\u2081) with ln3 = 1.0986. \u0394U = 0 because U of an ideal gas depends only on T.", doc:"core"},
+  {src:"CT-28", type:"NV", tier:2, tax:"C9", pat:"R4", q:"A gas expands against a constant external pressure of 2 atm, increasing its volume by 5 L. Find the work done ON the gas in L\u00b7atm.", ans:"\u221210 L\u00b7atm", note:"w = \u2212P_ext\u0394V. Negative because the gas does work on the surroundings, not the other way round.", doc:"core"},
+  {src:"CT-29", type:"NV", tier:2, tax:"C10", pat:"R5", q:"State \u0394U, \u0394H and \u0394S for one complete cycle of any cyclic process, and explain in one line why.", ans:"All three are zero, because each is a state function and the system returns to its initial state", note:"q and w are generally NOT zero over a cycle \u2014 that is exactly the difference between state and path functions.", doc:"core"},
+  {src:"CT-30", type:"NV", tier:3, tax:"C10", pat:"R5", q:"An ideal gas undergoes an irreversible isothermal expansion. State \u0394U and explain why the irreversibility does not matter for it but does matter for q and w.", ans:"\u0394U = 0. U is a state function depending only on T for an ideal gas, so the path is irrelevant; q and w are path functions and take different values on the reversible and irreversible routes", note:"The reversible route maximises the magnitude of both, which is why reversible work is the upper bound.", doc:"core"},
+  {src:"CT-31", type:"NV", tier:2, tax:"C11", pat:"R6", q:"For C(s) + O\u2082(g) \u2192 CO\u2082(g), \u0394n_g = ? Hence relate \u0394H and \u0394U.", ans:"\u0394n_g = 0, so \u0394H = \u0394U exactly", note:"Carbon is a solid and does not count. A bomb-calorimeter result can be quoted as \u0394H directly here.", doc:"core"},
+  {src:"CT-32", type:"NV", tier:3, tax:"C11", pat:"R6", q:"For CO(g) + \u00bdO\u2082(g) \u2192 CO\u2082(g), \u0394U = \u2212282.0 kJ/mol at 298 K. Find \u0394H. Take R = 8.314 J/mol\u00b7K.", ans:"\u2248 \u2212283.2 kJ/mol", note:"\u0394n_g = 1 \u2212 1.5 = \u22120.5; \u0394n_gRT = \u22120.5\u00d72477 J = \u22121.24 kJ. Failing to convert J to kJ shifts the answer by three orders of magnitude.", doc:"core"},
+  {src:"CT-33", type:"NV", tier:2, tax:"C11", pat:"R6", q:"For N\u2082(g) + 3H\u2082(g) \u2192 2NH\u2083(g), find \u0394n_g and state whether \u0394H is greater or less than \u0394U.", ans:"\u0394n_g = \u22122, so \u0394H is LESS than \u0394U by 2RT", note:"Fewer gas moles on the right means the surroundings do work on the system.", doc:"core"},
+  {src:"CT-34", type:"NV", tier:3, tax:"C12", pat:"R7", q:"Given \u0394H\u00b0_f = \u2212393.5 (CO\u2082, g), \u2212285.8 (H\u2082O, l) and \u221274.8 kJ/mol (CH\u2084, g), find \u0394H\u00b0 for CH\u2084(g) + 2O\u2082(g) \u2192 CO\u2082(g) + 2H\u2082O(l).", ans:"\u2212890.3 kJ/mol", note:"\u0394H\u00b0_f of O\u2082(g) is zero. Dropping the factor 2 on water gives \u2212604.5 \u2014 wrong but plausible-looking.", doc:"core"},
+  {src:"CT-35", type:"NV", tier:2, tax:"C12", pat:"R7", q:"If \u0394H for A \u2192 B is +50 kJ/mol, state \u0394H for B \u2192 A and for 2A \u2192 2B.", ans:"\u221250 kJ/mol and +100 kJ/mol", note:"Reversing flips the sign; scaling multiplies by the same factor.", doc:"core"},
+  {src:"CT-36", type:"NV", tier:2, tax:"C12", pat:"R7", q:"State the standard enthalpy of formation of O\u2082(g), of C(graphite) and of C(diamond), and explain the difference.", ans:"O\u2082(g) = 0, C(graphite) = 0, C(diamond) \u2260 0 (about +1.9 kJ/mol)", note:"Only the standard-state allotrope is assigned zero; diamond is not the standard state of carbon.", doc:"core"},
+  {src:"CT-37", type:"NV", tier:2, tax:"C13", pat:"R1", q:"Express 2.5 \u00d7 3.42 to the correct number of significant figures.", ans:"8.6", note:"Multiplication takes the fewest significant figures of the inputs \u2014 here two.", doc:"core"},
+  {src:"CT-38", type:"NV", tier:2, tax:"C13", pat:"R1", q:"Express 12.11 + 0.3 to the correct number of significant figures, and say which rule applies.", ans:"12.4", note:"Addition uses fewest DECIMAL PLACES, not fewest significant figures \u2014 a different rule from multiplication.", doc:"core"},
+  {src:"CT-39", type:"NV", tier:3, tax:"C14", pat:"R1", q:"A student calculates a bond enthalpy of 4.2 kJ/mol for a C\u2013C single bond. Flag the error using an order-of-magnitude check and give the expected range.", ans:"Bond enthalpies are hundreds of kJ/mol; C\u2013C is about 348 kJ/mol. A value of 4.2 kJ/mol is off by roughly two orders of magnitude", note:"4.2 kJ/mol is weaker than a hydrogen bond, which cannot hold a covalent skeleton together \u2014 the check is qualitative but decisive.", doc:"core"},
+  {src:"CT-40", type:"NV", tier:3, tax:"C14", pat:"R1", q:"A calculation on a 1 g sample returns 10\u2074 mol of product. State why this must be an error.", ans:"Even for the lightest element, 1 g is at most about 1 mol; 10\u2074 mol would need kilograms of material", note:"Mass conservation bounds the answer from above \u2014 the fastest possible screen on a mole calculation.", doc:"core"}
+];
+
+let CT_PRAC_DOCS = [
+  {id:"core", label:"Chemistry shortcuts core set \u2014 curated drills", date:"5 Aug 2026", note:"Hand-built, NOT from a test paper. Weighted to Physical Chemistry, the branch currently built out in Pattern Lab. Every answer verified by direct computation. All records are NV type: no MCQ option sets are fabricated for this lesson."}
+];
+
+const CT_PRAC_TIERS=[{k:"All",l:"All"},{k:"1",l:"Warm-up"},{k:"2",l:"Fluency"},{k:"3",l:"Exam-applied"},{k:"Flag",l:"\u2605 Flagged"}];
+
 const CONTENT={
   "maths/trig/fg":{key:"trigfg",taxa:TAXA,formulae:FORMULAE,patterns:PATTERNS,guided:GUIDED,practice:PRACTICE,pracTiers:PRAC_TIERS},
   "maths/trig/pev":{key:"pev",taxa:PEV_TAXA,formulae:PEV_FORMULAE,patterns:PEV_PATTERNS,guided:PEV_GUIDED,practice:PEV_PRACTICE,pracDocs:PEV_PRAC_DOCS,pracTiers:PEV_PRAC_TIERS},
@@ -6031,7 +7050,10 @@ const CONTENT={
   "maths/alg/leq":{key:"leq",taxa:LEQ_TAXA,formulae:LEQ_FORMULAE,patterns:LEQ_PATTERNS,guided:LEQ_GUIDED,practice:LEQ_PRACTICE,pracDocs:LEQ_PRAC_DOCS,pracTiers:LEQ_PRAC_TIERS},
   "maths/alg/mat":{key:"mat",taxa:MAT_TAXA,formulae:MAT_FORMULAE,patterns:MAT_PATTERNS,guided:MAT_GUIDED,practice:MAT_PRACTICE,pracDocs:MAT_PRAC_DOCS,pracTiers:MAT_PRAC_TIERS},
   "maths/alg/minv":{key:"minv",taxa:INV_TAXA,formulae:INV_FORMULAE,patterns:INV_PATTERNS,guided:INV_GUIDED,practice:INV_PRACTICE,pracDocs:INV_PRAC_DOCS,pracTiers:INV_PRAC_TIERS},
-  "tools/calc/mental":{key:"mental",taxa:MM_TAXA,formulae:MM_CARDS,patterns:MM_PATTERNS,guided:MM_GUIDED,practice:MM_PRACTICE,pracDocs:MM_PRAC_DOCS,pracTiers:MM_PRAC_TIERS}
+  "tools/calc/mental":{key:"mental",taxa:MM_TAXA,formulae:MM_CARDS,patterns:MM_PATTERNS,guided:MM_GUIDED,practice:MM_PRACTICE,pracDocs:MM_PRAC_DOCS,pracTiers:MM_PRAC_TIERS},
+  "tools/mtool/mtips":{key:"mtips",taxa:MT_TAXA,formulae:MT_CARDS,patterns:MT_PATTERNS,guided:MT_GUIDED,practice:MT_PRACTICE,pracDocs:MT_PRAC_DOCS,pracTiers:MT_PRAC_TIERS},
+  "tools/ptool/ptips":{key:"ptips",taxa:PT_TAXA,formulae:PT_CARDS,patterns:PT_PATTERNS,guided:PT_GUIDED,practice:PT_PRACTICE,pracDocs:PT_PRAC_DOCS,pracTiers:PT_PRAC_TIERS},
+  "tools/ctool/ctips":{key:"ctips",taxa:CT_TAXA,formulae:CT_CARDS,patterns:CT_PATTERNS,guided:CT_GUIDED,practice:CT_PRACTICE,pracDocs:CT_PRAC_DOCS,pracTiers:CT_PRAC_TIERS}
 };
 function chapPath(a,b,c){return a+"/"+b+"/"+c;}
 function findChapter(path){
