@@ -4046,149 +4046,241 @@ let DET_FORMULAE = [
 ];
 
 let DET_PATTERNS = [
-  {id:"P1",name:"Expand Along the Emptiest Line",
-   trigger:"A concrete 3\\u00d73 determinant with numbers or simple symbols, and at least one row or column carrying a zero.",
-   move:"Count zeros in every row and column. Expand along the line with the MOST zeros using \\u0394 = \\u03a3 a\\u1d62\\u2c7cC\\u1d62\\u2c7c along that line, applying the (\\u22121)^(i+j) sign board. Each zero entry kills a whole 2\\u00d72 minor.",
-   why:"Every line gives the same value, so the choice is pure economics \\u2014 a line with two zeros reduces a 3-term expansion to one term. You are not using a theorem, you are refusing to do arithmetic you don't have to.",
-   mini:"Find |1 2 4 ; \\u22121 3 0 ; 4 1 0| by choosing the cheapest line.",
-   fails:"Reflexively expanding along R\\u2081 because that's the one in the formula \\u2014 and then grinding three full minors when C\\u2083 had two zeros sitting there.",
-   src:"Illus 11.1, Ex Q1",
-   srcText:{"Illus 11.1":"Find the value of |1 2 4 ; \\u22121 3 0 ; 4 1 0|.","Ex Q1":"The number of integral values of x for which |x 2 3x ; 1 \\u22121 5 ; 2 0 2x| > 0 is."}},
-
-  {id:"P2",name:"Sarrus' Rule for a 3\\u00d73",
-   trigger:"A fully symbolic 3\\u00d73 with no zeros anywhere, where you want the six-term expansion written out in one pass.",
-   move:"Rewrite C\\u2081 and C\\u2082 again to the right of the array. Add the three downward-diagonal products, subtract the three upward-diagonal products: \\u0394 = aqz+brx+cpy \\u2212 xqc \\u2212 yra \\u2212 zpb.",
-   why:"It is just the cofactor expansion pre-unrolled into its six signed terms; the diagonal picture is a memory device for which of the 3! permutations carries a plus and which a minus.",
-   mini:"Expand |a b c ; p q r ; x y z| by Sarrus and confirm it matches expansion along R\\u2081.",
-   fails:"Reaching for Sarrus on a 4\\u00d74. There is no 4\\u00d74 diagonal rule \\u2014 order 4 must go through cofactors or row reduction.",
-   src:"Illus 11.4, Ex 11.5, Illus 11.6",
-   srcText:{"Illus 11.4":"Let a, b and c be distinct positive real numbers. Show that the value of the determinant |a b c ; b c a ; c a b| is negative.","Ex 11.5":"If a, b, c \\u2208 R, then find the roots of the equation |x c \\u2212b ; \\u2212c x a ; b \\u2212a x| = 0.","Illus 11.6":"If x+y+z = 0, then prove that |ax by cz ; cy az bx ; bz cx ay| = xyz |a b c ; c a b ; b c a|."}},
-
-  {id:"P3",name:"Spot the Vanishing Determinant",
-   trigger:"You are asked to PROVE a determinant is zero, or a multiple-choice option offers 0, or two lines look suspiciously alike.",
-   move:"Before expanding anything, scan for: two identical lines, two proportional lines, an all-zero line, or a line that is a linear combination of the other two. If none is visible, try one operation (R\\u1d62\\u2192R\\u1d62\\u2212R\\u2c7c or C\\u1d62\\u2192C\\u1d62\\u2212C\\u2c7c) and look again.",
-   why:"A determinant is zero exactly when its rows are linearly dependent. Identical and proportional rows are the two dependencies you can see by eye; one subtraction usually exposes the third.",
-   mini:"Show |1 1 1 ; a b c ; bc+a\\u00b2 ac+b\\u00b2 ab+c\\u00b2| collapses without full expansion.",
-   fails:"Expanding a 3\\u00d73 in full and grinding to zero after two pages, when C\\u2081\\u2192C\\u2081\\u2212C\\u2082 would have produced a proportional pair in one line.",
-   src:"CAE 11.3 Q1, Ex Q3, Ex Q18",
-   srcText:{"CAE 11.3 Q1":"Prove that the value of each of the following determinants is zero: (a) |a\\u2081 la\\u2081+mb\\u2081 b\\u2081 ; a\\u2082 la\\u2082+mb\\u2082 b\\u2082 ; a\\u2083 la\\u2083+mb\\u2083 b\\u2083|  (b) |a\\u2212b b\\u2212c c\\u2212a ; x\\u2212y y\\u2212z z\\u2212x ; p\\u2212q q\\u2212r r\\u2212p|  (c) |log x log y log z ; log 2x log 2y log 2z ; log 3x log 3y log 3z|","Ex Q3":"If p+q+r = 0 = a+b+c, then the value of the determinant |pa qb rc ; qc ra pb ; rb pc qa| is."}},
-
-  {id:"P4",name:"Skew-Symmetric \\u21d2 Odd Order Dies",
-   trigger:"The array has zeros down the principal diagonal and entries mirrored with opposite signs across it (a\\u1d62\\u2c7c = \\u2212a\\u2c7c\\u1d62).",
-   move:"Confirm every diagonal entry is 0 and every mirrored pair is a sign flip. If the order is odd, write \\u0394 = 0 immediately. If a parameter appears, set the diagonal entries to zero to force the skew-symmetric form.",
-   why:"\\u0394\\u1d40 = \\u0394 always, but for a skew-symmetric array \\u0394\\u1d40 = (\\u22121)\\u207f\\u0394. For odd n those force \\u0394 = \\u2212\\u0394, so \\u0394 = 0. The argument fails for even n, which is why 4\\u00d74 skew-symmetric determinants need not vanish.",
-   mini:"Show |0 \\u2212a b ; a 0 \\u2212c ; \\u2212b c 0| = 0 without expanding.",
-   fails:"Applying the result to an even-order skew-symmetric array, or mis-classifying a merely antisymmetric-looking array whose diagonal isn't actually zero.",
-   src:"Illus 11.7, NOTES p.11.5",
-   srcText:{"Illus 11.7":"Let p\\u03bb\\u2074+q\\u03bb\\u00b3+r\\u03bb\\u00b2+s\\u03bb+t = |\\u03bb\\u00b2+3\\u03bb \\u03bb\\u22121 \\u03bb+3 ; \\u03bb+1 \\u22122\\u03bb \\u03bb\\u22124 ; \\u03bb\\u22123 \\u03bb+4 3\\u03bb| be an identity in \\u03bb, where p,q,r,s and t are constants. Then, find the value of t.","NOTES p.11.5":"If in determinant a\\u1d62\\u2c7c = \\u2212a\\u2c7c\\u1d62 for all i, j then it is called skew-symmetric determinant. For the principal diagonal elements, a\\u1d62\\u1d62 = \\u2212a\\u1d62\\u1d62 or a\\u1d62\\u1d62 = 0. The value of a skew-symmetric determinant of odd order is zero."}},
-
-  {id:"P5",name:"Area & Collinearity Determinant",
-   trigger:"Three points are given by coordinates and you need an area, or you must prove collinearity, or find a parameter that makes points collinear.",
-   move:"Write A = \\u00bd|x\\u2081 y\\u2081 1 ; x\\u2082 y\\u2082 1 ; x\\u2083 y\\u2083 1|. For area take the modulus. For collinearity set the determinant to 0 and solve. For the line through two points, put (x,y) in R\\u2081 and set the determinant to zero.",
-   why:"The determinant is the signed area of the parallelogram spanned by two edge vectors; halving gives the triangle. Collinear points span no area, so the determinant vanishes \\u2014 area zero IS the collinearity condition, not a separate fact.",
-   mini:"Find the area of the triangle with vertices A(3,2), B(11,8), C(8,12).",
-   fails:"Keeping the modulus while solving \\u0394 = 0 for an unknown \\u2014 the modulus discards the sign information you need, and can hide a second root.",
-   src:"Illus 11.9, Illus 11.10, Illus 11.12",
-   srcText:{"Illus 11.9":"Find the area of a triangle whose vertices are A(3, 2), B(11, 8) and C(8, 12).","Illus 11.10":"If (x\\u2081\\u2212x\\u2082)\\u00b2+(y\\u2081\\u2212y\\u2082)\\u00b2 = a\\u00b2; (x\\u2082\\u2212x\\u2083)\\u00b2+(y\\u2082\\u2212y\\u2083)\\u00b2 = b\\u00b2; (x\\u2083\\u2212x\\u2081)\\u00b2+(y\\u2083\\u2212y\\u2081)\\u00b2 = c\\u00b2, where a, b, c are positive, then prove that 4|x\\u2081 y\\u2081 1 ; x\\u2082 y\\u2082 1 ; x\\u2083 y\\u2083 1|\\u00b2 = (a+b+c)(b+c\\u2212a)(c+a\\u2212b)(a+b\\u2212c).","Illus 11.12":"Show that the points (a+5, a\\u22124), (a\\u22122, a+3) and (a, a) do not lie on a straight line for any value of a."}},
-
-  {id:"P6",name:"Concurrency of Three Lines",
-   trigger:"Three lines a\\u1d62x+b\\u1d62y+c\\u1d62 = 0 are said to be concurrent, or you must find a condition forcing them to meet at one point.",
-   move:"Set |a\\u2081 b\\u2081 c\\u2081 ; a\\u2082 b\\u2082 c\\u2082 ; a\\u2083 b\\u2083 c\\u2083| = 0 and expand or reduce. Read the result backwards too: the same vanishing determinant says the three points (a\\u1d62,b\\u1d62) are collinear when every c\\u1d62 = 1.",
-   why:"Solve the first two lines for their intersection point and substitute into the third; clearing denominators gives exactly this determinant. Concurrency is a linear-dependence statement about the three coefficient triples.",
-   mini:"If ax+y+1=0, x+by+1=0 and x+y+c=0 are concurrent (a,b,c \\u2260 1), prove 1/(1\\u2212a)+1/(1\\u2212b)+1/(1\\u2212c) = 1.",
-   fails:"Missing the point\\u2194line duality and re-deriving from scratch when the problem is the collinearity twin of one you already solved.",
-   src:"Illus 11.11, Illus 11.27, CAE 11.1 Q8",
-   srcText:{"Illus 11.11":"If the lines a\\u2081x+b\\u2081y+1 = 0, a\\u2082x+b\\u2082y+1 = 0 and a\\u2083x+b\\u2083y+1 = 0 are concurrent, show that the points (a\\u2081, b\\u2081), (a\\u2082, b\\u2082) and (a\\u2083, b\\u2083) are collinear.","Illus 11.27":"If the lines ax+y+1 = 0, x+by+1 = 0 and x+y+c = 0 (a, b, c being distinct and different from 1) are concurrent, then prove that 1/(1\\u2212a) + 1/(1\\u2212b) + 1/(1\\u2212c) = 1.","CAE 11.1 Q8":"If lines px+qy+r = 0, qx+ry+p = 0 and rx+py+q = 0 are concurrent, then prove that p+q+r = 0 (where p, q, r are distinct)."}},
-
-  {id:"P7",name:"Differentiate One Line at a Time",
-   trigger:"\\u0394 is a determinant of functions of x and you need \\u0394'(x), f'(0), f'(\\u03c0/2), or a statement about whether f is constant.",
-   move:"\\u0394'(x) = |R\\u2081' ; R\\u2082 ; R\\u2083| + |R\\u2081 ; R\\u2082' ; R\\u2083| + |R\\u2081 ; R\\u2082 ; R\\u2083'| \\u2014 three determinants, each with exactly ONE line differentiated. Columns work identically. Then substitute the required value of x.",
-   why:"A determinant is a sum of products of one entry from each row; the product rule differentiates one factor at a time and sums, which is precisely one-row-at-a-time. Any term with two identical rows drops out for free.",
-   mini:"For f(x) = |cos x sin x cos x ; cos 2x sin 2x 2cos 2x ; cos 3x sin 3x 3cos 3x|, find f'(0) and f'(\\u03c0/2).",
-   fails:"Differentiating every entry simultaneously and calling the result \\u0394'. That array is not the derivative of anything relevant.",
-   src:"Illus 11.13, Illus 11.14, Ex 11.6",
-   srcText:{"Illus 11.13":"Let f(x) = |cos x sin x cos x ; cos 2x sin 2x 2cos 2x ; cos 3x sin 3x 3cos 3x|. Then find the values of f'(0) and f'(\\u03c0/2).","Illus 11.14":"If f(x) = |x\\u207f n! 2 ; cos x cos(n\\u03c0/2) 4 ; sin x sin(n\\u03c0/2) 8|, then find the value of d\\u207f/dx\\u207f[f(x)] at x = 0 (n \\u2208 Z).","Ex 11.6":"If f, g and h are differentiable functions of x and \\u0394(x) = |f g h ; (xf)' (xg)' (xh)' ; (x\\u00b2f)'' (x\\u00b2g)'' (x\\u00b2h)''|, prove that \\u0394'(x) = |f g h ; f' g' h' ; (x\\u00b3f'')' (x\\u00b3g'')' (x\\u00b3h'')'|."}},
-
-  {id:"P8",name:"Push \\u03a3 Into the Varying Line",
-   trigger:"A determinant \\u0394\\u1d63 depends on an index r and you must evaluate \\u03a3\\u1d63\\u208c\\u2081\\u207f \\u0394\\u1d63 (or prove it constant).",
-   move:"Identify which single line carries r. Replace that line's entries by their summations \\u03a3f(r), leaving the constant lines untouched. Evaluate the standard sums, then simplify \\u2014 very often a common factor drops out and two lines become identical.",
-   why:"\\u0394 is linear in each line separately, so summing \\u0394\\u1d63 over r is the same as summing inside that one line. The property is the addition/splitting rule iterated n times.",
-   mini:"Show \\u03a3\\u1d63\\u208c\\u2081\\u207f \\u0394\\u1d63 is constant for \\u0394\\u1d63 = |r\\u22121 n 6 ; (r\\u22121)\\u00b2 2n\\u00b2 4n\\u22122 ; (r\\u22121)\\u00b3 3n\\u00b3 3n\\u00b2\\u22123n|.",
-   fails:"Applying \\u03a3 to two lines at once, or to a line that also contains r-free constants \\u2014 the operation is valid only when r sits in exactly one line.",
-   src:"Illus 11.21, Ex Q42, Ex Q49",
-   srcText:{"Illus 11.21":"Let \\u0394\\u1d63 = |r\\u22121 n 6 ; (r\\u22121)\\u00b2 2n\\u00b2 4n\\u22122 ; (r\\u22121)\\u00b2 3n\\u00b3 3n\\u00b2\\u22123n|. Show that \\u03a3\\u1d63\\u208c\\u2081\\u207f \\u0394\\u1d63 is constant.","Ex Q42":"If D\\u2096 = |1 n n ; 2k n\\u00b2+n+1 n\\u00b2+n ; 2k\\u22121 n\\u00b2 n\\u00b2+n+1| and \\u03a3\\u2096\\u208c\\u2081\\u207f D\\u2096 = 56, then n equals."}},
-
-  {id:"P9",name:"Take Out the Common Factor",
-   trigger:"A whole row or column shares a visible factor \\u2014 a variable, a constant, a \\u221a, or a trig expression \\u2014 or every entry of a line is k times a simpler one.",
-   move:"Pull the factor out in front of the determinant, once per line. To CREATE a factor, multiply chosen lines by a,b,c and divide the whole determinant by abc to compensate. Then look for the simplified array's standard form.",
-   why:"\\u0394 is linear in each line, so scaling one line scales \\u0394 by the same amount. Multiplying-then-dividing is the standard trick for forcing a symmetric array into a recognisable shape without changing its value.",
-   mini:"Prove |(b+c)\\u00b2 ba ac ; ba (c+a)\\u00b2 cb ; ca cb (a+b)\\u00b2| = 2abc(a+b+c)\\u00b3 by multiplying R\\u2081,R\\u2082,R\\u2083 by a,b,c.",
-   fails:"Writing |kA| = k\\u0394 for an order-n determinant. The factor comes out of ONE line only \\u2014 scaling the whole array gives k\\u207f\\u0394.",
-   src:"Illus 11.38, Illus 11.39, Illus 11.41",
-   srcText:{"Illus 11.38":"Prove that |a\\u00b2+1 ab ac ; ab b\\u00b2+1 bc ; ac bc c\\u00b2+1| = 1+a\\u00b2+b\\u00b2+c\\u00b2.","Illus 11.39":"Prove that |(b+c)\\u00b2 ba ac ; ba (c+a)\\u00b2 cb ; ca cb (a+b)\\u00b2| = 2abc(a+b+c)\\u00b3.","Illus 11.41":"If a\\u00b2+b\\u00b2+c\\u00b2 = 1, then prove that |a\\u00b2+(b\\u00b2+c\\u00b2)cos\\u03c6 ab(1\\u2212cos\\u03c6) ac(1\\u2212cos\\u03c6) ; ba(1\\u2212cos\\u03c6) b\\u00b2+(c\\u00b2+a\\u00b2)cos\\u03c6 bc(1\\u2212cos\\u03c6) ; ca(1\\u2212cos\\u03c6) cb(1\\u2212cos\\u03c6) c\\u00b2+(a\\u00b2+b\\u00b2)cos\\u03c6| is independent of a, b, c."}},
-
-  {id:"P10",name:"Manufacture Zeros by R\\u1d62\\u2192R\\u1d62+mR\\u2c7c",
-   trigger:"Entries are bulky but two lines differ by something simple, or a column of numbers has an obvious arithmetic relation (e.g. 41, 79, 29 against 1, 7, 5).",
-   move:"Apply R\\u1d62\\u2192R\\u1d62+mR\\u2c7c or C\\u1d62\\u2192C\\u1d62+mC\\u2c7c to drive entries to zero. The value is unchanged. Repeat until one line has two zeros, then expand along it.",
-   why:"The extra determinant generated by the operation has two proportional rows, so it contributes nothing \\u2014 the value is genuinely invariant, which is why this is the workhorse simplification of the whole chapter.",
-   mini:"Find |41 1 5 ; 79 7 9 ; 29 5 3| using C\\u2081 \\u2192 C\\u2081 \\u2212 8C\\u2083.",
-   fails:"Replacing all three rows in one step. At most (n\\u22121) lines may be changed simultaneously \\u2014 for order 3 that means two.",
-   src:"Illus 11.22, Illus 11.24, Illus 11.26",
-   srcText:{"Illus 11.22":"Find the value of |41 1 5 ; 79 7 9 ; 29 5 3|.","Illus 11.24":"Find the value of the determinant |1 1 1 1 ; 1 2 3 4 ; 1 3 6 10 ; 1 4 10 20|.","Illus 11.26":"Solve for x: |x\\u22122 2x\\u22123 3x\\u22124 ; x\\u22124 2x\\u22129 3x\\u221216 ; x\\u22128 2x\\u221227 3x\\u221264| = 0."}},
-
-  {id:"P11",name:"Sum All Lines Into One",
-   trigger:"Every row (or column) of the determinant has the SAME total, or a symmetric expression like a+b+c can be made to appear in a whole line.",
-   move:"Apply R\\u2081 \\u2192 R\\u2081+R\\u2082+R\\u2083 (or C\\u2081 \\u2192 C\\u2081+C\\u2082+C\\u2083). The new line becomes constant, so take that constant out as a factor. Then use P10 to zero the rest.",
-   why:"Constant row sums are the fingerprint of a symmetric determinant. Adding the lines exposes that invariant as an explicit common factor, which is usually the factor the answer is asking for.",
-   mini:"Show |x+4 2x 2x ; 2x x+4 2x ; 2x 2x x+4| = (5x+4)(4\\u2212x)\\u00b2.",
-   fails:"Doing the sum but forgetting to extract the common factor before proceeding \\u2014 you lose the very structure the operation was meant to reveal.",
-   src:"Illus 11.28, Illus 11.29, Illus 11.31",
-   srcText:{"Illus 11.28":"Using the properties of determinant, show that |x+4 2x 2x ; 2x x+4 2x ; 2x 2x x+4| = (5x+4)(4\\u2212x)\\u00b2.","Illus 11.29":"Prove that |a\\u2212b\\u2212c 2a 2a ; 2b b\\u2212c\\u2212a 2b ; 2c 2c c\\u2212a\\u2212b| = (a+b+c)\\u00b3.","Illus 11.31":"If a, b, and c are real numbers, and \\u0394 = |b+c c+a a+b ; c+a a+b b+c ; a+b b+c c+a| = 0, then prove that either a+b+c = 0 or a = b = c."}},
-
-  {id:"P12",name:"Split a Determinant Apart",
-   trigger:"One line's entries are visibly sums \\u2014 a\\u1d62+a\\u1d62', or terms like a\\u2074\\u22121 that separate as a\\u2074 minus 1.",
-   move:"Break the determinant along that ONE line into a sum (or difference) of two determinants with the other lines copied verbatim. Then evaluate or factor each piece separately; often one of them vanishes by P3.",
-   why:"Linearity in each line again \\u2014 but read forwards this time. Splitting turns one hard array into two recognisable standard forms, which is usually cheaper than expanding the composite.",
-   mini:"Split |a a\\u00b3 a\\u2074\\u22121 ; b b\\u00b3 b\\u2074\\u22121 ; c c\\u00b3 c\\u2074\\u22121| = 0 w.r.t. C\\u2083 and deduce abc(ab+bc+ca) = a+b+c.",
-   fails:"Splitting two lines simultaneously and writing two determinants instead of the four the algebra actually produces.",
-   src:"Illus 11.37, \\u00a711.3.1",
-   srcText:{"Illus 11.37":"If a, b, c are all different and |a a\\u00b3 a\\u2074\\u22121 ; b b\\u00b3 b\\u2074\\u22121 ; c c\\u00b3 c\\u2074\\u22121| = 0, show that abc(ab+bc+ca) = a+b+c.","\\u00a711.3.1":"If some or all elements of a row or column of a determinant are expressed as sum of two (or more) terms, then the determinant can be expressed as sum of two (or more) determinants."}},
-
-  {id:"P13",name:"Factor Theorem \\u2014 Substitute to Find a Root",
-   trigger:"You must PROVE a determinant equals a product of linear factors such as (a\\u2212b)(b\\u2212c)(c\\u2212a) or (a+b)(b+c)(c+a), or find the constant k in such an identity.",
-   move:"Set a = b (or a+b = 0, whichever the target factor suggests). If the determinant then has two identical rows it is 0, so that factor divides \\u0394. Repeat for the other factors. Compare degrees to pin the leftover constant, then fix it by substituting easy numbers.",
-   why:"A determinant of polynomial entries is itself a polynomial; a substitution that makes two lines identical is exactly a root. Degree counting then bounds how much is left over, and one numerical substitution nails the constant.",
-   mini:"Prove |\\u22122a a+b a+c ; b+a \\u22122b b+c ; c+a c+b \\u22122c| = 4(a+b)(b+c)(c+a) by finding \\u03bb.",
-   fails:"Forgetting the degree check \\u2014 the leftover factor need not be a constant, and assuming it is produces an identity that fails on a second substitution.",
-   src:"Ex 11.1, Illus 11.35, CAE 11.3 Q12",
-   srcText:{"Ex 11.1":"Prove that |\\u22122a a+b a+c ; b+a \\u22122b b+c ; c+a c+b \\u22122c| = 4(a+b)(b+c)(c+a).","Illus 11.35":"Prove that |a b+c a\\u00b2 ; b c+a b\\u00b2 ; c a+b c\\u00b2| = \\u2212(a+b+c)(a\\u2212b)(b\\u2212c)(c\\u2212a).","CAE 11.3 Q12":"If |(a+1)\\u00b2 (b+1)\\u00b2 (c+1)\\u00b2 ; a\\u00b2 b\\u00b2 c\\u00b2 ; (a\\u22121)\\u00b2 (b\\u22121)\\u00b2 (c\\u22121)\\u00b2| = k(a\\u2212b)(b\\u2212c)(c\\u2212a), then the value of k is."}},
-
-  {id:"P14",name:"Recognise a Standard Form",
-   trigger:"The array matches (or nearly matches) a Vandermonde |1 1 1 ; x y z ; x\\u00b2 y\\u00b2 z\\u00b2|, a cyclic |a b c ; b c a ; c a b|, or one of the frequently-used determinants of \\u00a711.3.3.",
-   move:"Quote the standard result rather than deriving it. If the match is imperfect, use one column operation, a transpose, or a column swap (remembering the sign flip) to force the standard shape first.",
-   why:"These forms recur constantly and their factorisations are already proved in the text. Recognition converts a multi-step derivation into a single line, which is the whole point of building a pattern library.",
-   mini:"Factorise |3 a+b+c a\\u00b3+b\\u00b3+c\\u00b3 ; a+b+c a\\u00b2+b\\u00b2+c\\u00b2 a\\u2074+b\\u2074+c\\u2074 ; a\\u00b2+b\\u00b2+c\\u00b2 a\\u00b3+b\\u00b3+c\\u00b3 a\\u2075+b\\u2075+c\\u2075| as a product of two Vandermondes.",
-   fails:"Applying a column swap to reach the standard form and forgetting that the swap flipped the sign \\u2014 a very common source of an answer that is right up to \\u00b1.",
-   src:"\\u00a711.3.3, Illus 11.34, Illus 11.43",
-   srcText:{"\\u00a711.3.3":"Frequently used determinants: (1) |1 1 1 ; x y z ; x\\u00b2 y\\u00b2 z\\u00b2| = (x\\u2212y)(y\\u2212z)(z\\u2212x)  (2) |1 1 1 ; x y z ; x\\u00b3 y\\u00b3 z\\u00b3| = (x\\u2212y)(y\\u2212z)(z\\u2212x)(x+y+z)  (3) |1 1 1 ; x\\u00b2 y\\u00b2 z\\u00b2 ; x\\u00b3 y\\u00b3 z\\u00b3| = (x\\u2212y)(y\\u2212z)(z\\u2212x)(xy+yz+zx)","Illus 11.34":"Prove that |1 \\u03b2\\u03b3+\\u03b1\\u03b4 \\u03b2\\u00b2\\u03b3\\u00b2+\\u03b1\\u00b2\\u03b4\\u00b2 ; 1 \\u03b3\\u03b1+\\u03b2\\u03b4 \\u03b3\\u00b2\\u03b1\\u00b2+\\u03b2\\u00b2\\u03b4\\u00b2 ; 1 \\u03b1\\u03b2+\\u03b3\\u03b4 \\u03b1\\u00b2\\u03b2\\u00b2+\\u03b3\\u00b2\\u03b4\\u00b2| = \\u2212(\\u03b1\\u2212\\u03b4)(\\u03b2\\u2212\\u03b4)(\\u03b3\\u2212\\u03b4)(\\u03b1\\u2212\\u03b2)(\\u03b2\\u2212\\u03b3)(\\u03b3\\u2212\\u03b1).","Illus 11.43":"Factorize the determinant |3 a+b+c a\\u00b3+b\\u00b3+c\\u00b3 ; a+b+c a\\u00b2+b\\u00b2+c\\u00b2 a\\u2074+b\\u2074+c\\u2074 ; a\\u00b2+b\\u00b2+c\\u00b2 a\\u00b3+b\\u00b3+c\\u00b3 a\\u2075+b\\u2075+c\\u2075|."}},
-
-  {id:"P15",name:"Multiply Two Determinants Row-by-Row",
-   trigger:"Entries look like dot products (a\\u1d62\\u03b1\\u2c7c+b\\u1d62\\u03b2\\u2c7c+c\\u1d62\\u03b3\\u2c7c), or squares of sums such as (1+ax)\\u00b2, or the problem says 'express as the product of two determinants'.",
-   move:"Write entry (i,j) = R\\u1d62(\\u0394\\u2081)\\u00b7R\\u2c7c(\\u0394\\u2082). Going backwards: read a composite array as a product and split it into two simple determinants. Try all four pairings (row\\u00d7row, row\\u00d7column, \\u2026) \\u2014 they give the same value, so choose whichever produces zeros.",
-   why:"\\u0394\\u2081\\u0394\\u2082 = |AB| for the underlying matrices, and \\u0394\\u1d40 = \\u0394 makes all four pairings equivalent. Factoring a nasty array into two clean ones is almost always cheaper than expanding it.",
-   mini:"Show |1 cos(\\u03b2\\u2212\\u03b1) cos(\\u03b3\\u2212\\u03b1) ; cos(\\u03b1\\u2212\\u03b2) 1 cos(\\u03b3\\u2212\\u03b2) ; cos(\\u03b1\\u2212\\u03b3) cos(\\u03b2\\u2212\\u03b3) 1| = 0 without expanding at any stage.",
-   fails:"Pairing rows with rows when the entries were built column-wise \\u2014 the arithmetic still 'works' but produces the wrong array; check one entry against the definition before committing.",
-   src:"Illus 11.44, Illus 11.45, Ex 11.2",
-   srcText:{"Illus 11.44":"Prove that |(a\\u2212x)\\u00b2 (a\\u2212y)\\u00b2 (a\\u2212z)\\u00b2 ; (b\\u2212x)\\u00b2 (b\\u2212y)\\u00b2 (b\\u2212z)\\u00b2 ; (c\\u2212x)\\u00b2 (c\\u2212y)\\u00b2 (c\\u2212z)\\u00b2| = 2(b\\u2212c)(c\\u2212a)(a\\u2212b)\\u00d7(y\\u2212z)(z\\u2212x)(x\\u2212y).","Illus 11.45":"If \\u03b1, \\u03b2, \\u03b3 are real numbers, then without expanding at any stage, show that |1 cos(\\u03b2\\u2212\\u03b1) cos(\\u03b3\\u2212\\u03b1) ; cos(\\u03b1\\u2212\\u03b2) 1 cos(\\u03b3\\u2212\\u03b2) ; cos(\\u03b1\\u2212\\u03b3) cos(\\u03b2\\u2212\\u03b3) 1| = 0.","Ex 11.2":"Let \\u0394 = |2a\\u2081b\\u2081 a\\u2081b\\u2082+a\\u2082b\\u2081 a\\u2081b\\u2083+a\\u2083b\\u2081 ; a\\u2081b\\u2082+a\\u2082b\\u2081 2a\\u2082b\\u2082 a\\u2082b\\u2083+a\\u2083b\\u2082 ; a\\u2081b\\u2083+a\\u2083b\\u2081 a\\u2083b\\u2082+a\\u2082b\\u2083 2a\\u2083b\\u2083|. Expressing \\u0394 as the product of two determinants, show that \\u0394 = 0."}},
-
-  {id:"P16",name:"Determinant of Cofactors",
-   trigger:"The problem builds a NEW determinant whose entries are the cofactors (or cofactors of cofactors) of the original, or asks for |B\\u2082 C\\u2082 ; B\\u2083 C\\u2083| type 2\\u00d72 blocks of cofactors.",
-   move:"Use \\u0394c = \\u0394\\u207f\\u207b\\u00b9; for order 3 that is \\u0394c = \\u0394\\u00b2. Iterating once more gives \\u0394\\u2074. For a 2\\u00d72 block of cofactors, use the identity |B\\u2082 C\\u2082 ; B\\u2083 C\\u2083| = a\\u2081\\u0394.",
-   why:"Multiplying \\u0394 by its cofactor determinant row-by-row gives a diagonal array with \\u0394 down the diagonal (by the cross-term rule), so \\u0394\\u00b7\\u0394c = \\u0394\\u00b3, hence \\u0394c = \\u0394\\u00b2 for order 3.",
-   mini:"If |1 x x\\u00b2 ; x x\\u00b2 1 ; x\\u00b2 1 x| = 3, find the determinant formed by replacing each element by its cofactor.",
-   fails:"Using \\u0394c = \\u0394\\u00b2 for an order-4 determinant \\u2014 the exponent is n\\u22121, so order 4 gives \\u0394\\u00b3.",
-   src:"Illus 11.46, \\u00a711.4.1, Ex Q47",
-   srcText:{"Illus 11.46":"If |1 x x\\u00b2 ; x x\\u00b2 1 ; x\\u00b2 1 x| = 3, then find the value of |x\\u00b3\\u22121 0 x\\u2212x\\u2074 ; 0 x\\u2212x\\u2074 x\\u00b3\\u22121 ; x\\u2212x\\u2074 x\\u00b3\\u22121 0|.","\\u00a711.4.1":"If A\\u2081, B\\u2081, C\\u2081, \\u2026 are respectively the cofactors of the elements a\\u2081, b\\u2081, c\\u2081, \\u2026 of the determinant \\u0394, \\u0394 \\u2260 0, then |A\\u2081 B\\u2081 C\\u2081 ; A\\u2082 B\\u2082 C\\u2082 ; A\\u2083 B\\u2083 C\\u2083| = \\u0394\\u00b2. For n-order determinant, \\u0394c = \\u0394\\u207f\\u207b\\u00b9.","Ex Q47":"If A\\u2081, B\\u2081, C\\u2081, \\u2026 are, respectively, the cofactors of the elements a\\u2081, b\\u2081, c\\u2081, \\u2026 of the determinant \\u0394 = |a\\u2081 b\\u2081 c\\u2081 ; a\\u2082 b\\u2082 c\\u2082 ; a\\u2083 b\\u2083 c\\u2083|, \\u0394 \\u2260 0, then the value of |B\\u2082 C\\u2082 ; B\\u2083 C\\u2083| is equal to."}}
+ {
+  "id": "P1",
+  "name": "Expand Along the Emptiest Line",
+  "trigger": "A 3×3 determinant of numbers, where at least one row or column already has a zero in it.",
+  "move": "1) Count the zeros in every row and every column. 2) Pick the line with the most zeros. 3) Expand along that line only. 4) Use the sign board + − + / − + − / + − +. Each zero entry lets you skip a whole 2×2 minor.",
+  "why": "Every row and every column gives the same answer. So the choice is only about saving work. A line with two zeros turns a three-term expansion into one term.",
+  "mini": "Find |1 2 4 ; \\u22121 3 0 ; 4 1 0| by choosing the cheapest line.",
+  "fails": "Common slip: expanding along R₁ out of habit. Scan the whole grid for zeros before you start.",
+  "src": "Illus 11.1, Ex Q1",
+  "srcText": {
+   "Illus 11.1": "Find the value of |1 2 4 ; \\u22121 3 0 ; 4 1 0|.",
+   "Ex Q1": "The number of integral values of x for which |x 2 3x ; 1 \\u22121 5 ; 2 0 2x| > 0 is."
+  }
+ },
+ {
+  "id": "P2",
+  "name": "Sarrus' Rule for a 3\\u00d73",
+  "trigger": "A 3×3 full of letters with no zeros anywhere, and you want all six terms in one go.",
+  "move": "1) Copy column 1 and column 2 again to the right of the grid. 2) Multiply along the three downward diagonals and add them. 3) Multiply along the three upward diagonals and subtract them.",
+  "why": "This is the ordinary cofactor expansion, just written out in advance. The diagonal picture is only a way to remember which six products get a plus and which get a minus.",
+  "mini": "Expand |a b c ; p q r ; x y z| by Sarrus and confirm it matches expansion along R\\u2081.",
+  "fails": "Common slip: trying Sarrus on a 4×4. There is no diagonal rule beyond 3×3 — order 4 needs cofactors or row operations.",
+  "src": "Illus 11.4, Ex 11.5, Illus 11.6",
+  "srcText": {
+   "Illus 11.4": "Let a, b and c be distinct positive real numbers. Show that the value of the determinant |a b c ; b c a ; c a b| is negative.",
+   "Ex 11.5": "If a, b, c \\u2208 R, then find the roots of the equation |x c \\u2212b ; \\u2212c x a ; b \\u2212a x| = 0.",
+   "Illus 11.6": "If x+y+z = 0, then prove that |ax by cz ; cy az bx ; bz cx ay| = xyz |a b c ; c a b ; b c a|."
+  }
+ },
+ {
+  "id": "P3",
+  "name": "Spot the Vanishing Determinant",
+  "trigger": "You are asked to prove a determinant is 0, or 0 is one of the options, or two lines look suspiciously alike.",
+  "move": "1) Before expanding anything, look for two identical lines, two proportional lines, or an all-zero line. 2) If you cannot see one, do a single operation such as R₁ → R₁ − R₂. 3) Look again.",
+  "why": "A determinant is 0 exactly when one row can be built out of the other rows. Identical and proportional rows are the two cases you can spot by eye. One subtraction usually exposes the hidden third case.",
+  "mini": "Show |1 1 1 ; a b c ; bc+a\\u00b2 ac+b\\u00b2 ab+c\\u00b2| collapses without full expansion.",
+  "fails": "Common slip: expanding in full and grinding to 0 over two pages, when one column operation would have shown it in a single line.",
+  "src": "CAE 11.3 Q1, Ex Q3, Ex Q18",
+  "srcText": {
+   "CAE 11.3 Q1": "Prove that the value of each of the following determinants is zero: (a) |a\\u2081 la\\u2081+mb\\u2081 b\\u2081 ; a\\u2082 la\\u2082+mb\\u2082 b\\u2082 ; a\\u2083 la\\u2083+mb\\u2083 b\\u2083|  (b) |a\\u2212b b\\u2212c c\\u2212a ; x\\u2212y y\\u2212z z\\u2212x ; p\\u2212q q\\u2212r r\\u2212p|  (c) |log x log y log z ; log 2x log 2y log 2z ; log 3x log 3y log 3z|",
+   "Ex Q3": "If p+q+r = 0 = a+b+c, then the value of the determinant |pa qb rc ; qc ra pb ; rb pc qa| is."
+  }
+ },
+ {
+  "id": "P4",
+  "name": "Skew-Symmetric \\u21d2 Odd Order Dies",
+  "trigger": "Zeros all down the main diagonal, and entries mirrored across it with opposite signs (aᵢⱼ = −aⱼᵢ).",
+  "move": "1) Check every diagonal entry really is 0. 2) Check each mirrored pair is a sign flip. 3) If the order is odd, write Δ = 0 immediately.",
+  "why": "Transposing never changes a determinant. But for a skew-symmetric matrix, transposing also multiplies it by (−1)ⁿ. When n is odd that forces Δ = −Δ, so Δ = 0. When n is even there is no contradiction, so it need not vanish.",
+  "mini": "Show |0 \\u2212a b ; a 0 \\u2212c ; \\u2212b c 0| = 0 without expanding.",
+  "fails": "Common slip: using this on a 4×4. Even orders are not forced to zero.",
+  "src": "Illus 11.7, NOTES p.11.5",
+  "srcText": {
+   "Illus 11.7": "Let p\\u03bb\\u2074+q\\u03bb\\u00b3+r\\u03bb\\u00b2+s\\u03bb+t = |\\u03bb\\u00b2+3\\u03bb \\u03bb\\u22121 \\u03bb+3 ; \\u03bb+1 \\u22122\\u03bb \\u03bb\\u22124 ; \\u03bb\\u22123 \\u03bb+4 3\\u03bb| be an identity in \\u03bb, where p,q,r,s and t are constants. Then, find the value of t.",
+   "NOTES p.11.5": "If in determinant a\\u1d62\\u2c7c = \\u2212a\\u2c7c\\u1d62 for all i, j then it is called skew-symmetric determinant. For the principal diagonal elements, a\\u1d62\\u1d62 = \\u2212a\\u1d62\\u1d62 or a\\u1d62\\u1d62 = 0. The value of a skew-symmetric determinant of odd order is zero."
+  }
+ },
+ {
+  "id": "P5",
+  "name": "Area & Collinearity Determinant",
+  "trigger": "Three points given by coordinates, and you need an area, or must show they lie on one line.",
+  "move": "1) Write Δ = |x₁ y₁ 1 ; x₂ y₂ 1 ; x₃ y₃ 1|. 2) Area = ½ × |Δ|. 3) For collinear points, set Δ = 0 and solve. 4) For the line through two points, put (x, y) in row 1 and set Δ = 0.",
+  "why": "This determinant equals twice the signed area of the triangle. Three points on one line make a triangle of zero area, so the determinant is 0. Collinearity is not a separate rule — it is the area rule with area 0.",
+  "mini": "Find the area of the triangle with vertices A(3,2), B(11,8), C(8,12).",
+  "fails": "Common slip: keeping the modulus while solving Δ = 0 for an unknown. The modulus throws away the sign and can hide a second root.",
+  "src": "Illus 11.9, Illus 11.10, Illus 11.12",
+  "srcText": {
+   "Illus 11.9": "Find the area of a triangle whose vertices are A(3, 2), B(11, 8) and C(8, 12).",
+   "Illus 11.10": "If (x\\u2081\\u2212x\\u2082)\\u00b2+(y\\u2081\\u2212y\\u2082)\\u00b2 = a\\u00b2; (x\\u2082\\u2212x\\u2083)\\u00b2+(y\\u2082\\u2212y\\u2083)\\u00b2 = b\\u00b2; (x\\u2083\\u2212x\\u2081)\\u00b2+(y\\u2083\\u2212y\\u2081)\\u00b2 = c\\u00b2, where a, b, c are positive, then prove that 4|x\\u2081 y\\u2081 1 ; x\\u2082 y\\u2082 1 ; x\\u2083 y\\u2083 1|\\u00b2 = (a+b+c)(b+c\\u2212a)(c+a\\u2212b)(a+b\\u2212c).",
+   "Illus 11.12": "Show that the points (a+5, a\\u22124), (a\\u22122, a+3) and (a, a) do not lie on a straight line for any value of a."
+  }
+ },
+ {
+  "id": "P6",
+  "name": "Concurrency of Three Lines",
+  "trigger": "Three lines aᵢx + bᵢy + cᵢ = 0 are said to be concurrent, or you must find the condition that makes them meet at one point.",
+  "move": "1) Write Δ = |a₁ b₁ c₁ ; a₂ b₂ c₂ ; a₃ b₃ c₃|. 2) Set Δ = 0. 3) Expand or simplify to get the condition.",
+  "why": "Work out where the first two lines cross, then put that point into the third line. Clearing the fractions gives exactly this determinant. The same equation read the other way says that if every cᵢ = 1, the three points (aᵢ, bᵢ) lie on one line.",
+  "mini": "If ax+y+1=0, x+by+1=0 and x+y+c=0 are concurrent (a,b,c \\u2260 1), prove 1/(1\\u2212a)+1/(1\\u2212b)+1/(1\\u2212c) = 1.",
+  "fails": "Common slip: not spotting that concurrent lines and collinear points are the same determinant, and re-deriving a result you have already done.",
+  "src": "Illus 11.11, Illus 11.27, CAE 11.1 Q8",
+  "srcText": {
+   "Illus 11.11": "If the lines a\\u2081x+b\\u2081y+1 = 0, a\\u2082x+b\\u2082y+1 = 0 and a\\u2083x+b\\u2083y+1 = 0 are concurrent, show that the points (a\\u2081, b\\u2081), (a\\u2082, b\\u2082) and (a\\u2083, b\\u2083) are collinear.",
+   "Illus 11.27": "If the lines ax+y+1 = 0, x+by+1 = 0 and x+y+c = 0 (a, b, c being distinct and different from 1) are concurrent, then prove that 1/(1\\u2212a) + 1/(1\\u2212b) + 1/(1\\u2212c) = 1.",
+   "CAE 11.1 Q8": "If lines px+qy+r = 0, qx+ry+p = 0 and rx+py+q = 0 are concurrent, then prove that p+q+r = 0 (where p, q, r are distinct)."
+  }
+ },
+ {
+  "id": "P7",
+  "name": "Differentiate One Line at a Time",
+  "trigger": "The entries are functions of x, and you need Δ′(x), or f′(0), or whether f is constant.",
+  "move": "1) Write three separate determinants. 2) In the first, differentiate row 1 only. 3) In the second, row 2 only. 4) In the third, row 3 only. 5) Add the three. 6) Now put in the value of x. Columns work the same way.",
+  "why": "A determinant is a sum of products that take one entry from each row. The product rule differentiates one factor at a time and adds the results. That is exactly one row at a time.",
+  "mini": "For f(x) = |cos x sin x cos x ; cos 2x sin 2x 2cos 2x ; cos 3x sin 3x 3cos 3x|, find f'(0) and f'(\\u03c0/2).",
+  "fails": "Common slip: differentiating every entry at the same time. That grid is not Δ′ and means nothing here.",
+  "src": "Illus 11.13, Illus 11.14, Ex 11.6",
+  "srcText": {
+   "Illus 11.13": "Let f(x) = |cos x sin x cos x ; cos 2x sin 2x 2cos 2x ; cos 3x sin 3x 3cos 3x|. Then find the values of f'(0) and f'(\\u03c0/2).",
+   "Illus 11.14": "If f(x) = |x\\u207f n! 2 ; cos x cos(n\\u03c0/2) 4 ; sin x sin(n\\u03c0/2) 8|, then find the value of d\\u207f/dx\\u207f[f(x)] at x = 0 (n \\u2208 Z).",
+   "Ex 11.6": "If f, g and h are differentiable functions of x and \\u0394(x) = |f g h ; (xf)' (xg)' (xh)' ; (x\\u00b2f)'' (x\\u00b2g)'' (x\\u00b2h)''|, prove that \\u0394'(x) = |f g h ; f' g' h' ; (x\\u00b3f'')' (x\\u00b3g'')' (x\\u00b3h'')'|."
+  }
+ },
+ {
+  "id": "P8",
+  "name": "Push \\u03a3 Into the Varying Line",
+  "trigger": "A determinant Δᵣ contains an index r, and you are asked for the sum of Δᵣ from r = 1 to n.",
+  "move": "1) Find the one line that contains r. 2) Replace each entry of that line by its summation Σ. 3) Leave the other lines exactly as they are. 4) Work out the standard sums and simplify — a common factor often appears.",
+  "why": "A determinant is linear in each line separately. So adding up the determinants is the same as adding up inside that one line.",
+  "mini": "Show \\u03a3\\u1d63\\u208c\\u2081\\u207f \\u0394\\u1d63 is constant for \\u0394\\u1d63 = |r\\u22121 n 6 ; (r\\u22121)\\u00b2 2n\\u00b2 4n\\u22122 ; (r\\u22121)\\u00b3 3n\\u00b3 3n\\u00b2\\u22123n|.",
+  "fails": "Common slip: applying Σ to two lines at once. This works only when r sits in exactly one line.",
+  "src": "Illus 11.21, Ex Q42, Ex Q49",
+  "srcText": {
+   "Illus 11.21": "Let \\u0394\\u1d63 = |r\\u22121 n 6 ; (r\\u22121)\\u00b2 2n\\u00b2 4n\\u22122 ; (r\\u22121)\\u00b2 3n\\u00b3 3n\\u00b2\\u22123n|. Show that \\u03a3\\u1d63\\u208c\\u2081\\u207f \\u0394\\u1d63 is constant.",
+   "Ex Q42": "If D\\u2096 = |1 n n ; 2k n\\u00b2+n+1 n\\u00b2+n ; 2k\\u22121 n\\u00b2 n\\u00b2+n+1| and \\u03a3\\u2096\\u208c\\u2081\\u207f D\\u2096 = 56, then n equals."
+  }
+ },
+ {
+  "id": "P9",
+  "name": "Take Out the Common Factor",
+  "trigger": "A whole row or column shares a factor, or every entry of a line is k times a simpler entry.",
+  "move": "1) Pull the factor out in front of the determinant, one line at a time. 2) To create a factor that is not there yet, multiply chosen lines by a, b and c. 3) Then divide the whole determinant by abc, so the value is unchanged.",
+  "why": "A determinant is linear in each line, so scaling one line scales the answer by the same amount. Multiplying and then dividing changes the shape of the grid without changing its value.",
+  "mini": "Prove |(b+c)\\u00b2 ba ac ; ba (c+a)\\u00b2 cb ; ca cb (a+b)\\u00b2| = 2abc(a+b+c)\\u00b3 by multiplying R\\u2081,R\\u2082,R\\u2083 by a,b,c.",
+  "fails": "Common slip: writing |kA| = kΔ. The factor comes out of ONE line only. Scaling the whole matrix by k gives kⁿΔ.",
+  "src": "Illus 11.38, Illus 11.39, Illus 11.41",
+  "srcText": {
+   "Illus 11.38": "Prove that |a\\u00b2+1 ab ac ; ab b\\u00b2+1 bc ; ac bc c\\u00b2+1| = 1+a\\u00b2+b\\u00b2+c\\u00b2.",
+   "Illus 11.39": "Prove that |(b+c)\\u00b2 ba ac ; ba (c+a)\\u00b2 cb ; ca cb (a+b)\\u00b2| = 2abc(a+b+c)\\u00b3.",
+   "Illus 11.41": "If a\\u00b2+b\\u00b2+c\\u00b2 = 1, then prove that |a\\u00b2+(b\\u00b2+c\\u00b2)cos\\u03c6 ab(1\\u2212cos\\u03c6) ac(1\\u2212cos\\u03c6) ; ba(1\\u2212cos\\u03c6) b\\u00b2+(c\\u00b2+a\\u00b2)cos\\u03c6 bc(1\\u2212cos\\u03c6) ; ca(1\\u2212cos\\u03c6) cb(1\\u2212cos\\u03c6) c\\u00b2+(a\\u00b2+b\\u00b2)cos\\u03c6| is independent of a, b, c."
+  }
+ },
+ {
+  "id": "P10",
+  "name": "Manufacture Zeros by R\\u1d62\\u2192R\\u1d62+mR\\u2c7c",
+  "trigger": "The entries are bulky, but two lines differ by something simple, or a column of numbers has an obvious arithmetic relation.",
+  "move": "1) Apply Rᵢ → Rᵢ + mRⱼ, or the column version. 2) The value does not change. 3) Repeat until one line has two zeros. 4) Expand along that line.",
+  "why": "This operation secretly adds a second determinant that has two proportional rows, and that one is worth 0. So nothing is added and the value is genuinely safe. This is the workhorse move of the whole chapter.",
+  "mini": "Find |41 1 5 ; 79 7 9 ; 29 5 3| using C\\u2081 \\u2192 C\\u2081 \\u2212 8C\\u2083.",
+  "fails": "Common slip: changing all three rows in one step. For order 3 you may change at most two lines at a time.",
+  "src": "Illus 11.22, Illus 11.24, Illus 11.26",
+  "srcText": {
+   "Illus 11.22": "Find the value of |41 1 5 ; 79 7 9 ; 29 5 3|.",
+   "Illus 11.24": "Find the value of the determinant |1 1 1 1 ; 1 2 3 4 ; 1 3 6 10 ; 1 4 10 20|.",
+   "Illus 11.26": "Solve for x: |x\\u22122 2x\\u22123 3x\\u22124 ; x\\u22124 2x\\u22129 3x\\u221216 ; x\\u22128 2x\\u221227 3x\\u221264| = 0."
+  }
+ },
+ {
+  "id": "P11",
+  "name": "Sum All Lines Into One",
+  "trigger": "Every row adds up to the same total, or a symmetric expression like a+b+c can be made to fill a whole line.",
+  "move": "1) Do R₁ → R₁ + R₂ + R₃, or the column version. 2) That line now has the same entry everywhere. 3) Take it out as a common factor. 4) Then make zeros to finish.",
+  "why": "Equal row sums are the signature of a symmetric determinant. Adding the lines turns that hidden sameness into a visible common factor — and that factor is usually what the answer is asking for.",
+  "mini": "Show |x+4 2x 2x ; 2x x+4 2x ; 2x 2x x+4| = (5x+4)(4\\u2212x)\\u00b2.",
+  "fails": "Common slip: doing the addition but forgetting to pull the factor out, which throws away the structure you just created.",
+  "src": "Illus 11.28, Illus 11.29, Illus 11.31",
+  "srcText": {
+   "Illus 11.28": "Using the properties of determinant, show that |x+4 2x 2x ; 2x x+4 2x ; 2x 2x x+4| = (5x+4)(4\\u2212x)\\u00b2.",
+   "Illus 11.29": "Prove that |a\\u2212b\\u2212c 2a 2a ; 2b b\\u2212c\\u2212a 2b ; 2c 2c c\\u2212a\\u2212b| = (a+b+c)\\u00b3.",
+   "Illus 11.31": "If a, b, and c are real numbers, and \\u0394 = |b+c c+a a+b ; c+a a+b b+c ; a+b b+c c+a| = 0, then prove that either a+b+c = 0 or a = b = c."
+  }
+ },
+ {
+  "id": "P12",
+  "name": "Split a Determinant Apart",
+  "trigger": "One line's entries are visibly sums, like aᵢ + aᵢ′, or a⁴ − 1 which separates into a⁴ and −1.",
+  "move": "1) Pick the one line made of sums. 2) Write two determinants, splitting only that line. 3) Copy the other two lines unchanged into both. 4) Work out each piece — often one of them is 0.",
+  "why": "This is linearity in a line again, used forwards instead of backwards. Two familiar determinants are usually easier than one messy one.",
+  "mini": "Split |a a\\u00b3 a\\u2074\\u22121 ; b b\\u00b3 b\\u2074\\u22121 ; c c\\u00b3 c\\u2074\\u22121| = 0 w.r.t. C\\u2083 and deduce abc(ab+bc+ca) = a+b+c.",
+  "fails": "Common slip: splitting two lines at once and writing two determinants, when the algebra actually produces four.",
+  "src": "Illus 11.37, \\u00a711.3.1",
+  "srcText": {
+   "Illus 11.37": "If a, b, c are all different and |a a\\u00b3 a\\u2074\\u22121 ; b b\\u00b3 b\\u2074\\u22121 ; c c\\u00b3 c\\u2074\\u22121| = 0, show that abc(ab+bc+ca) = a+b+c.",
+   "\\u00a711.3.1": "If some or all elements of a row or column of a determinant are expressed as sum of two (or more) terms, then the determinant can be expressed as sum of two (or more) determinants."
+  }
+ },
+ {
+  "id": "P13",
+  "name": "Factor Theorem \\u2014 Substitute to Find a Root",
+  "trigger": "You must prove a determinant equals a product like (a−b)(b−c)(c−a), or find the constant k in such an identity.",
+  "move": "1) Put a = b. 2) If two rows become identical the determinant is 0, so (a−b) is a factor. 3) Repeat for each factor you expect. 4) Compare degrees to see what is left over. 5) Put in easy numbers to pin down the constant.",
+  "why": "The determinant is a polynomial in a, b and c. Any substitution that makes two rows identical is a root of that polynomial, and a root gives a factor. Counting degrees then tells you how much is still unaccounted for.",
+  "mini": "Prove |\\u22122a a+b a+c ; b+a \\u22122b b+c ; c+a c+b \\u22122c| = 4(a+b)(b+c)(c+a) by finding \\u03bb.",
+  "fails": "Common slip: skipping the degree check and assuming what is left is a constant. Sometimes it is not, and the identity then fails on a second substitution.",
+  "src": "Ex 11.1, Illus 11.35, CAE 11.3 Q12",
+  "srcText": {
+   "Ex 11.1": "Prove that |\\u22122a a+b a+c ; b+a \\u22122b b+c ; c+a c+b \\u22122c| = 4(a+b)(b+c)(c+a).",
+   "Illus 11.35": "Prove that |a b+c a\\u00b2 ; b c+a b\\u00b2 ; c a+b c\\u00b2| = \\u2212(a+b+c)(a\\u2212b)(b\\u2212c)(c\\u2212a).",
+   "CAE 11.3 Q12": "If |(a+1)\\u00b2 (b+1)\\u00b2 (c+1)\\u00b2 ; a\\u00b2 b\\u00b2 c\\u00b2 ; (a\\u22121)\\u00b2 (b\\u22121)\\u00b2 (c\\u22121)\\u00b2| = k(a\\u2212b)(b\\u2212c)(c\\u2212a), then the value of k is."
+  }
+ },
+ {
+  "id": "P14",
+  "name": "Recognise a Standard Form",
+  "trigger": "The grid looks like a Vandermonde |1 1 1 ; x y z ; x² y² z²|, a cyclic |a b c ; b c a ; c a b|, or another named determinant from the text.",
+  "move": "1) Compare the grid against the standard list. 2) If the match is close but not exact, use one column operation, a transpose, or a swap to force the shape. 3) Then quote the known result instead of deriving it.",
+  "why": "These shapes come up again and again, and their factorisations are already proved in the book. Recognising one turns a long derivation into a single line.",
+  "mini": "Factorise |3 a+b+c a\\u00b3+b\\u00b3+c\\u00b3 ; a+b+c a\\u00b2+b\\u00b2+c\\u00b2 a\\u2074+b\\u2074+c\\u2074 ; a\\u00b2+b\\u00b2+c\\u00b2 a\\u00b3+b\\u00b3+c\\u00b3 a\\u2075+b\\u2075+c\\u2075| as a product of two Vandermondes.",
+  "fails": "Common slip: swapping two columns to reach the standard shape and forgetting that a swap flips the sign. The answer then comes out correct except for ±.",
+  "src": "\\u00a711.3.3, Illus 11.34, Illus 11.43",
+  "srcText": {
+   "\\u00a711.3.3": "Frequently used determinants: (1) |1 1 1 ; x y z ; x\\u00b2 y\\u00b2 z\\u00b2| = (x\\u2212y)(y\\u2212z)(z\\u2212x)  (2) |1 1 1 ; x y z ; x\\u00b3 y\\u00b3 z\\u00b3| = (x\\u2212y)(y\\u2212z)(z\\u2212x)(x+y+z)  (3) |1 1 1 ; x\\u00b2 y\\u00b2 z\\u00b2 ; x\\u00b3 y\\u00b3 z\\u00b3| = (x\\u2212y)(y\\u2212z)(z\\u2212x)(xy+yz+zx)",
+   "Illus 11.34": "Prove that |1 \\u03b2\\u03b3+\\u03b1\\u03b4 \\u03b2\\u00b2\\u03b3\\u00b2+\\u03b1\\u00b2\\u03b4\\u00b2 ; 1 \\u03b3\\u03b1+\\u03b2\\u03b4 \\u03b3\\u00b2\\u03b1\\u00b2+\\u03b2\\u00b2\\u03b4\\u00b2 ; 1 \\u03b1\\u03b2+\\u03b3\\u03b4 \\u03b1\\u00b2\\u03b2\\u00b2+\\u03b3\\u00b2\\u03b4\\u00b2| = \\u2212(\\u03b1\\u2212\\u03b4)(\\u03b2\\u2212\\u03b4)(\\u03b3\\u2212\\u03b4)(\\u03b1\\u2212\\u03b2)(\\u03b2\\u2212\\u03b3)(\\u03b3\\u2212\\u03b1).",
+   "Illus 11.43": "Factorize the determinant |3 a+b+c a\\u00b3+b\\u00b3+c\\u00b3 ; a+b+c a\\u00b2+b\\u00b2+c\\u00b2 a\\u2074+b\\u2074+c\\u2074 ; a\\u00b2+b\\u00b2+c\\u00b2 a\\u00b3+b\\u00b3+c\\u00b3 a\\u2075+b\\u2075+c\\u2075|."
+  }
+ },
+ {
+  "id": "P15",
+  "name": "Multiply Two Determinants Row-by-Row",
+  "trigger": "Entries look like dot products such as aᵢαⱼ + bᵢβⱼ + cᵢγⱼ, or squares of sums, or the question says 'express as the product of two determinants'.",
+  "move": "1) Read entry (i, j) as row i of Δ₁ dotted with row j of Δ₂. 2) Going backwards, split a messy grid into two simple determinants. 3) All four pairings (row×row, row×column and so on) give the same value, so pick the one that creates zeros.",
+  "why": "Multiplying two determinants matches multiplying the underlying matrices, and a determinant equals its transpose — which is why all four pairings agree. Splitting a nasty grid into two clean ones is nearly always cheaper than expanding it.",
+  "mini": "Show |1 cos(\\u03b2\\u2212\\u03b1) cos(\\u03b3\\u2212\\u03b1) ; cos(\\u03b1\\u2212\\u03b2) 1 cos(\\u03b3\\u2212\\u03b2) ; cos(\\u03b1\\u2212\\u03b3) cos(\\u03b2\\u2212\\u03b3) 1| = 0 without expanding at any stage.",
+  "fails": "Common slip: pairing rows with rows when the entries were actually built column-wise. Check one entry against the definition before you commit.",
+  "src": "Illus 11.44, Illus 11.45, Ex 11.2",
+  "srcText": {
+   "Illus 11.44": "Prove that |(a\\u2212x)\\u00b2 (a\\u2212y)\\u00b2 (a\\u2212z)\\u00b2 ; (b\\u2212x)\\u00b2 (b\\u2212y)\\u00b2 (b\\u2212z)\\u00b2 ; (c\\u2212x)\\u00b2 (c\\u2212y)\\u00b2 (c\\u2212z)\\u00b2| = 2(b\\u2212c)(c\\u2212a)(a\\u2212b)\\u00d7(y\\u2212z)(z\\u2212x)(x\\u2212y).",
+   "Illus 11.45": "If \\u03b1, \\u03b2, \\u03b3 are real numbers, then without expanding at any stage, show that |1 cos(\\u03b2\\u2212\\u03b1) cos(\\u03b3\\u2212\\u03b1) ; cos(\\u03b1\\u2212\\u03b2) 1 cos(\\u03b3\\u2212\\u03b2) ; cos(\\u03b1\\u2212\\u03b3) cos(\\u03b2\\u2212\\u03b3) 1| = 0.",
+   "Ex 11.2": "Let \\u0394 = |2a\\u2081b\\u2081 a\\u2081b\\u2082+a\\u2082b\\u2081 a\\u2081b\\u2083+a\\u2083b\\u2081 ; a\\u2081b\\u2082+a\\u2082b\\u2081 2a\\u2082b\\u2082 a\\u2082b\\u2083+a\\u2083b\\u2082 ; a\\u2081b\\u2083+a\\u2083b\\u2081 a\\u2083b\\u2082+a\\u2082b\\u2083 2a\\u2083b\\u2083|. Expressing \\u0394 as the product of two determinants, show that \\u0394 = 0."
+  }
+ },
+ {
+  "id": "P16",
+  "name": "Determinant of Cofactors",
+  "trigger": "A new determinant is built from the cofactors of the original, or a 2×2 block of cofactors is asked for.",
+  "move": "1) Use Δc = Δⁿ⁻¹. 2) For order 3 that means Δc = Δ². 3) Doing it once more gives Δ⁴. 4) For a 2×2 cofactor block, use |B₂ C₂ ; B₃ C₃| = a₁Δ.",
+  "why": "Multiply Δ by its cofactor determinant, row by row. You get a diagonal grid with Δ down the diagonal. So Δ × Δc = Δ³. Dividing gives Δc = Δ² for order 3.",
+  "mini": "If |1 x x\\u00b2 ; x x\\u00b2 1 ; x\\u00b2 1 x| = 3, find the determinant formed by replacing each element by its cofactor.",
+  "fails": "Common slip: using Δc = Δ² on a 4×4. The exponent is n − 1, so order 4 gives Δ³.",
+  "src": "Illus 11.46, \\u00a711.4.1, Ex Q47",
+  "srcText": {
+   "Illus 11.46": "If |1 x x\\u00b2 ; x x\\u00b2 1 ; x\\u00b2 1 x| = 3, then find the value of |x\\u00b3\\u22121 0 x\\u2212x\\u2074 ; 0 x\\u2212x\\u2074 x\\u00b3\\u22121 ; x\\u2212x\\u2074 x\\u00b3\\u22121 0|.",
+   "\\u00a711.4.1": "If A\\u2081, B\\u2081, C\\u2081, \\u2026 are respectively the cofactors of the elements a\\u2081, b\\u2081, c\\u2081, \\u2026 of the determinant \\u0394, \\u0394 \\u2260 0, then |A\\u2081 B\\u2081 C\\u2081 ; A\\u2082 B\\u2082 C\\u2082 ; A\\u2083 B\\u2083 C\\u2083| = \\u0394\\u00b2. For n-order determinant, \\u0394c = \\u0394\\u207f\\u207b\\u00b9.",
+   "Ex Q47": "If A\\u2081, B\\u2081, C\\u2081, \\u2026 are, respectively, the cofactors of the elements a\\u2081, b\\u2081, c\\u2081, \\u2026 of the determinant \\u0394 = |a\\u2081 b\\u2081 c\\u2081 ; a\\u2082 b\\u2082 c\\u2082 ; a\\u2083 b\\u2083 c\\u2083|, \\u0394 \\u2260 0, then the value of |B\\u2082 C\\u2082 ; B\\u2083 C\\u2083| is equal to."
+  }
+ }
 ];
 
 let DET_GUIDED = [
@@ -4868,158 +4960,252 @@ let MAT_FORMULAE = [
 ];
 
 let MAT_PATTERNS = [
-  {id:"P1",name:"Count the Free Entries",
-   trigger:"'How many matrices of order n are there such that \u2026' \u2014 diagonal, scalar, triangular, symmetric, entries from a given set, prescribed trace.",
-   move:"Split the n\u00b2 positions into FORCED (zero, or equal to a partner entry) and FREE. Count choices for each free position and multiply. If a constraint links entries (trace = k, symmetric), handle the linked block first and multiply by the free remainder.",
-   why:"Every 'type' of matrix is just a statement about which positions are determined by which others, so counting reduces to counting independent choices.",
-   mini:"With entries from a set of 8 values, an upper triangular 3\u00d73 matrix has 6 free positions on-or-above the diagonal, so 8\u2076 such matrices.",
-   fails:"Forgetting the exclusion in 'diagonal but not null' (subtract the single all-zero case), or double-counting a symmetric matrix's mirror entries.",
-   src:"Illus 12.1, Illus 12.3, Illus 12.7, Illus 12.18",
-   srcText:{"Illus 12.1":"Find the total number of matrices with different elements that can be formed using the given twelve different numbers.","Illus 12.3":"Let A = {0,1,2,3,4,5,6,7}. Then find the number of square matrices of order 3\u00d73, using the elements of set A, which are a. diagonal but not null b. scalar c. upper triangular d. symmetric e. symmetric with maximum number of distinct elements.","Illus 12.7":"If A is a matrix of order 3\u00d73, whose entries are either 0 or 1, then find the number of matrices such that tr(A) is a prime number.","Illus 12.18":"Let S = {0,1,2}. Then find the number of symmetric matrices of order 3 whose elements belong to S and whose trace is 3."}},
-
-  {id:"P2",name:"Build the Matrix from a\u1d62\u2c7c = f(i,j)",
-   trigger:"The matrix is DEFINED by a formula in i and j \u2014 possibly piecewise (sgn, cos, tan, cot conditions).",
-   move:"Tabulate. Run i and j over their ranges, evaluate f at each pair, and write the grid out explicitly. Only then answer the question asked (symmetry, determinant, trace).",
-   why:"A rule in i and j is not a matrix until it is evaluated; almost all of these questions become trivial once the grid is on paper.",
-   mini:"a\u1d62\u2c7c = (i+j)\u00b7sgn(i\u2212j) on 3\u00d73 gives a matrix with zero diagonal and a\u2c7c\u1d62 = \u2212a\u1d62\u2c7c \u2014 skew-symmetric.",
-   fails:"Trying to reason about symmetry directly from the formula and getting the sign of sgn(i\u2212j) backwards. Swap i and j in the formula and compare \u2014 that is the honest test.",
-   src:"Illus 12.4, Illus 12.9, CAE 12.1 Q1",
-   srcText:{"Illus 12.4":"Let A = [a\u1d62\u2c7c]\u2083\u2093\u2083, a\u1d62\u2c7c = (i+j) sgn(i\u2212j) \u2200 i,j and b\u1d62\u2c7c = cos(i\u2212j), \u2200 i,j. Check whether the matrices A and B are symmetric or skew-symmetric.","Illus 12.9":"Let A = [a\u1d62\u2c7c] be a 3\u00d73 matrix, where a\u1d62\u2c7c = i if tan(i\u2212j) < 0; j if cot(i\u2212j) > 0; 2i\u2212j if cos(i\u2212j) = 1. Then find the value of |A|.","CAE 12.1 Q1":"Construct a 3\u00d74 matrix, whose elements are given by a\u1d62\u2c7c = \u00bd|\u22123i+j|."}},
-
-  {id:"P3",name:"Equate Corresponding Entries",
-   trigger:"Two matrices are stated equal, or a matrix equation in scalars x, y, z is given.",
-   move:"Same order first, then read off one scalar equation per position. Solve the resulting system, and KEEP ONLY the values common to every equation.",
-   why:"Matrix equality is defined entrywise, so a matrix equation is just a simultaneous system in disguise.",
-   mini:"From [[2x+1, 3y],[0, y\u00b2\u22125y]] = [[x+3, y\u00b2+2],[0, \u22126]] the three equations give x = 2 and y \u2208 {1,2} \u2229 {2,3} = {2}.",
-   fails:"Reporting a value that satisfies only one of the entry equations. The answer is the INTERSECTION over all positions, not the union.",
-   src:"Illus 12.2, Illus 12.13, CAE 12.1 Q2",
-   srcText:{"Illus 12.2":"For what values of x and y are the following matrices equal? A = [[2x+1, 3y],[0, y\u00b2\u22125y]], B = [[x+3, y\u00b2+2],[0, \u22126]].","Illus 12.13":"Find non-zero values of x satisfying the matrix equation x[[2x,2],[3,x]] + 2[[8,5x],[4,4x]] = 2[[x\u00b2+8, 24],[10, 6x]].","CAE 12.1 Q2":"If [[a\u2212b, 2a+c],[2a\u2212b, 3c+d]] = [[\u22121, 5],[0, 13]], then the value of a+b+c+d is."}},
-
-  {id:"P4",name:"Test Symmetry by Transposing",
-   trigger:"Asked whether a built or combined matrix is symmetric, skew-symmetric, or neither.",
-   move:"Compute the transpose of the WHOLE expression using (A\u00b1B)\u1d40 = A\u1d40\u00b1B\u1d40 and (AB)\u1d40 = B\u1d40A\u1d40, then substitute A\u1d40 = A (symmetric) or A\u1d40 = \u2212A (skew). Compare the result with \u00b1 the original.",
-   why:"'Symmetric' and 'skew' are statements about the transpose, so the transpose is the only tool needed \u2014 never expand entries.",
-   mini:"C = AB \u2212 BA with A\u1d40 = A, B\u1d40 = \u2212B: C\u1d40 = (AB)\u1d40 \u2212 (BA)\u1d40 = B\u1d40A\u1d40 \u2212 A\u1d40B\u1d40 = \u2212BA + AB = C, so C is symmetric.",
-   fails:"Dropping the reversal \u2014 writing (AB)\u1d40 = A\u1d40B\u1d40. Every wrong answer in this family traces back to that.",
-   src:"Illus 12.32, Illus 12.33, Illus 12.34",
-   srcText:{"Illus 12.32":"Let A be a square matrix. Then prove that AA\u1d40 and A\u1d40A are symmetric matrices.","Illus 12.33":"If A, B are square matrices of same order and B is a skew-symmetric matrix, show that A\u1d40BA is skew-symmetric.","Illus 12.34":"Let A and B be 3\u00d73 real matrices such that A is symmetric matrix and B is skew-symmetric matrix. Then prove that a. A\u00b2B\u00b2 \u2212 B\u00b2A\u00b2 is skew-symmetric b. A\u2074 \u2212 B\u2074 is symmetric c. AB \u2212 BA is symmetric d. A\u00b9\u2075B\u00b3\u2070 \u2212 B\u00b3\u2070A\u00b9\u2075 is skew-symmetric."}},
-
-  {id:"P5",name:"Exploit the Skew-Symmetric Structure",
-   trigger:"The word 'skew-symmetric' appears, especially alongside 'odd order', 'determinant', or 'number of distinct entries'.",
-   move:"Immediately write down the three structural facts: every diagonal entry is 0; the strict upper triangle determines everything; odd order \u21d2 |A| = 0. Then read off whichever the question needs.",
-   why:"a\u1d62\u1d62 = \u2212a\u1d62\u1d62 forces a\u1d62\u1d62 = 0, and |A| = |A\u1d40| = |\u2212A| = (\u22121)\u207f|A| collapses at odd n.",
-   mini:"A skew-symmetric matrix of order n has at most n(n\u22121)/2 distinct non-zero entries; setting that equal to 45 gives n = 10.",
-   fails:"Concluding 'odd order \u21d2 singular' also holds for SYMMETRIC matrices. It does not \u2014 the sign flip is what does the work.",
-   src:"Illus 12.5, CAE 12.1 Q7",
-   srcText:{"Illus 12.5":"If the maximum number of distinct non-zero elements in a skew-symmetric matrix is 45 then find the value of n.","CAE 12.1 Q7":"If matrix A is skew-symmetric matrix of odd order, then show that tr. A = det. A."}},
-
-  {id:"P6",name:"Trace Algebra and Trace Minimisation",
-   trigger:"tr(\u00b7) appears in the statement \u2014 combining traces of sums, or asking for the least value of a trace.",
-   move:"Use linearity: tr(\u03bbA \u00b1 \u03bcB) = \u03bb tr A \u00b1 \u03bc tr B, which turns two trace conditions into a 2\u00d72 linear system in tr A and tr B. For minimisation, complete the square on the diagonal expression.",
-   why:"The trace is a linear functional, so trace conditions behave exactly like ordinary linear equations in two unknowns.",
-   mini:"tr(A+2B) = 4 and tr(3A\u22124B) = 2 give tr A = 2, tr B = 1, hence tr(4A+5B) = 13.",
-   fails:"Reaching for tr(AB) = tr A \u00b7 tr B \u2014 that is false. The only product fact available is tr(AB) = tr(BA).",
-   src:"Illus 12.6, Illus 12.15",
-   srcText:{"Illus 12.6":"If A = [[a\u00b2+4b+7, \u22121, 3],[4, b\u00b2+c\u00b2+8, 7],[\u22122, 0, 4\u22122a\u22126c]], then find the least value of tr(A).","Illus 12.15":"If A and B are square matrices of the same order such that tr.(A+2B) = 4 and tr.(3A\u22124B) = 2, then find the value of tr.(4A+5B)."}},
-
-  {id:"P7",name:"Singular \u21d2 Determinant Zero \u21d2 Solve for the Parameter",
-   trigger:"'\u2026 is singular', or 'find x for which the matrix has no inverse'.",
-   move:"Set |A| = 0. Use row/column operations to create zeros BEFORE expanding \u2014 the determinant of a parametric matrix expands far more cleanly after one subtraction.",
-   why:"Singular is defined as |A| = 0, so the whole question is one polynomial equation in the parameter.",
-   mini:"For [[2/x, \u22121, 2],[1, x, 2x\u00b2],[1, 1/x, 2]] singular, |A| = 0 gives x = \u00b11.",
-   fails:"Expanding along a row full of parameters. R\u2081 \u2192 R\u2081 \u2212 R\u2082 first; it usually kills a whole entry.",
-   src:"Illus 12.8, CAE 12.1 Q6",
-   srcText:{"Illus 12.8":"Find the values of x for which matrix [[3, \u22121+x, 2],[3, \u22121, x+2],[x+3, \u22121, 2]] is singular.","CAE 12.1 Q6":"The values of x for which the matrix A = [[2/x, \u22121, 2],[1, x, 2x\u00b2],[1, 1/x, 2]] is singular are."}},
-
-  {id:"P8",name:"Solve a Matrix Equation for the Unknown Matrix",
-   trigger:"An unknown matrix D, X or Y sits inside a linear matrix relation \u2014 A + B \u2212 D = O, 2X \u2212 Y = P and 2Y + X = Q, or a polynomial identity in a parameter \u03bb.",
-   move:"Treat matrices as ordinary algebraic unknowns and rearrange \u2014 addition and scalar multiplication obey all the usual rules. For a \u03bb-polynomial identity, SUBSTITUTE convenient values (\u03bb = 0, 1, \u22121) to generate simultaneous matrix equations, then eliminate.",
-   why:"Under + and scalar \u00d7, matrices of a fixed order form a vector space; every ordinary linear manipulation is legal. Only multiplication misbehaves.",
-   mini:"If A\u03bb\u00b2 + B\u03bb + C equals a given \u03bb-matrix, then \u03bb = 0 gives C, and \u03bb = \u00b11 give A+B+C and A\u2212B+C, whose difference is 2B.",
-   fails:"Carrying that freedom into products \u2014 you may not divide by a matrix, and you may not reorder a product to isolate X.",
-   src:"Illus 12.10, Illus 12.16, CAE 12.2 Q1, CAE 12.2 Q3",
-   srcText:{"Illus 12.10":"If A = [[1,2],[3,4],[5,6]] and B = [[\u22123,\u22122],[1,\u22125],[4,3]], then find D = [[p,q],[r,s],[t,u]] such that A + B \u2212 D = O.","Illus 12.16":"If [[\u03bb\u00b2\u22122\u03bb+1, \u03bb\u22122],[1\u2212\u03bb\u00b2+3\u03bb, 1\u2212\u03bb\u00b2]] = A\u03bb\u00b2 + B\u03bb + C, where A, B and C are matrices then find matrices B and C.","CAE 12.2 Q3":"Solve the following equations for X and Y: 2X \u2212 Y = [[3,\u22123,0],[3,3,2]], 2Y + X = [[4,1,5],[\u22121,4,\u22124]]."}},
-
-  {id:"P9",name:"Split into Symmetric and Skew Parts",
-   trigger:"'Express A as P + Q where P is symmetric and Q is skew-symmetric', or a question about det(P) / det(Q) of such a split.",
-   move:"P = \u00bd(A + A\u1d40), Q = \u00bd(A \u2212 A\u1d40). Both are forced \u2014 the decomposition is unique. Then compute whatever is asked directly from those two explicit matrices.",
-   why:"P\u1d40 = P and Q\u1d40 = \u2212Q follow in one line from (A\u1d40)\u1d40 = A, and P + Q telescopes back to A.",
-   mini:"For A = [[1,a],[2,0]], Q = [[0,(a\u22122)/2],[(2\u2212a)/2,0]] so det Q = (a\u22122)\u00b2/4 \u2014 one equation in a.",
-   fails:"Forgetting the \u00bd. Without it you get A + A\u1d40 and A \u2212 A\u1d40, whose sum is 2A, not A.",
-   src:"Illus 12.19, CAE 12.2 Q7",
-   srcText:{"Illus 12.19":"Let A = [[1,a],[2,3]] and A = C + D, where C and D are respectively symmetric and skew-symmetric matrices. Find the value of det.(D) when det.(C) is the maximum.","CAE 12.2 Q7":"If matrix A = [[0,1,\u22121],[4,\u22123,4],[3,\u22123,4]] = B + C, where B is symmetric matrix and C is skew-symmetric matrix, then find matrices B and C."}},
-
-  {id:"P10",name:"Check Conformability, Then Read the Order",
-   trigger:"'Which product is not defined?', or the orders of A and B are given symbolically and something must be deduced.",
-   move:"Write every matrix's order underneath it. A\u2098\u2093\u2099B\u2099\u2093\u209a exists only if the inner numbers match, and the result is m\u00d7p. If BOTH AB and BA are said to exist, set columns(A) = rows(B) AND columns(B) = rows(A) and solve.",
-   why:"The row-by-column definition needs exactly as many entries in a row of A as in a column of B; everything else is bookkeeping.",
-   mini:"A has m rows, n+5 columns; B has m rows, 11\u2212n columns. Both AB and BA existing forces n+5 = m and 11\u2212n = m, so n = 3, m = 8.",
-   fails:"Assuming AB and BA have the same order when both exist \u2014 they do only if A and B are square of the same order.",
-   src:"Illus 12.20, CAE 12.3 Q1",
-   srcText:{"Illus 12.20":"Matrix A has m rows and n+5 columns; matrix B has m rows and 11\u2212n columns. If both AB and BA exist, prove that AB and BA are square matrices.","CAE 12.3 Q1":"Consider the matrices A = [[4,6,\u22121],[3,0,2],[1,\u22122,5]], B = [[2,4],[0,1],[\u22121,2]], C = [[3],[1],[2]]. Out of the given matrix products, which one is not defined?"}},
-
-  {id:"P11",name:"Multiply Row-by-Column",
-   trigger:"A numerical product AB (or BA, or A\u1d40A) is asked for outright.",
-   move:"Entry (i,j) of the product is the dot product of row i of the first with column j of the second. Do them in reading order and write the target grid first so nothing is skipped.",
-   why:"This is the definition; there is no shortcut for a generic numerical product.",
-   mini:"For A 3\u00d73 and B 3\u00d72, AB is 3\u00d72 and (AB)\u2081\u2081 is (row 1 of A)\u00b7(column 1 of B).",
-   fails:"Computing column-by-row. Also: computing AB when the question asked for BA \u2014 for non-square factors these have different orders, which is a free self-check.",
-   src:"Illus 12.21, Illus 12.22, Illus 12.23",
-   srcText:{"Illus 12.21":"If A = [[1,\u22122,3],[\u22124,2,5]] and B = [[2,3],[4,5],[2,1]], then find the product AB and BA.","Illus 12.22":"Find the values of x, y, z if the matrix A = [[0,2y,z],[x,y,\u2212z],[x,\u2212y,z]] satisfies the equation A\u1d40A = I.","Illus 12.23":"If A = [[1,0,\u22121],[2,1,0],[0,1,1]] and B = [B\u2081,B\u2082,B\u2083], where B\u2081, B\u2082, B\u2083 are column matrices, and AB\u2081 = [[1],[3],[0]], AB\u2082 = [[5],[7],[\u22121]], AB\u2083 = [[\u22122],[2],[3]], then find the matrix B."}},
-
-  {id:"P12",name:"Recover an Unknown Matrix Column by Column",
-   trigger:"AB\u2081, AB\u2082, AB\u2083 are given as columns and B is wanted; or 'find X such that AX = B'.",
-   move:"Name the unknown entries, multiply out, and equate each resulting column with its given target. Each column gives an independent small system \u2014 solve them one at a time.",
-   why:"The jth column of AB depends only on the jth column of B, so the problem splits into independent column problems.",
-   mini:"With B = [[a,p,x],[b,q,y],[c,r,z]], the equation AB\u2081 = given determines only a, b, c.",
-   fails:"Setting up all nine unknowns in one nine-equation system. Column-splitting turns it into three easy triples.",
-   src:"Illus 12.23, CAE 12.3 Q6",
-   srcText:{"CAE 12.3 Q6":"Let A = [[1,2],[3,\u22125]], B = [[1,0],[0,2]] and X be the matrices such that A = BX. Then the sum of elements of matrix X is."}},
-
-  {id:"P13",name:"Compute A\u207f by Spotting the Trend",
-   trigger:"A power A\u207f, A\u2078, A\u00b9\u2070\u2070, A\u00b2\u2070\u2070\u2075 is asked for, or A\u207f is claimed to have a given closed form.",
-   move:"Compute A\u00b2 and A\u00b3 honestly. Look for one of the three standard shapes: (i) angle-doubling in a rotation matrix, (ii) a linear recursion A\u00b2 = \u03b1A + \u03b2I that lets you reduce every power, (iii) A = I + N with N nilpotent, so the binomial expansion terminates.",
-   why:"Every JEE-level power question is one of those three; brute force past A\u00b3 is never the intended route.",
-   mini:"For the rotation matrix, A\u00b2 doubles the angle and A\u00b3 triples it, so A\u207f is the same matrix with n\u03b8 throughout.",
-   fails:"Guessing the pattern from A\u00b2 alone. Two data points fit too many formulas \u2014 always confirm with A\u00b3.",
-   src:"Illus 12.26, Illus 12.27, CAE 12.3 Q8",
-   srcText:{"Illus 12.26":"If A = [[p,q],[0,1]], then show that A\u2078 = [[p\u2078, q((p\u2078\u22121)/(p\u22121))],[0,1]].","Illus 12.27":"If A = [[cos\u03b8, sin\u03b8],[\u2212sin\u03b8, cos\u03b8]], n \u2208 N, then prove that A\u207f = [[cos n\u03b8, sin n\u03b8],[\u2212sin n\u03b8, cos n\u03b8]].","CAE 12.3 Q8":"If A = [[3,\u22124],[1,\u22121]], show that A\u1d4f = [[1+2k, \u22124k],[k, 1\u22122k]], where k is any positive integer."}},
-
-  {id:"P14",name:"Read the Geometry: Rotation and Reflection Matrices",
-   trigger:"A point is rotated or reflected and the transforming matrix is wanted, or a matrix built from cos\u03b8 and sin\u03b8 appears.",
-   move:"Write the image coordinates as x\u2081 = ax + by, y\u2081 = cx + dy and read the matrix straight off the coefficients. Rotation by \u03b8: [[cos\u03b8, \u2212sin\u03b8],[sin\u03b8, cos\u03b8]]. Reflection in the line y = x tan\u03b8: [[cos2\u03b8, sin2\u03b8],[sin2\u03b8, \u2212cos2\u03b8]].",
-   why:"A linear map IS its coefficient matrix; putting the transformation into coordinate form makes the entries visible with no geometry needed.",
-   mini:"Reflection about the x-axis sends (x,y) to (x,\u2212y), i.e. x\u2081 = 1\u00b7x + 0\u00b7y and y\u2081 = 0\u00b7x + (\u22121)y, so the matrix is diag(1,\u22121).",
-   fails:"Confusing rotation with reflection. Rotation has determinant +1 and R(s)R(t) = R(s+t); reflection has determinant \u22121 and squares to I. Checking the determinant is instant.",
-   src:"Illus 12.29, CAE 12.3 Q3, CAE 12.3 Q9",
-   srcText:{"Illus 12.29":"Consider point P(x,y) in first quadrant. Its reflection about x-axis is Q(x\u2081,y\u2081). Here matrix [[1,0],[0,\u22121]] is the matrix of reflection about x-axis. Then find the matrix of a. reflection about y-axis b. reflection about the line y = x c. reflection about origin d. reflection about line y = (tan\u03b8)x.","CAE 12.3 Q3":"Let the matrix R(t) be defined by R(t) = [[cos t, sin t],[\u2212sin t, cos t]]. Then show that R(s)R(t) = R(s+t).","CAE 12.3 Q9":"Point P(x,y) is rotated by an angle \u03b8 in anticlockwise direction. The new position of point P is Q(x\u2081,y\u2081). If [[x\u2081],[y\u2081]] = A[[x],[y]], then find matrix A."}},
-
-  {id:"P15",name:"Reversal Law Consequences",
-   trigger:"A transpose is applied to a product, or a chain condition like A\u1d40 = BCD is given.",
-   move:"Apply (AB)\u1d40 = B\u1d40A\u1d40 and (ABC)\u1d40 = C\u1d40B\u1d40A\u1d40 mechanically, then substitute the given relations. In chain problems, keep rewriting until both sides reduce to the same product.",
-   why:"Transposition reverses the order because entry (i,j) of the product pairs row i of the first with column j of the second, and transposing swaps those roles.",
-   mini:"S = ABCD with A\u1d40 = BCD gives S = AA\u1d40, and S\u00b3 reduces back to S by repeated reversal.",
-   fails:"Losing the order in a triple product. Write the reversal out in full every time \u2014 C\u1d40B\u1d40A\u1d40, not A\u1d40B\u1d40C\u1d40.",
-   src:"Property 7, Illus 12.36",
-   srcText:{"Illus 12.36":"Let A, B, C, D be (not necessarily square) real matrices such that A\u1d40 = BCD; B\u1d40 = CDA; C\u1d40 = DAB and D\u1d40 = ABC. If matrix S = ABCD, then prove that S\u00b3 = S."}},
-
-  {id:"P16",name:"Refuse the Commutativity Assumption",
-   trigger:"An expansion of (A+B)\u00b2, (A+B)\u207f, A\u00b2\u2212B\u00b2 or A\u00b3\u2212B\u00b3 is offered, or a conclusion is drawn from AB = O or AB = AC.",
-   move:"Expand keeping BOTH cross terms: (A+B)\u00b2 = A\u00b2 + AB + BA + B\u00b2. Collapse to 2AB only if AB = BA is given or provable. From AB = O conclude nothing about A or B individually; from AB = AC conclude nothing about B and C.",
-   why:"Matrix multiplication is associative and distributive but not commutative, and the ring of matrices has zero divisors \u2014 so the two ordinary-algebra facts that fail are exactly these.",
-   mini:"If AB + BA = O then in (A+B)(A\u00b2\u2212AB\u2212B\u00b2) the cross terms cancel and the product collapses to A\u00b3 \u2212 B\u00b3.",
-   fails:"Writing (A+B)\u00b2 = A\u00b2 + 2AB + B\u00b2 by reflex. That single line is the most common wrong step in the whole chapter.",
-   src:"Property 4, Property 5, Illus 12.35, Illus 12.37",
-   srcText:{"Illus 12.35":"If A and B are square matrices of same order such that AB + BA = O, then prove that A\u00b3 \u2212 B\u00b3 = (A+B)(A\u00b2 \u2212 AB \u2212 B\u00b2).","Illus 12.37":"If A and B are square matrices of the same order such that AB = BA, then prove by induction that AB\u207f = B\u207fA. Also, prove that (AB)\u207f = A\u207fB\u207f for all n \u2208 N."}},
-
-  {id:"P17",name:"Elementary Operations \u2014 Left for Rows, Right for Columns",
-   trigger:"'Show A and B are row equivalent', or 'find X using elementary transformations' from A = BX.",
-   move:"To change the ROWS of a product, operate on the pre-factor (or pre-multiply by the corresponding elementary matrix). To change the COLUMNS, operate on the post-factor. To solve A = BX, apply row operations simultaneously to A and to B until B becomes I; what A has become is X.",
-   why:"An elementary row operation is left-multiplication by an elementary matrix, and left-multiplication associates with the left factor of a product \u2014 hence rows-left, columns-right.",
-   mini:"From A = BX, reducing B to I by row operations while applying the same operations to A leaves A = IX = X.",
-   fails:"Applying a row operation to one side only, or mixing row and column operations mid-reduction. Every operation must hit both sides of the equation.",
-   src:"Illus 12.30, Illus 12.31, Theorem 1, Theorem 2",
-   srcText:{"Illus 12.30":"Show that two matrices A = [[1,\u22121,0],[2,1,1]] and B = [[3,0,1],[0,3,1]] are row equivalent.","Illus 12.31":"If [[9,11],[9,\u22125]] = [[4,1],[\u22121,2]]X, then find matrix X using elementary transformations.","Theorem 2":"If C = AB is the product of two matrices, an elementary row transformation on C can be achieved by performing the same row transformation on the first matrix A (the pre-factor); an elementary column transformation on C can be achieved by performing the same column transformation on the second matrix B (the post-factor)."}}
+ {
+  "id": "P1",
+  "name": "Count the Free Entries",
+  "trigger": "'How many matrices of order n are there such that …' — diagonal, scalar, triangular, symmetric, entries from a given set, or a fixed trace.",
+  "move": "1) Mark each of the n² positions as FORCED (zero, or copied from a partner entry) or FREE. 2) Count the choices at each free position. 3) Multiply those counts together. 4) If a condition links entries, such as trace = k or symmetry, settle that block first.",
+  "why": "Each 'type' of matrix is really a rule about which positions are decided by which other positions. So counting matrices becomes counting independent choices.",
+  "mini": "With entries from a set of 8 values, an upper triangular 3×3 matrix has 6 free positions on-or-above the diagonal, so 8⁶ such matrices.",
+  "fails": "Common slip: forgetting the exclusion in 'diagonal but not null' — subtract the single all-zero case. Also double-counting the mirror entries of a symmetric matrix.",
+  "src": "Illus 12.1, Illus 12.3, Illus 12.7, Illus 12.18",
+  "srcText": {
+   "Illus 12.1": "Find the total number of matrices with different elements that can be formed using the given twelve different numbers.",
+   "Illus 12.3": "Let A = {0,1,2,3,4,5,6,7}. Then find the number of square matrices of order 3×3, using the elements of set A, which are a. diagonal but not null b. scalar c. upper triangular d. symmetric e. symmetric with maximum number of distinct elements.",
+   "Illus 12.7": "If A is a matrix of order 3×3, whose entries are either 0 or 1, then find the number of matrices such that tr(A) is a prime number.",
+   "Illus 12.18": "Let S = {0,1,2}. Then find the number of symmetric matrices of order 3 whose elements belong to S and whose trace is 3."
+  }
+ },
+ {
+  "id": "P2",
+  "name": "Build the Matrix from aᵢⱼ = f(i,j)",
+  "trigger": "The matrix is defined by a formula in i and j, sometimes with cases (sgn, cos, tan, cot).",
+  "move": "1) Run i and j over their ranges. 2) Work out the formula at every pair. 3) Write the full grid out on paper. 4) Only now answer what was asked — symmetry, determinant, trace.",
+  "why": "A rule in i and j is not a matrix until you evaluate it. Almost all of these questions become easy once the grid is actually written down.",
+  "mini": "aᵢⱼ = (i+j)·sgn(i−j) on 3×3 gives a matrix with zero diagonal and aⱼᵢ = −aᵢⱼ — skew-symmetric.",
+  "fails": "Common slip: reasoning about symmetry straight from the formula and getting the sign of sgn(i−j) backwards. Swap i and j in the formula and compare — that is the honest test.",
+  "src": "Illus 12.4, Illus 12.9, CAE 12.1 Q1",
+  "srcText": {
+   "Illus 12.4": "Let A = [aᵢⱼ]₃ₓ₃, aᵢⱼ = (i+j) sgn(i−j) ∀ i,j and bᵢⱼ = cos(i−j), ∀ i,j. Check whether the matrices A and B are symmetric or skew-symmetric.",
+   "Illus 12.9": "Let A = [aᵢⱼ] be a 3×3 matrix, where aᵢⱼ = i if tan(i−j) < 0; j if cot(i−j) > 0; 2i−j if cos(i−j) = 1. Then find the value of |A|.",
+   "CAE 12.1 Q1": "Construct a 3×4 matrix, whose elements are given by aᵢⱼ = ½|−3i+j|."
+  }
+ },
+ {
+  "id": "P3",
+  "name": "Equate Corresponding Entries",
+  "trigger": "Two matrices are stated to be equal, or a matrix equation in x, y, z is given.",
+  "move": "1) Check both matrices have the same order. 2) Write one ordinary equation for each position. 3) Solve that system. 4) Keep only the values that work in EVERY equation.",
+  "why": "Matrices are equal only when every matching entry is equal. So a matrix equation is just a set of simultaneous equations in disguise.",
+  "mini": "From [[2x+1, 3y],[0, y²−5y]] = [[x+3, y²+2],[0, −6]] the three equations give x = 2 and y ∈ {1,2} ∩ {2,3} = {2}.",
+  "fails": "Common slip: giving a value that satisfies only one of the entry equations. The answer is what all positions agree on, not what any one of them allows.",
+  "src": "Illus 12.2, Illus 12.13, CAE 12.1 Q2",
+  "srcText": {
+   "Illus 12.2": "For what values of x and y are the following matrices equal? A = [[2x+1, 3y],[0, y²−5y]], B = [[x+3, y²+2],[0, −6]].",
+   "Illus 12.13": "Find non-zero values of x satisfying the matrix equation x[[2x,2],[3,x]] + 2[[8,5x],[4,4x]] = 2[[x²+8, 24],[10, 6x]].",
+   "CAE 12.1 Q2": "If [[a−b, 2a+c],[2a−b, 3c+d]] = [[−1, 5],[0, 13]], then the value of a+b+c+d is."
+  }
+ },
+ {
+  "id": "P4",
+  "name": "Test Symmetry by Transposing",
+  "trigger": "You are asked whether a built or combined matrix is symmetric, skew-symmetric, or neither.",
+  "move": "1) Transpose the whole expression using (A±B)ᵀ = Aᵀ±Bᵀ and (AB)ᵀ = BᵀAᵀ. 2) Substitute Aᵀ = A if A is symmetric, or Aᵀ = −A if A is skew. 3) Compare what you get with the original, and with minus the original.",
+  "why": "Symmetric and skew are defined by what the transpose does, so the transpose is the only tool needed. You never have to write out individual entries.",
+  "mini": "C = AB − BA with Aᵀ = A, Bᵀ = −B: Cᵀ = (AB)ᵀ − (BA)ᵀ = BᵀAᵀ − AᵀBᵀ = −BA + AB = C, so C is symmetric.",
+  "fails": "Common slip: writing (AB)ᵀ = AᵀBᵀ. The order must reverse. Nearly every wrong answer in this family traces back to that one line.",
+  "src": "Illus 12.32, Illus 12.33, Illus 12.34",
+  "srcText": {
+   "Illus 12.32": "Let A be a square matrix. Then prove that AAᵀ and AᵀA are symmetric matrices.",
+   "Illus 12.33": "If A, B are square matrices of same order and B is a skew-symmetric matrix, show that AᵀBA is skew-symmetric.",
+   "Illus 12.34": "Let A and B be 3×3 real matrices such that A is symmetric matrix and B is skew-symmetric matrix. Then prove that a. A²B² − B²A² is skew-symmetric b. A⁴ − B⁴ is symmetric c. AB − BA is symmetric d. A¹⁵B³⁰ − B³⁰A¹⁵ is skew-symmetric."
+  }
+ },
+ {
+  "id": "P5",
+  "name": "Exploit the Skew-Symmetric Structure",
+  "trigger": "The word 'skew-symmetric' appears, often together with 'odd order', 'determinant', or 'number of distinct entries'.",
+  "move": "1) Write down the three structural facts at once: every diagonal entry is 0; the entries above the diagonal decide all the rest; odd order means |A| = 0. 2) Read off whichever one the question needs.",
+  "why": "aᵢᵢ = −aᵢᵢ forces every diagonal entry to be 0. And |A| = |Aᵀ| = |−A| = (−1)ⁿ|A|, which collapses to |A| = 0 when n is odd.",
+  "mini": "A skew-symmetric matrix of order n has at most n(n−1)/2 distinct non-zero entries; setting that equal to 45 gives n = 10.",
+  "fails": "Common slip: assuming odd order makes a SYMMETRIC matrix singular too. It does not — the sign flip is what does the work, and symmetric matrices have no sign flip.",
+  "src": "Illus 12.5, CAE 12.1 Q7",
+  "srcText": {
+   "Illus 12.5": "If the maximum number of distinct non-zero elements in a skew-symmetric matrix is 45 then find the value of n.",
+   "CAE 12.1 Q7": "If matrix A is skew-symmetric matrix of odd order, then show that tr. A = det. A."
+  }
+ },
+ {
+  "id": "P6",
+  "name": "Trace Algebra and Trace Minimisation",
+  "trigger": "tr(·) appears in the question — combining traces of sums, or asking for the least value of a trace.",
+  "move": "1) Use tr(λA ± μB) = λ tr A ± μ tr B. 2) Two trace conditions then become a 2×2 system in tr A and tr B. 3) For a minimum, complete the square on the diagonal expression.",
+  "why": "The trace just adds up the diagonal entries, so it behaves like an ordinary linear expression in two unknowns.",
+  "mini": "tr(A+2B) = 4 and tr(3A−4B) = 2 give tr A = 2, tr B = 1, hence tr(4A+5B) = 13.",
+  "fails": "Common slip: using tr(AB) = tr A × tr B. That is false. The only product fact you have is tr(AB) = tr(BA).",
+  "src": "Illus 12.6, Illus 12.15",
+  "srcText": {
+   "Illus 12.6": "If A = [[a²+4b+7, −1, 3],[4, b²+c²+8, 7],[−2, 0, 4−2a−6c]], then find the least value of tr(A).",
+   "Illus 12.15": "If A and B are square matrices of the same order such that tr.(A+2B) = 4 and tr.(3A−4B) = 2, then find the value of tr.(4A+5B)."
+  }
+ },
+ {
+  "id": "P7",
+  "name": "Singular ⇒ Determinant Zero ⇒ Solve for the Parameter",
+  "trigger": "'… is singular', or 'find x for which the matrix has no inverse'.",
+  "move": "1) Set |A| = 0. 2) Use row or column operations to create zeros FIRST. 3) Then expand. 4) Solve the equation in the parameter.",
+  "why": "Singular is defined as |A| = 0. So the whole question is one polynomial equation in the unknown parameter.",
+  "mini": "For [[2/x, −1, 2],[1, x, 2x²],[1, 1/x, 2]] singular, |A| = 0 gives x = ±1.",
+  "fails": "Common slip: expanding along a row that is full of parameters. Do R₁ → R₁ − R₂ first; it usually clears an entry and saves most of the work.",
+  "src": "Illus 12.8, CAE 12.1 Q6",
+  "srcText": {
+   "Illus 12.8": "Find the values of x for which matrix [[3, −1+x, 2],[3, −1, x+2],[x+3, −1, 2]] is singular.",
+   "CAE 12.1 Q6": "The values of x for which the matrix A = [[2/x, −1, 2],[1, x, 2x²],[1, 1/x, 2]] is singular are."
+  }
+ },
+ {
+  "id": "P8",
+  "name": "Solve a Matrix Equation for the Unknown Matrix",
+  "trigger": "An unknown matrix X, Y or D sits inside a linear relation, or a polynomial identity in a parameter λ is given.",
+  "move": "1) Treat the matrices like ordinary algebraic unknowns and rearrange. 2) Addition and scalar multiplication follow all the usual rules. 3) For a λ-identity, substitute λ = 0, 1 and −1 to get several matrix equations, then eliminate.",
+  "why": "For addition and scalar multiplication, matrices behave exactly like numbers. Only multiplication misbehaves.",
+  "mini": "If Aλ² + Bλ + C equals a given λ-matrix, then λ = 0 gives C, and λ = ±1 give A+B+C and A−B+C, whose difference is 2B.",
+  "fails": "Common slip: carrying that freedom into products. You may not divide by a matrix, and you may not reorder a product to get X on its own.",
+  "src": "Illus 12.10, Illus 12.16, CAE 12.2 Q1, CAE 12.2 Q3",
+  "srcText": {
+   "Illus 12.10": "If A = [[1,2],[3,4],[5,6]] and B = [[−3,−2],[1,−5],[4,3]], then find D = [[p,q],[r,s],[t,u]] such that A + B − D = O.",
+   "Illus 12.16": "If [[λ²−2λ+1, λ−2],[1−λ²+3λ, 1−λ²]] = Aλ² + Bλ + C, where A, B and C are matrices then find matrices B and C.",
+   "CAE 12.2 Q3": "Solve the following equations for X and Y: 2X − Y = [[3,−3,0],[3,3,2]], 2Y + X = [[4,1,5],[−1,4,−4]]."
+  }
+ },
+ {
+  "id": "P9",
+  "name": "Split into Symmetric and Skew Parts",
+  "trigger": "'Express A as P + Q where P is symmetric and Q is skew-symmetric', or a question about det P or det Q of that split.",
+  "move": "1) P = ½(A + Aᵀ). 2) Q = ½(A − Aᵀ). 3) Write both matrices out. 4) Answer the question from those two grids.",
+  "why": "Pᵀ = P and Qᵀ = −Q both follow in one line, and P + Q adds straight back to A. There is only one way to make this split.",
+  "mini": "For A = [[1,a],[2,0]], Q = [[0,(a−2)/2],[(2−a)/2,0]] so det Q = (a−2)²/4 — one equation in a.",
+  "fails": "Common slip: dropping the ½. Without it you get A + Aᵀ and A − Aᵀ, which add to 2A, not A.",
+  "src": "Illus 12.19, CAE 12.2 Q7",
+  "srcText": {
+   "Illus 12.19": "Let A = [[1,a],[2,3]] and A = C + D, where C and D are respectively symmetric and skew-symmetric matrices. Find the value of det.(D) when det.(C) is the maximum.",
+   "CAE 12.2 Q7": "If matrix A = [[0,1,−1],[4,−3,4],[3,−3,4]] = B + C, where B is symmetric matrix and C is skew-symmetric matrix, then find matrices B and C."
+  }
+ },
+ {
+  "id": "P10",
+  "name": "Check Conformability, Then Read the Order",
+  "trigger": "'Which product is not defined?', or the orders of A and B are given as letters and something must be deduced.",
+  "move": "1) Write each matrix's order underneath it. 2) A(m×n) times B(n×p) exists only if the two inner numbers match. 3) The result has order m×p. 4) If both AB and BA are said to exist, set cols(A) = rows(B) and cols(B) = rows(A), then solve.",
+  "why": "To multiply, a row of A must have exactly as many entries as a column of B. Everything else is bookkeeping.",
+  "mini": "A has m rows, n+5 columns; B has m rows, 11−n columns. Both AB and BA existing forces n+5 = m and 11−n = m, so n = 3, m = 8.",
+  "fails": "Common slip: assuming AB and BA have the same order when both exist. They do only if A and B are square and the same size.",
+  "src": "Illus 12.20, CAE 12.3 Q1",
+  "srcText": {
+   "Illus 12.20": "Matrix A has m rows and n+5 columns; matrix B has m rows and 11−n columns. If both AB and BA exist, prove that AB and BA are square matrices.",
+   "CAE 12.3 Q1": "Consider the matrices A = [[4,6,−1],[3,0,2],[1,−2,5]], B = [[2,4],[0,1],[−1,2]], C = [[3],[1],[2]]. Out of the given matrix products, which one is not defined?"
+  }
+ },
+ {
+  "id": "P11",
+  "name": "Multiply Row-by-Column",
+  "trigger": "A numerical product AB, BA or AᵀA is asked for directly.",
+  "move": "1) Draw the empty answer grid first, so nothing gets skipped. 2) Entry (i, j) is row i of the first matrix dotted with column j of the second. 3) Fill the grid in reading order.",
+  "why": "This is the definition of a matrix product. For a general numerical product there is no shortcut.",
+  "mini": "For A 3×3 and B 3×2, AB is 3×2 and (AB)₁₁ is (row 1 of A)·(column 1 of B).",
+  "fails": "Common slip: multiplying column by row. Also computing AB when BA was asked — for non-square matrices those have different orders, which is a free self-check.",
+  "src": "Illus 12.21, Illus 12.22, Illus 12.23",
+  "srcText": {
+   "Illus 12.21": "If A = [[1,−2,3],[−4,2,5]] and B = [[2,3],[4,5],[2,1]], then find the product AB and BA.",
+   "Illus 12.22": "Find the values of x, y, z if the matrix A = [[0,2y,z],[x,y,−z],[x,−y,z]] satisfies the equation AᵀA = I.",
+   "Illus 12.23": "If A = [[1,0,−1],[2,1,0],[0,1,1]] and B = [B₁,B₂,B₃], where B₁, B₂, B₃ are column matrices, and AB₁ = [[1],[3],[0]], AB₂ = [[5],[7],[−1]], AB₃ = [[−2],[2],[3]], then find the matrix B."
+  }
+ },
+ {
+  "id": "P12",
+  "name": "Recover an Unknown Matrix Column by Column",
+  "trigger": "AB₁, AB₂, AB₃ are given as columns and B is wanted, or 'find X such that AX = B'.",
+  "move": "1) Name the unknown entries. 2) Multiply out. 3) Match each column of your result to its given target column. 4) Solve one column at a time.",
+  "why": "Column j of AB depends only on column j of B. So one big problem breaks into several independent small ones.",
+  "mini": "With B = [[a,p,x],[b,q,y],[c,r,z]], the equation AB₁ = given determines only a, b, c.",
+  "fails": "Common slip: setting up all nine unknowns as one nine-equation system. Splitting by column turns it into three easy triples.",
+  "src": "Illus 12.23, CAE 12.3 Q6",
+  "srcText": {
+   "CAE 12.3 Q6": "Let A = [[1,2],[3,−5]], B = [[1,0],[0,2]] and X be the matrices such that A = BX. Then the sum of elements of matrix X is."
+  }
+ },
+ {
+  "id": "P13",
+  "name": "Compute Aⁿ by Spotting the Trend",
+  "trigger": "Aⁿ, A⁸, A¹⁰⁰ or A²⁰⁰⁵ is asked for, or a closed form for Aⁿ is claimed.",
+  "move": "1) Work out A² and A³ honestly. 2) Check which of three shapes you have: a rotation where the angle doubles; a recursion A² = αA + βI that reduces every higher power; or A = I + N with N nilpotent, so the binomial expansion stops early. 3) Use that shape to jump to Aⁿ.",
+  "why": "Every JEE-level power question is one of those three shapes. Brute force past A³ is never the intended route.",
+  "mini": "For the rotation matrix, A² doubles the angle and A³ triples it, so Aⁿ is the same matrix with nθ throughout.",
+  "fails": "Common slip: guessing the pattern from A² alone. Two data points fit too many formulas — always confirm with A³.",
+  "src": "Illus 12.26, Illus 12.27, CAE 12.3 Q8",
+  "srcText": {
+   "Illus 12.26": "If A = [[p,q],[0,1]], then show that A⁸ = [[p⁸, q((p⁸−1)/(p−1))],[0,1]].",
+   "Illus 12.27": "If A = [[cosθ, sinθ],[−sinθ, cosθ]], n ∈ N, then prove that Aⁿ = [[cos nθ, sin nθ],[−sin nθ, cos nθ]].",
+   "CAE 12.3 Q8": "If A = [[3,−4],[1,−1]], show that Aᵏ = [[1+2k, −4k],[k, 1−2k]], where k is any positive integer."
+  }
+ },
+ {
+  "id": "P14",
+  "name": "Read the Geometry: Rotation and Reflection Matrices",
+  "trigger": "A point is rotated or reflected and the transforming matrix is wanted, or a matrix built from cosθ and sinθ appears.",
+  "move": "1) Write the image as x₁ = ax + by and y₁ = cx + dy. 2) Read the matrix straight off the coefficients. 3) Rotation by θ is [[cosθ, −sinθ],[sinθ, cosθ]]. 4) Reflection in y = x tanθ is [[cos2θ, sin2θ],[sin2θ, −cos2θ]].",
+  "why": "A linear transformation IS its coefficient matrix. Writing the map out in coordinates makes the entries visible, with no geometry needed.",
+  "mini": "Reflection about the x-axis sends (x,y) to (x,−y), i.e. x₁ = 1·x + 0·y and y₁ = 0·x + (−1)y, so the matrix is diag(1,−1).",
+  "fails": "Common slip: confusing rotation with reflection. Rotation has determinant +1 and R(s)R(t) = R(s+t); reflection has determinant −1 and squares to I. Checking the determinant settles it instantly.",
+  "src": "Illus 12.29, CAE 12.3 Q3, CAE 12.3 Q9",
+  "srcText": {
+   "Illus 12.29": "Consider point P(x,y) in first quadrant. Its reflection about x-axis is Q(x₁,y₁). Here matrix [[1,0],[0,−1]] is the matrix of reflection about x-axis. Then find the matrix of a. reflection about y-axis b. reflection about the line y = x c. reflection about origin d. reflection about line y = (tanθ)x.",
+   "CAE 12.3 Q3": "Let the matrix R(t) be defined by R(t) = [[cos t, sin t],[−sin t, cos t]]. Then show that R(s)R(t) = R(s+t).",
+   "CAE 12.3 Q9": "Point P(x,y) is rotated by an angle θ in anticlockwise direction. The new position of point P is Q(x₁,y₁). If [[x₁],[y₁]] = A[[x],[y]], then find matrix A."
+  }
+ },
+ {
+  "id": "P15",
+  "name": "Reversal Law Consequences",
+  "trigger": "A transpose is applied to a product, or a chain condition such as Aᵀ = BCD is given.",
+  "move": "1) Apply (AB)ᵀ = BᵀAᵀ and (ABC)ᵀ = CᵀBᵀAᵀ carefully. 2) Substitute the given relations. 3) Keep rewriting until both sides reduce to the same product.",
+  "why": "Entry (i, j) of a product pairs row i of the first matrix with column j of the second. Transposing swaps those two roles, and that is what reverses the order.",
+  "mini": "S = ABCD with Aᵀ = BCD gives S = AAᵀ, and S³ reduces back to S by repeated reversal.",
+  "fails": "Common slip: losing the order in a triple product. Write CᵀBᵀAᵀ out in full every time — never AᵀBᵀCᵀ.",
+  "src": "Property 7, Illus 12.36",
+  "srcText": {
+   "Illus 12.36": "Let A, B, C, D be (not necessarily square) real matrices such that Aᵀ = BCD; Bᵀ = CDA; Cᵀ = DAB and Dᵀ = ABC. If matrix S = ABCD, then prove that S³ = S."
+  }
+ },
+ {
+  "id": "P16",
+  "name": "Refuse the Commutativity Assumption",
+  "trigger": "An expansion of (A+B)², (A+B)ⁿ, A²−B² or A³−B³ is offered, or a conclusion is drawn from AB = O or AB = AC.",
+  "move": "1) Expand keeping BOTH cross terms: (A+B)² = A² + AB + BA + B². 2) Combine them to 2AB only if you are told, or can prove, that AB = BA. 3) From AB = O conclude nothing about A or B on their own. 4) From AB = AC conclude nothing about B and C.",
+  "why": "Matrix multiplication is associative and distributive but NOT commutative. Also two non-zero matrices can multiply to give zero. Those two facts are exactly the ordinary-algebra rules that break here.",
+  "mini": "If AB + BA = O then in (A+B)(A²−AB−B²) the cross terms cancel and the product collapses to A³ − B³.",
+  "fails": "Common slip: writing (A+B)² = A² + 2AB + B² by reflex. That single line is the most common wrong step in the whole chapter.",
+  "src": "Property 4, Property 5, Illus 12.35, Illus 12.37",
+  "srcText": {
+   "Illus 12.35": "If A and B are square matrices of same order such that AB + BA = O, then prove that A³ − B³ = (A+B)(A² − AB − B²).",
+   "Illus 12.37": "If A and B are square matrices of the same order such that AB = BA, then prove by induction that ABⁿ = BⁿA. Also, prove that (AB)ⁿ = AⁿBⁿ for all n ∈ N."
+  }
+ },
+ {
+  "id": "P17",
+  "name": "Elementary Operations — Left for Rows, Right for Columns",
+  "trigger": "'Show A and B are row equivalent', or 'find X using elementary transformations' starting from A = BX.",
+  "move": "1) To change the ROWS of a product, operate on the LEFT factor. 2) To change the COLUMNS, operate on the RIGHT factor. 3) To solve A = BX, apply the same row operations to A and to B until B becomes I. 4) Whatever A has turned into is X.",
+  "why": "A row operation is the same as multiplying on the left by an elementary matrix. Left multiplication attaches to the left factor of a product. That is why rows go left and columns go right.",
+  "mini": "From A = BX, reducing B to I by row operations while applying the same operations to A leaves A = IX = X.",
+  "fails": "Common slip: applying an operation to one side only, or mixing row and column operations halfway through. Every operation must hit both sides of the equation.",
+  "src": "Illus 12.30, Illus 12.31, Theorem 1, Theorem 2",
+  "srcText": {
+   "Illus 12.30": "Show that two matrices A = [[1,−1,0],[2,1,1]] and B = [[3,0,1],[0,3,1]] are row equivalent.",
+   "Illus 12.31": "If [[9,11],[9,−5]] = [[4,1],[−1,2]]X, then find matrix X using elementary transformations.",
+   "Theorem 2": "If C = AB is the product of two matrices, an elementary row transformation on C can be achieved by performing the same row transformation on the first matrix A (the pre-factor); an elementary column transformation on C can be achieved by performing the same column transformation on the second matrix B (the post-factor)."
+  }
+ }
 ];
 
 let MAT_GUIDED = [
@@ -5364,140 +5550,218 @@ let INV_FORMULAE = [
 ];
 
 let INV_PATTERNS = [
-  {id:"Q1",name:"Classify by the Defining Equation",
-   trigger:"The words orthogonal, idempotent, involutory or nilpotent appear, or a matrix is given with a condition like A\u00b2 = A or A\u00b3 = O.",
-   move:"Write the defining equation, then take determinants of BOTH sides. That one step pins |A| to a tiny set and usually answers the question outright.",
-   why:"det is multiplicative, so each defining equation becomes a scalar equation in |A|: |A|\u00b2 = |A| for idempotent, |A|\u00b2 = 1 for involutory and orthogonal, |A|\u1d50 = 0 for nilpotent.",
-   mini:"A\u00b2 = A \u21d2 |A|\u00b2 = |A| \u21d2 |A| = 0 or 1, so an idempotent matrix is invertible only when |A| = 1.",
-   fails:"Assuming every special matrix is invertible. Nilpotent matrices never are, and idempotent ones only in the trivial case A = I.",
-   src:"\u00a712.4.1.1\u2013\u00a712.4.1.4, Illus 12.44, Illus 12.45, Illus 12.46",
-   srcText:{"Illus 12.44":"How many different diagonal matrices of order n can be formed that are involutory?","Illus 12.45":"If abc = p and A = [[a,b,c],[c,a,b],[b,c,a]], prove that A is orthogonal if and only if a, b, c are the roots of the equation x\u00b3 \u00b1 x\u00b2 \u2212 p = 0.","Illus 12.46":"Let A be an orthogonal matrix, and B a matrix such that AB = BA, then show that AB\u1d40 = B\u1d40A."}},
-
-  {id:"Q2",name:"Form the Characteristic Equation",
-   trigger:"'Characteristic roots', 'eigenvalues', or |A \u2212 \u03bbI| = 0 is asked for or implied.",
-   move:"For order 2 write \u03bb\u00b2 \u2212 (tr A)\u03bb + |A| = 0 straight down. For order 3 use \u03bb\u00b3 \u2212 t\u2082\u03bb\u00b2 + t\u2081\u03bb \u2212 t\u2080 = 0 with t\u2082 = trace, t\u2081 = sum of principal-diagonal minors, t\u2080 = determinant.",
-   why:"|A \u2212 \u03bbI| expands into exactly those symmetric functions of the entries, so trace and determinant are the coefficients rather than something to be computed separately.",
-   mini:"For [[2,a],[3,b]] with roots \u22121 and 2: sum = 2 + b = 1 and product = 2b \u2212 3a = \u22122, which solves for a and b.",
-   fails:"Expanding |A \u2212 \u03bbI| entry by entry for a 3\u00d73 and losing a sign. The t\u2082/t\u2081/t\u2080 template is faster and safer.",
-   src:"\u00a712.5, Illus 12.47, Illus 12.48",
-   srcText:{"Illus 12.47":"Find the characteristic roots of the matrix [[cos\u03b8, \u2212sin\u03b8],[sin\u03b8, cos\u03b8]] and prove that they have unit modulus.","Illus 12.48":"If the characteristic roots of the matrix [[2,a],[3,b]] are \u22121 and 2 then find the values of a and b."}},
-
-  {id:"Q3",name:"Read tr(A) and |A| Off a Given Polynomial",
-   trigger:"You are TOLD that A satisfies a matrix polynomial \u2014 A\u00b2 + kI = 8A, 4A\u00b3 \u2212 3A\u00b2 + 2A \u2212 I = O, A\u00b3 = 8A\u00b2 + 2A \u2212 39I \u2014 and asked for trace, determinant or a parameter.",
-   move:"Normalise to monic form of the SAME degree as the order. Then match against \u03bb\u00b2 \u2212 (tr A)\u03bb + |A| (order 2) or \u03bb\u00b3 \u2212 t\u2082\u03bb\u00b2 + t\u2081\u03bb \u2212 t\u2080 (order 3) and read the coefficients directly.",
-   why:"Cayley\u2013Hamilton says the characteristic polynomial annihilates A; when the given polynomial has the same degree and is monic, it IS the characteristic polynomial.",
-   mini:"4A\u00b3 \u2212 3A\u00b2 + 2A \u2212 I = O for a 3\u00d73 divides to A\u00b3 \u2212 (3/4)A\u00b2 + \u00bdA \u2212 \u00bcI = O, so tr A = 3/4 and |A| = \u00bc, giving tr A + |A| = 1.",
-   fails:"Forgetting to make the polynomial monic before reading coefficients \u2014 the leading coefficient scales every reading.",
-   src:"\u00a712.5.1, Illus 12.53, Illus 12.54",
-   srcText:{"Illus 12.53":"Let A be a 2\u00d72 real matrix and I be the identity matrix of order 2. If the roots of the equation |A \u2212 xI| = 0 are \u22122 and 1, then find the values of tr.(A\u00b2) and |A\u00b2|.","Illus 12.54":"Let A = [[1,2,4],[a,0,\u22121],[3,1,b]]. If A\u00b3 = 6A\u00b2 + 2A + 7I, then find the values of a and b."}},
-
-  {id:"Q4",name:"Reduce a High Power via Cayley\u2013Hamilton",
-   trigger:"A\u2076, A\u00b9\u2075, A\u2075\u2070, A\u00b2\u2070\u00b9\u00b2 or a mixed polynomial in high powers is asked for.",
-   move:"Get the characteristic equation, use it to express A\u00b2 (or A\u00b3) in lower powers, and substitute repeatedly until every term is a multiple of A and I. For a nilpotent split A = I + D with D\u1d50 = O, expand binomially instead \u2014 the series terminates.",
-   why:"The characteristic equation is a linear recurrence on the powers of A, so every power collapses into the span of I, A, \u2026, A\u207f\u207b\u00b9.",
-   mini:"For A = [[1,2],[\u22121,3]]: tr = 4, |A| = 5, so A\u00b2 = 4A \u2212 5I, and repeated substitution gives A\u2076 = 44A \u2212 205I.",
-   fails:"Multiplying out A\u2076 directly. Also: applying the order-2 template to a 3\u00d73 matrix \u2014 the degree must match the order.",
-   src:"Illus 12.50, Illus 12.55",
-   srcText:{"Illus 12.50":"If A = [[1,2],[\u22121,3]], then prove that A\u2076 = 44A \u2212 205I.","Illus 12.55":"If A = [[1,1,0],[0,1,2],[0,0,1]], then find the sum of the elements of matrix B = 8A\u00b9\u2075 \u2212 15A\u2078 + 7I, where I is an identity matrix of order 3\u00d73."}},
-
-  {id:"Q5",name:"Transform the Eigenvalue, Not the Matrix",
-   trigger:"An eigenvalue of A is given and one of pA, A + qI, A\u207f, A\u207b\u00b9 or adj A is asked about.",
-   move:"Apply the transformation to the SCALAR \u03bb rather than recomputing anything: pA \u2192 p\u03bb, A+qI \u2192 \u03bb+q, A\u207f \u2192 \u03bb\u207f, A\u207b\u00b9 \u2192 1/\u03bb, adj A \u2192 |A|/\u03bb.",
-   why:"AX = \u03bbX survives every one of these operations applied to both sides, with the same eigenvector X throughout.",
-   mini:"If 3 is a characteristic root of A and the corresponding root of adj A is 9, then |A|/3 = 9 gives |A| = 27.",
-   fails:"Using \u03bb \u2192 |A|/\u03bb for adj A when \u03bb = 0 \u2014 a singular matrix's zero eigenvalue has no such image.",
-   src:"\u00a712.5 NOTES, \u00a712.6.2, Illus 12.63",
-   srcText:{"Illus 12.63":"If the characteristic root of matrix A is 3 and the corresponding characteristic root of adj.(A) is 9, then find the value of |A|.","\u00a712.6.2":"If a non-zero \u03bb is a characteristic root of matrix A, then the corresponding characteristic root of adj. A is |A|/\u03bb."}},
-
-  {id:"Q6",name:"Compute the Adjoint from Cofactors",
-   trigger:"adj A is asked for explicitly, or A(adj A) must be verified.",
-   move:"Build the cofactor matrix C = [C\u1d62\u2c7c], where C\u1d62\u2c7c is (\u22121)\u2071\u207a\u02b2 times the minor of a\u1d62\u2c7c. Then TRANSPOSE it. Verify with A(adj A) = |A|I.",
-   why:"The adjoint is defined as the transpose of the cofactor matrix, and the verification identity is a restatement of the cofactor expansion of a determinant.",
-   mini:"For [[2,3],[4,1]] the cofactors are 1, \u22124, \u22123, 2, so adj A = [[1, \u22123],[\u22124, 2]] \u2014 note the transpose has already been taken.",
-   fails:"Forgetting the transpose. The 2\u00d72 shortcut 'swap the diagonal, negate the off-diagonal' already includes it, which is why people who learn only that shortcut trip on 3\u00d73.",
-   src:"\u00a712.6.1, Illus 12.56, CAE 12.6 Q1",
-   srcText:{"Illus 12.56":"Find the adjoint of the matrix A = [[1,1,1],[2,1,\u22123],[\u22121,2,3]].","CAE 12.6 Q1":"Find the adjoint of each of the following matrices and verify that A(adj. A) = |A|I: a. [[3,\u22124],[5,\u22126]] b. [[2,\u22121,3],[0,1,\u22122],[4,5,\u22126]]."}},
-
-  {id:"Q7",name:"Run the Adjoint Exponent Ladder",
-   trigger:"|adj A|, |adj(adj A)|, |adj(3A)|, or adj applied k times, with |A| given.",
-   move:"Apply the two rules mechanically: |adj A| = |A|\u207f\u207b\u00b9 and adj(kA) = k\u207f\u207b\u00b9 adj A. For k nested adjoints the determinant becomes |A|\u207d\u207f\u207b\u00b9\u207e\u1d4f. Work from the inside out and keep the order n explicit at every step.",
-   why:"Each adjoint multiplies the determinant exponent by (n\u22121), so nesting compounds it as a power rather than a product.",
-   mini:"For n = 3 and |A| = 2: |adj A| = 2\u00b2 = 4, |adj(adj A)| = 2\u2074 = 16, and applying adj ten times gives 2\u207d\u00b2\u207e\u00b9\u2070 = 2\u00b9\u2070\u00b2\u2074.",
-   fails:"Using |adj A| = |A|\u207f. The exponent is n\u22121, and for order 2 that means |adj A| = |A| exactly.",
-   src:"\u00a712.6.2, Illus 12.57, Illus 12.58, Illus 12.59",
-   srcText:{"Illus 12.57":"If A is a 3\u00d73 matrix such that |A| = 2, then find the values of a. |adj.(A)| b. |adj.(A\u00b2)| c. |adj.(A\u1d40)| d. |adj.(adj.(A))| e. |(adj(adj\u2026(adj.A))) ten times| f. |adj.(3A)| g. |adj.(\u2212A)| h. |adj.(3adj.(2A))| i. ||2A|adj.(3A\u2075)| j. |2adj.(2adj.(2adj.(2A)))|.","Illus 12.59":"Let A be a square matrix of order 3 such that adj.(adj.(adj. A)) = [[16,0,\u221224],[0,4,0],[0,12,4]]. Then find a. |A| b. adj. A."}},
-
-  {id:"Q8",name:"Use A(adj A) = |A| I as an Equation",
-   trigger:"A product involving adj A must be evaluated, or a trace of such a product is asked for.",
-   move:"Substitute A(adj A) = |A| I wherever the pair appears and pull the scalar out. Then trace, determinant or further multiplication becomes elementary.",
-   why:"This single identity is what makes the adjoint useful at all \u2014 it converts a matrix product into a scalar times the identity.",
-   mini:"tr(B(adj B)(adj A)A) = tr(|B| I \u00b7 |A| I) = 3|A||B| for order 3.",
-   fails:"Only spotting the pairing when A and adj A are literally adjacent. Rearrange first \u2014 associativity is free.",
-   src:"\u00a712.6.1, Illus 12.58, Illus 12.60",
-   srcText:{"Illus 12.58":"If A and B are square matrices of order 3\u00d73 such that |adj. A| = 9 and |2B\u00b3| = 64, then find the least value of tr.(B(adj.(AB))A).","Illus 12.60":"If AA\u1d40 = I and B = [[1,\u22121,0],[2,1,\u22123],[0,\u22122,4]], then find the trace of the matrix B(adj. A)(adj. A)\u1d40(adj. B)."}},
-
-  {id:"Q9",name:"Build A\u207b\u00b9 from the Adjoint",
-   trigger:"A numerical inverse is wanted, or an inverse must be verified.",
-   move:"Check |A| \u2260 0 first, then A\u207b\u00b9 = (adj A)/|A|. Verify with AA\u207b\u00b9 = I \u2014 for a 3\u00d73 this catches sign errors that are otherwise invisible.",
-   why:"A(adj A) = |A|I divided through by the scalar |A| is precisely the inverse formula.",
-   mini:"If |A| = 10 and adj A is known, then B = A\u207b\u00b9 = (adj A)/10, so 10B = adj A entrywise.",
-   fails:"Computing the adjoint but forgetting to divide by |A|, or dividing when |A| = 0 and the inverse does not exist.",
-   src:"\u00a712.7, Illus 12.64, Illus 12.65",
-   srcText:{"Illus 12.64":"Let A = [[1,\u22121,1],[2,1,\u22123],[1,1,1]] and 10B = [[4,2,2],[\u22125,0,\u03b1],[1,\u22122,3]]. If B is the inverse of A, then find the value of \u03b1.","Illus 12.65":"Given the matrices A = [[1,\u22121],[4,\u22121]] and B = [[1,\u22121],[2,\u22122]]. If two matrices X and Y are such that XA = B and AY = B, then find the matrix 3(X+Y)."}},
-
-  {id:"Q10",name:"Invert Using the Matrix Polynomial",
-   trigger:"A satisfies a polynomial equation and A\u207b\u00b9 (or a relation A\u207b\u00b9 = pI + qA) is wanted.",
-   move:"Multiply the polynomial through by A\u207b\u00b9 and rearrange to isolate A\u207b\u00b9 as a polynomial in A. No cofactors are needed.",
-   why:"Cayley\u2013Hamilton guarantees the polynomial exists; multiplying by A\u207b\u00b9 lowers every exponent by one and moves the constant term onto the inverse.",
-   mini:"A\u00b2 \u2212 A + I = O \u21d2 A \u2212 I + A\u207b\u00b9 = O \u21d2 A\u207b\u00b9 = I \u2212 A.",
-   fails:"Doing this when the constant term is zero. If a\u2080 = 0 the matrix is singular and no inverse exists \u2014 check the constant before multiplying.",
-   src:"Illus 12.67, Illus 12.69, Illus 12.70",
-   srcText:{"Illus 12.67":"Let p be a non-singular matrix, and I + p + p\u00b2 + \u2026 + p\u207f = O. Then find p\u207b\u00b9.","Illus 12.69":"If A is 2\u00d72 non-singular matrix such that A\u207b\u00b9 = 2I \u2212 A, then find the value of tr.(A) + |A|.","Illus 12.70":"If A = [[1,0,0],[0,1,1],[0,\u22122,4]] satisfies the equation A\u207b\u00b9 = (1/6)(A\u00b2 + cA + dI), then find the values of c and d."}},
-
-  {id:"Q11",name:"Apply the Reversal Laws",
-   trigger:"An inverse or adjoint is applied to a product, or an expression must be simplified before evaluating.",
-   move:"(AB)\u207b\u00b9 = B\u207b\u00b9A\u207b\u00b9 and adj(AB) = (adj B)(adj A). Simplify the whole expression symbolically BEFORE substituting any numbers.",
-   why:"Both operations reverse order for the same structural reason the transpose does \u2014 they are all anti-homomorphisms of the product.",
-   mini:"[A(A+B)\u207b\u00b9B]\u207b\u00b9 = B\u207b\u00b9(A+B)A\u207b\u00b9 = B\u207b\u00b9 + A\u207b\u00b9.",
-   fails:"Writing (AB)\u207b\u00b9 = A\u207b\u00b9B\u207b\u00b9 or adj(AB) = (adj A)(adj B). The second is a standing JEE Advanced trap.",
-   src:"\u00a712.7.1, Illus 12.71, Illus 12.73",
-   srcText:{"Illus 12.71":"Let A, B and C be square matrices of order n\u00d7n and (I\u2099 + 2B) be a non-singular matrix. If A\u207b\u00b9B = (C \u2212 2A)\u207b\u00b9 then prove that A = (I + 2B)\u207b\u00b9BC.","Illus 12.73":"If the matrices A, B and (A+B) are non-singular, then prove that [A(A+B)\u207b\u00b9B]\u207b\u00b9 = B\u207b\u00b9 + A\u207b\u00b9."}},
-
-  {id:"Q12",name:"Transpose an Inverse Expression to Test Symmetry",
-   trigger:"An expression built from inverses is claimed to be symmetric, skew-symmetric or orthogonal.",
-   move:"Use (A\u1d40)\u207b\u00b9 = (A\u207b\u00b9)\u1d40 together with the reversal law and transpose the whole expression, then substitute A\u1d40 = \u00b1A as given.",
-   why:"Transposition and inversion commute, so the two operations can be applied in either order \u2014 which is what lets you push the transpose all the way inside.",
-   mini:"If A\u1d40A = I and X = (A+I)\u207b\u00b9(A\u2212I), then X\u1d40 = \u2212X, so X is skew-symmetric.",
-   fails:"Losing the reversal when transposing a product of inverses \u2014 the order flips exactly as for ordinary products.",
-   src:"Illus 12.74, Illus 12.76, Illus 12.77",
-   srcText:{"Illus 12.74":"If A and B are non-singular symmetric matrices such that AB = BA, then prove that A\u207b\u00b9B\u207b\u00b9 is a symmetric matrix.","Illus 12.77":"If A is a matrix of order n such that A\u1d40A = I and X is any matrix such that X = (A+I)\u207b\u00b9(A\u2212I), then show that X is a skew symmetric matrix."}},
-
-  {id:"Q13",name:"Invert by Elementary Row Operations",
-   trigger:"'Using elementary transformation, find the inverse of \u2026'.",
-   move:"Write A = IA. Apply row operations to the LEFT matrix and to I on the right SIMULTANEOUSLY, driving the left to I. What I has become is A\u207b\u00b9. Never mix in a column operation.",
-   why:"Each row operation is left-multiplication by an elementary matrix; accumulating them on I builds the product of elementary matrices, which is exactly A\u207b\u00b9.",
-   mini:"Starting from A = IA and reducing A to I by R\u2081 \u2192 \u00bdR\u2081, R\u2082 \u2192 R\u2082 \u2212 5R\u2081, \u2026 leaves A\u207b\u00b9 on the right.",
-   fails:"Switching to a column operation partway through. If you want the column route, start from A = AI instead and stay there.",
-   src:"\u00a712.7.2, Illus 12.81, CAE 12.7 Q14",
-   srcText:{"Illus 12.81":"Using elementary transformation find the inverse of the matrix [[2,0,\u22121],[5,1,0],[0,1,3]] if it exists.","CAE 12.7 Q14":"Using elementary transformation, find the inverse of the matrix A = [[a, b],[c, (1+bc)/a]]."}},
-
-  {id:"Q14",name:"Solve AX = B by Inversion",
-   trigger:"A system of linear equations is to be solved 'by the matrix method' or 'by matrix inversion'.",
-   move:"Write AX = B. Compute |A|. If |A| \u2260 0 then X = A\u207b\u00b9B = (adj A)B/|A|. If |A| = 0, compute (adj A)B: non-zero means inconsistent, zero means further inspection is needed.",
-   why:"Left-multiplying AX = B by A\u207b\u00b9 isolates X, which is only legal when the inverse exists \u2014 hence the determinant check first.",
-   mini:"For x+2y+z = 7, x+3z = 11, 2x\u22123y = 1: |A| = 18 \u2260 0 and X = A\u207b\u00b9B gives (2,1,3).",
-   fails:"Reporting 'infinitely many solutions' whenever |A| = 0. That branch is genuinely ambiguous \u2014 the same ambiguity that Case II carries in maths/alg/leq.",
-   src:"\u00a712.7.3, Illus 12.82, Illus 12.83",
-   srcText:{"Illus 12.82":"Solve the following system of equations, using matrix method: x + 2y + z = 7, x + 3z = 11, 2x \u2212 3y = 1.","Illus 12.83":"Using matrix method, show that the following system of equations is inconsistent: 2x + 3y \u2212 z + 4 = 0, x \u2212 y + 2z \u2212 7 = 0, x + 4y \u2212 3z = 0."}},
-
-  {id:"Q15",name:"Deduce Singularity from a Product Equation",
-   trigger:"AB = O with B \u2260 O, or a chain of matrix equations from which a determinant must be extracted.",
-   move:"Take determinants across the equation. |AB| = |A||B| turns a matrix relation into a scalar one, and a zero on one side forces a zero factor on the other.",
-   why:"det is a multiplicative map to the scalars, so it converts non-commutative matrix statements into ordinary arithmetic that can be reasoned about freely.",
-   mini:"AB = O with B \u2260 O: assuming |A| \u2260 0 lets you left-multiply by A\u207b\u00b9 to get B = O, a contradiction, so |A| = 0.",
-   fails:"Trying to 'divide by B' directly. The determinant route is the only safe one, because matrix cancellation is invalid.",
-   src:"Illus 12.68, Illus 12.40, Illus 12.43",
-   srcText:{"Illus 12.68":"If A and B are square matrices of same order such that AB = O and B \u2260 O, then prove that |A| = 0.","Illus 12.43":"If M is a 3\u00d73 matrix, where det. M = 1 and MM\u1d40 = I, where I is an identity matrix, then prove that det.(M \u2212 I) = 0."}}
+ {
+  "id": "Q1",
+  "name": "Classify by the Defining Equation",
+  "trigger": "The words orthogonal, idempotent, involutory or nilpotent appear, or you are given a condition like A² = A or A³ = O.",
+  "move": "1) Write down the defining equation. 2) Take determinants of BOTH sides. 3) Solve the resulting scalar equation for |A|.",
+  "why": "Determinants multiply, so |AB| = |A||B|. So each defining equation becomes a small equation in |A| alone. Idempotent gives |A|² = |A|. Involutory and orthogonal give |A|² = 1. Nilpotent gives |A|ᵐ = 0.",
+  "mini": "A² = A ⇒ |A|² = |A| ⇒ |A| = 0 or 1, so an idempotent matrix is invertible only when |A| = 1.",
+  "fails": "Common slip: assuming every special matrix has an inverse. Nilpotent matrices never do, and idempotent ones only when A = I.",
+  "src": "§12.4.1.1–§12.4.1.4, Illus 12.44, Illus 12.45, Illus 12.46",
+  "srcText": {
+   "Illus 12.44": "How many different diagonal matrices of order n can be formed that are involutory?",
+   "Illus 12.45": "If abc = p and A = [[a,b,c],[c,a,b],[b,c,a]], prove that A is orthogonal if and only if a, b, c are the roots of the equation x³ ± x² − p = 0.",
+   "Illus 12.46": "Let A be an orthogonal matrix, and B a matrix such that AB = BA, then show that ABᵀ = BᵀA."
+  }
+ },
+ {
+  "id": "Q2",
+  "name": "Form the Characteristic Equation",
+  "trigger": "'Characteristic roots' or 'eigenvalues' are asked for, or |A − λI| = 0 appears.",
+  "move": "1) For a 2×2, write λ² − (tr A)λ + |A| = 0 straight down. 2) For a 3×3, use λ³ − t₂λ² + t₁λ − t₀ = 0. 3) Here t₂ = trace, t₁ = sum of the principal diagonal minors, t₀ = determinant.",
+  "why": "When you expand |A − λI| you always get exactly these quantities as the coefficients. So the trace and determinant are already the answer — there is nothing extra to work out.",
+  "mini": "For [[2,a],[3,b]] with roots −1 and 2: sum = 2 + b = 1 and product = 2b − 3a = −2, which solves for a and b.",
+  "fails": "Common slip: expanding |A − λI| entry by entry for a 3×3 and losing a sign. The t₂ / t₁ / t₀ template is faster and safer.",
+  "src": "§12.5, Illus 12.47, Illus 12.48",
+  "srcText": {
+   "Illus 12.47": "Find the characteristic roots of the matrix [[cosθ, −sinθ],[sinθ, cosθ]] and prove that they have unit modulus.",
+   "Illus 12.48": "If the characteristic roots of the matrix [[2,a],[3,b]] are −1 and 2 then find the values of a and b."
+  }
+ },
+ {
+  "id": "Q3",
+  "name": "Read tr(A) and |A| Off a Given Polynomial",
+  "trigger": "You are TOLD that A satisfies a matrix polynomial, such as A² + kI = 8A or A³ = 8A² + 2A − 39I, and asked for the trace, determinant or a parameter.",
+  "move": "1) Rewrite the polynomial so the leading coefficient is 1 (monic). 2) Check its degree equals the order of the matrix. 3) Compare it with λ² − (tr A)λ + |A| for order 2, or λ³ − t₂λ² + t₁λ − t₀ for order 3. 4) Read the trace and determinant straight off the coefficients.",
+  "why": "Cayley–Hamilton says a matrix satisfies its own characteristic polynomial. If the polynomial you are given is monic and has the same degree as the order, then it IS that characteristic polynomial.",
+  "mini": "4A³ − 3A² + 2A − I = O for a 3×3 divides to A³ − (3/4)A² + ½A − ¼I = O, so tr A = 3/4 and |A| = ¼, giving tr A + |A| = 1.",
+  "fails": "Common slip: reading off the coefficients before making the polynomial monic. The leading coefficient scales everything you read.",
+  "src": "§12.5.1, Illus 12.53, Illus 12.54",
+  "srcText": {
+   "Illus 12.53": "Let A be a 2×2 real matrix and I be the identity matrix of order 2. If the roots of the equation |A − xI| = 0 are −2 and 1, then find the values of tr.(A²) and |A²|.",
+   "Illus 12.54": "Let A = [[1,2,4],[a,0,−1],[3,1,b]]. If A³ = 6A² + 2A + 7I, then find the values of a and b."
+  }
+ },
+ {
+  "id": "Q4",
+  "name": "Reduce a High Power via Cayley–Hamilton",
+  "trigger": "A⁶, A¹⁵, A⁵⁰ or A²⁰¹² is asked for, or a polynomial with high powers of A.",
+  "move": "1) Find the characteristic equation. 2) Use it to write A² (or A³) in terms of lower powers. 3) Substitute again and again until only A and I are left. 4) If instead A = I + D with Dᵐ = O, expand the bracket binomially — the series stops early.",
+  "why": "The characteristic equation lets you swap the highest power for lower ones. Repeating that pulls every power down into the same small set: I, A, up to Aⁿ⁻¹.",
+  "mini": "For A = [[1,2],[−1,3]]: tr = 4, |A| = 5, so A² = 4A − 5I, and repeated substitution gives A⁶ = 44A − 205I.",
+  "fails": "Common slip: multiplying out A⁶ directly. Also using the order-2 template on a 3×3 — the degree must match the order.",
+  "src": "Illus 12.50, Illus 12.55",
+  "srcText": {
+   "Illus 12.50": "If A = [[1,2],[−1,3]], then prove that A⁶ = 44A − 205I.",
+   "Illus 12.55": "If A = [[1,1,0],[0,1,2],[0,0,1]], then find the sum of the elements of matrix B = 8A¹⁵ − 15A⁸ + 7I, where I is an identity matrix of order 3×3."
+  }
+ },
+ {
+  "id": "Q5",
+  "name": "Transform the Eigenvalue, Not the Matrix",
+  "trigger": "An eigenvalue of A is given, and the question asks about pA, A + qI, Aⁿ, A⁻¹ or adj A.",
+  "move": "1) Do NOT recompute anything. 2) Apply the change to the number λ instead: pA gives pλ; A + qI gives λ + q; Aⁿ gives λⁿ; A⁻¹ gives 1/λ; adj A gives |A|/λ.",
+  "why": "The eigenvector equation AX = λX survives all of these operations if you apply them to both sides. The eigenvector X stays the same throughout, so only the number changes.",
+  "mini": "If 3 is a characteristic root of A and the corresponding root of adj A is 9, then |A|/3 = 9 gives |A| = 27.",
+  "fails": "Common slip: using λ → |A|/λ for adj A when λ = 0. A singular matrix's zero eigenvalue has no such image.",
+  "src": "§12.5 NOTES, §12.6.2, Illus 12.63",
+  "srcText": {
+   "Illus 12.63": "If the characteristic root of matrix A is 3 and the corresponding characteristic root of adj.(A) is 9, then find the value of |A|.",
+   "§12.6.2": "If a non-zero λ is a characteristic root of matrix A, then the corresponding characteristic root of adj. A is |A|/λ."
+  }
+ },
+ {
+  "id": "Q6",
+  "name": "Compute the Adjoint from Cofactors",
+  "trigger": "adj A is asked for directly, or you must verify A(adj A).",
+  "move": "1) Work out the minor of each entry aᵢⱼ. 2) Attach the sign (−1)ⁱ⁺ʲ to get the cofactor Cᵢⱼ. 3) Write the cofactor matrix. 4) TRANSPOSE it — that is adj A. 5) Check with A(adj A) = |A|I.",
+  "why": "The adjoint is defined as the transpose of the cofactor matrix. The check identity is just the cofactor expansion of a determinant written in matrix form.",
+  "mini": "For [[2,3],[4,1]] the cofactors are 1, −4, −3, 2, so adj A = [[1, −3],[−4, 2]] — note the transpose has already been taken.",
+  "fails": "Common slip: forgetting the transpose. The 2×2 shortcut 'swap the diagonal, negate the off-diagonal' already has the transpose built in. That is why people who learn only the shortcut come unstuck on a 3×3.",
+  "src": "§12.6.1, Illus 12.56, CAE 12.6 Q1",
+  "srcText": {
+   "Illus 12.56": "Find the adjoint of the matrix A = [[1,1,1],[2,1,−3],[−1,2,3]].",
+   "CAE 12.6 Q1": "Find the adjoint of each of the following matrices and verify that A(adj. A) = |A|I: a. [[3,−4],[5,−6]] b. [[2,−1,3],[0,1,−2],[4,5,−6]]."
+  }
+ },
+ {
+  "id": "Q7",
+  "name": "Run the Adjoint Exponent Ladder",
+  "trigger": "|adj A|, |adj(adj A)|, |adj(3A)|, or adj applied several times, with |A| given.",
+  "move": "1) Use |adj A| = |A|ⁿ⁻¹. 2) Use adj(kA) = kⁿ⁻¹ adj A. 3) For k nested adjoints, the determinant becomes |A| raised to (n−1)ᵏ. 4) Work from the inside outwards and write the order n at every step.",
+  "why": "Each adjoint multiplies the exponent on |A| by (n−1). So nesting them compounds the exponent as a power, not as a product.",
+  "mini": "For n = 3 and |A| = 2: |adj A| = 2² = 4, |adj(adj A)| = 2⁴ = 16, and applying adj ten times gives 2⁽²⁾¹⁰ = 2¹⁰²⁴.",
+  "fails": "Common slip: using |adj A| = |A|ⁿ. The exponent is n − 1. For order 2 that means |adj A| = |A| exactly.",
+  "src": "§12.6.2, Illus 12.57, Illus 12.58, Illus 12.59",
+  "srcText": {
+   "Illus 12.57": "If A is a 3×3 matrix such that |A| = 2, then find the values of a. |adj.(A)| b. |adj.(A²)| c. |adj.(Aᵀ)| d. |adj.(adj.(A))| e. |(adj(adj…(adj.A))) ten times| f. |adj.(3A)| g. |adj.(−A)| h. |adj.(3adj.(2A))| i. ||2A|adj.(3A⁵)| j. |2adj.(2adj.(2adj.(2A)))|.",
+   "Illus 12.59": "Let A be a square matrix of order 3 such that adj.(adj.(adj. A)) = [[16,0,−24],[0,4,0],[0,12,4]]. Then find a. |A| b. adj. A."
+  }
+ },
+ {
+  "id": "Q8",
+  "name": "Use A(adj A) = |A| I as an Equation",
+  "trigger": "A product containing adj A must be evaluated, or a trace of such a product is asked for.",
+  "move": "1) Look for A and adj A anywhere in the product. 2) Replace the pair by |A| I. 3) Pull the scalar |A| outside. 4) Now the trace, determinant or remaining product is easy.",
+  "why": "This one identity is what makes the adjoint useful. It turns a matrix product into a number times the identity matrix.",
+  "mini": "tr(B(adj B)(adj A)A) = tr(|B| I · |A| I) = 3|A||B| for order 3.",
+  "fails": "Common slip: only spotting the pair when A and adj A sit next to each other. Rearrange first — you may regroup a product freely.",
+  "src": "§12.6.1, Illus 12.58, Illus 12.60",
+  "srcText": {
+   "Illus 12.58": "If A and B are square matrices of order 3×3 such that |adj. A| = 9 and |2B³| = 64, then find the least value of tr.(B(adj.(AB))A).",
+   "Illus 12.60": "If AAᵀ = I and B = [[1,−1,0],[2,1,−3],[0,−2,4]], then find the trace of the matrix B(adj. A)(adj. A)ᵀ(adj. B)."
+  }
+ },
+ {
+  "id": "Q9",
+  "name": "Build A⁻¹ from the Adjoint",
+  "trigger": "A numerical inverse is wanted, or an inverse must be checked.",
+  "move": "1) Compute |A| first and confirm it is not 0. 2) Build adj A. 3) Divide: A⁻¹ = (adj A)/|A|. 4) Verify with AA⁻¹ = I.",
+  "why": "Start from A(adj A) = |A|I and divide both sides by the number |A|. That is exactly the inverse formula.",
+  "mini": "If |A| = 10 and adj A is known, then B = A⁻¹ = (adj A)/10, so 10B = adj A entrywise.",
+  "fails": "Common slip: building the adjoint and forgetting to divide by |A|. Or dividing when |A| = 0, where no inverse exists at all.",
+  "src": "§12.7, Illus 12.64, Illus 12.65",
+  "srcText": {
+   "Illus 12.64": "Let A = [[1,−1,1],[2,1,−3],[1,1,1]] and 10B = [[4,2,2],[−5,0,α],[1,−2,3]]. If B is the inverse of A, then find the value of α.",
+   "Illus 12.65": "Given the matrices A = [[1,−1],[4,−1]] and B = [[1,−1],[2,−2]]. If two matrices X and Y are such that XA = B and AY = B, then find the matrix 3(X+Y)."
+  }
+ },
+ {
+  "id": "Q10",
+  "name": "Invert Using the Matrix Polynomial",
+  "trigger": "A satisfies a polynomial equation and you are asked for A⁻¹, often in the form A⁻¹ = pI + qA.",
+  "move": "1) Check the constant term is not zero. 2) Multiply the whole equation through by A⁻¹. 3) Rearrange so A⁻¹ is alone on one side. 4) You now have A⁻¹ as a polynomial in A — no cofactors needed.",
+  "why": "Multiplying by A⁻¹ lowers every power by one and moves the constant term across onto the inverse. Cayley–Hamilton guarantees such a polynomial exists.",
+  "mini": "A² − A + I = O ⇒ A − I + A⁻¹ = O ⇒ A⁻¹ = I − A.",
+  "fails": "Common slip: doing this when the constant term is 0. Then the matrix is singular and there is no inverse to find — check before you multiply.",
+  "src": "Illus 12.67, Illus 12.69, Illus 12.70",
+  "srcText": {
+   "Illus 12.67": "Let p be a non-singular matrix, and I + p + p² + … + pⁿ = O. Then find p⁻¹.",
+   "Illus 12.69": "If A is 2×2 non-singular matrix such that A⁻¹ = 2I − A, then find the value of tr.(A) + |A|.",
+   "Illus 12.70": "If A = [[1,0,0],[0,1,1],[0,−2,4]] satisfies the equation A⁻¹ = (1/6)(A² + cA + dI), then find the values of c and d."
+  }
+ },
+ {
+  "id": "Q11",
+  "name": "Apply the Reversal Laws",
+  "trigger": "An inverse or an adjoint is applied to a product, or an expression needs simplifying before you put numbers in.",
+  "move": "1) Use (AB)⁻¹ = B⁻¹A⁻¹. 2) Use adj(AB) = (adj B)(adj A). 3) Simplify the whole expression with letters FIRST. 4) Only then substitute numbers.",
+  "why": "Inverse and adjoint both reverse the order of a product, for the same reason the transpose does. Undoing two operations means undoing the last one first.",
+  "mini": "[A(A+B)⁻¹B]⁻¹ = B⁻¹(A+B)A⁻¹ = B⁻¹ + A⁻¹.",
+  "fails": "Common slip: writing (AB)⁻¹ = A⁻¹B⁻¹, or adj(AB) = (adj A)(adj B). The second one is a standing JEE Advanced trap.",
+  "src": "§12.7.1, Illus 12.71, Illus 12.73",
+  "srcText": {
+   "Illus 12.71": "Let A, B and C be square matrices of order n×n and (Iₙ + 2B) be a non-singular matrix. If A⁻¹B = (C − 2A)⁻¹ then prove that A = (I + 2B)⁻¹BC.",
+   "Illus 12.73": "If the matrices A, B and (A+B) are non-singular, then prove that [A(A+B)⁻¹B]⁻¹ = B⁻¹ + A⁻¹."
+  }
+ },
+ {
+  "id": "Q12",
+  "name": "Transpose an Inverse Expression to Test Symmetry",
+  "trigger": "An expression built from inverses is claimed to be symmetric, skew-symmetric or orthogonal.",
+  "move": "1) Transpose the whole expression. 2) Use (Aᵀ)⁻¹ = (A⁻¹)ᵀ to move the transpose inside. 3) Apply the reversal law to any product. 4) Substitute Aᵀ = A or Aᵀ = −A as given. 5) Compare with the original.",
+  "why": "Transposing and inverting can be done in either order and give the same result. That is what lets you push the transpose all the way in.",
+  "mini": "If AᵀA = I and X = (A+I)⁻¹(A−I), then Xᵀ = −X, so X is skew-symmetric.",
+  "fails": "Common slip: losing the reversal when transposing a product of inverses. The order flips exactly as it does for ordinary products.",
+  "src": "Illus 12.74, Illus 12.76, Illus 12.77",
+  "srcText": {
+   "Illus 12.74": "If A and B are non-singular symmetric matrices such that AB = BA, then prove that A⁻¹B⁻¹ is a symmetric matrix.",
+   "Illus 12.77": "If A is a matrix of order n such that AᵀA = I and X is any matrix such that X = (A+I)⁻¹(A−I), then show that X is a skew symmetric matrix."
+  }
+ },
+ {
+  "id": "Q13",
+  "name": "Invert by Elementary Row Operations",
+  "trigger": "'Using elementary transformation, find the inverse of …'.",
+  "move": "1) Write A = IA. 2) Apply a row operation to the left matrix AND to I on the right at the same time. 3) Repeat until the left matrix becomes I. 4) Whatever I has turned into is A⁻¹.",
+  "why": "Each row operation is the same as multiplying on the left by an elementary matrix. Collecting all of them on I builds their product, and that product is A⁻¹.",
+  "mini": "Starting from A = IA and reducing A to I by R₁ → ½R₁, R₂ → R₂ − 5R₁, … leaves A⁻¹ on the right.",
+  "fails": "Common slip: switching to a column operation halfway through. If you want the column route, start from A = AI instead and stay with columns.",
+  "src": "§12.7.2, Illus 12.81, CAE 12.7 Q14",
+  "srcText": {
+   "Illus 12.81": "Using elementary transformation find the inverse of the matrix [[2,0,−1],[5,1,0],[0,1,3]] if it exists.",
+   "CAE 12.7 Q14": "Using elementary transformation, find the inverse of the matrix A = [[a, b],[c, (1+bc)/a]]."
+  }
+ },
+ {
+  "id": "Q14",
+  "name": "Solve AX = B by Inversion",
+  "trigger": "A system of linear equations is to be solved 'by the matrix method' or 'by matrix inversion'.",
+  "move": "1) Write the system as AX = B. 2) Compute |A|. 3) If |A| ≠ 0, then X = A⁻¹B = (adj A)B / |A|. 4) If |A| = 0, compute (adj A)B: non-zero means no solution; zero means you must look closer.",
+  "why": "Multiplying AX = B on the left by A⁻¹ leaves X on its own. That is only allowed when the inverse exists, which is why you check the determinant first.",
+  "mini": "For x+2y+z = 7, x+3z = 11, 2x−3y = 1: |A| = 18 ≠ 0 and X = A⁻¹B gives (2,1,3).",
+  "fails": "Common slip: saying 'infinitely many solutions' whenever |A| = 0. That case is genuinely ambiguous — the same ambiguity as Case II in the System of Linear Equations chapter.",
+  "src": "§12.7.3, Illus 12.82, Illus 12.83",
+  "srcText": {
+   "Illus 12.82": "Solve the following system of equations, using matrix method: x + 2y + z = 7, x + 3z = 11, 2x − 3y = 1.",
+   "Illus 12.83": "Using matrix method, show that the following system of equations is inconsistent: 2x + 3y − z + 4 = 0, x − y + 2z − 7 = 0, x + 4y − 3z = 0."
+  }
+ },
+ {
+  "id": "Q15",
+  "name": "Deduce Singularity from a Product Equation",
+  "trigger": "You are given AB = O with B ≠ O, or a chain of matrix equations from which a determinant must be extracted.",
+  "move": "1) Take determinants across the whole equation. 2) Use |AB| = |A||B|. 3) A zero on one side forces one of the factors on the other side to be zero. 4) Read off which matrix must be singular.",
+  "why": "The determinant turns matrix statements into ordinary number statements. Numbers can be cancelled and reasoned about freely, whereas matrices cannot.",
+  "mini": "AB = O with B ≠ O: assuming |A| ≠ 0 lets you left-multiply by A⁻¹ to get B = O, a contradiction, so |A| = 0.",
+  "fails": "Common slip: trying to 'divide by B'. Matrix cancellation is not valid — the determinant route is the only safe one.",
+  "src": "Illus 12.68, Illus 12.40, Illus 12.43",
+  "srcText": {
+   "Illus 12.68": "If A and B are square matrices of same order such that AB = O and B ≠ O, then prove that |A| = 0.",
+   "Illus 12.43": "If M is a 3×3 matrix, where det. M = 1 and MMᵀ = I, where I is an identity matrix, then prove that det.(M − I) = 0."
+  }
+ }
 ];
 
 let INV_GUIDED = [
