@@ -3929,6 +3929,7 @@ const CURRICULUM=[
       {id:"det",name:"Determinants",grade:11},
       {id:"leq",name:"System of Linear Equations",grade:11}]},
     {id:"calc",name:"Calculus",chapters:[
+      {id:"fn",name:"Functions: Domain, Range & Types",grade:11},
       {id:"lim",name:"Limits & Continuity",grade:12},{id:"diff",name:"Differentiation",grade:12},
       {id:"aod",name:"Applications of Derivatives",grade:12},{id:"intg",name:"Integration",grade:12},
       {id:"de",name:"Differential Equations",grade:12}]},
@@ -8634,6 +8635,462 @@ let CK_PRAC_DOCS = [
 const CK_PRAC_TIERS=[{k:"All",l:"All"},{k:"1",l:"Foundation"},{k:"2",l:"JEE Main"},{k:"3",l:"JEE Advanced"},{k:"Flag",l:"\u2605 Flagged"}];
 
 
+/* ============================================================
+   FUNCTIONS — PART 1 : Domain, Range & Types      maths/calc/fn
+   Source: Narayana JEE-ADV-MATHS-VOL-IV, chapter "FUNCTIONS"
+   Built 24 Aug 2026
+   ============================================================ */
+
+let FN_TAXA = [
+  {code:"F1", label:"Function vs relation \u00b7 image, pre-image, number of maps", group:"Mapping basics"},
+  {code:"F2", label:"One-one (injection) by the algebraic test", group:"Types of functions"},
+  {code:"F3", label:"One-one by monotonicity (f\u2032 keeps one sign)", group:"Types of functions"},
+  {code:"F4", label:"Many-one flags \u2014 even, periodic, or a turning point", group:"Types of functions"},
+  {code:"F5", label:"Onto / into \u2014 range against codomain", group:"Types of functions"},
+  {code:"F6", label:"Counting injections, surjections and bijections", group:"Types of functions"},
+  {code:"F7", label:"Modulus function and its properties", group:"Standard functions"},
+  {code:"F8", label:"Greatest integer function [x] and its properties", group:"Standard functions"},
+  {code:"F9", label:"Least integer (ceiling) function (x)", group:"Standard functions"},
+  {code:"F10",label:"Fractional part {x} and its properties", group:"Standard functions"},
+  {code:"F11",label:"Signum function", group:"Standard functions"},
+  {code:"F12",label:"Identical functions \u2014 same domain AND same rule", group:"Standard functions"},
+  {code:"F13",label:"Domain by the constraint stack (\u221a, log, 1/\u25a1, sin\u207b\u00b9)", group:"Domain"},
+  {code:"F14",label:"Domain when the logarithm base carries x", group:"Domain"},
+  {code:"F15",label:"Domain of nested logarithms", group:"Domain"},
+  {code:"F16",label:"Domain of f(g(x)) from a stated domain of f", group:"Domain"},
+  {code:"F17",label:"Range of a rational function by the y-discriminant", group:"Range"},
+  {code:"F18",label:"Range by AM\u2013GM or by bounding a piece", group:"Range"},
+  {code:"F19",label:"Range on an interval \u2014 endpoints plus turning points", group:"Range"},
+  {code:"F20",label:"Range of expressions built from [x] and {x}", group:"Range"}
+];
+
+let FN_FORMULAE = [
+  {tag:"def", title:"Function, image and counting", rows:[
+    {f:"f : A \u2192 B is a function when every element of A is paired with exactly one element of B"},
+    {f:"A = domain \u00b7 B = codomain \u00b7 f(A) = range, and f(A) \u2286 B always"},
+    {f:"Number of functions from A to B = {n(B)}^{n(A)}"},
+    {f:"Injections A \u2192 B exist only when r \u2264 n, and their number is \u207fP\u1d63 = n!/(n\u2212r)!", k:"count", note:"r = n(A), n = n(B). If r > n the count is 0 \u2014 pigeonhole."},
+    {f:"Surjections A \u2192 B (r = n(A), n = n(B)) = n\u02b3 \u2212 \u207fC\u2081(n\u22121)\u02b3 + \u207fC\u2082(n\u22122)\u02b3 \u2212 \u2026 + (\u22121)\u207f\u207b\u00b9\u00b7\u207fC\u2099\u208b\u2081"},
+    {f:"If n(A) < n(B) the number of onto functions A \u2192 B is zero"},
+    {f:"Bijections A \u2192 B exist only when n(A) = n(B), and their number is (n(A))!"},
+    {f:"With n(B) = 2 the number of onto maps from an n-element set is 2\u207f \u2212 2"}
+  ]},
+  {tag:"types", title:"Deciding the type", rows:[
+    {f:"One-one test: set f(x\u2081) = f(x\u2082) and solve. If it forces x\u2081 = x\u2082 the map is injective, else many-one"},
+    {f:"Horizontal line test: a line parallel to the x-axis must meet the graph at most once for one-one"},
+    {f:"Every even function is many-one \u00b7 every periodic function is many-one", k:"trap"},
+    {f:"A function continuous and strictly monotonic on the whole domain is one-one"},
+    {f:"Onto test: build the range. Range = codomain means onto; range a proper subset means into"},
+    {f:"A continuous function with at least one local maximum or minimum is many-one", k:"trap", note:"So checking the sign of f\u2032 settles one-one for polynomials: no real root of f\u2032 (discriminant negative) means strictly monotonic."}
+  ]},
+  {tag:"mod", title:"Modulus function", rows:[
+    {f:"|x| = \u2212x for x < 0, 0 at x = 0, x for x > 0 \u00b7 domain R \u00b7 range [0, \u221e)"},
+    {f:"x\u00b2 = |x|\u00b2 \u00b7 |xy| = |x||y| \u00b7 |x/y| = |x|/|y| for y \u2260 0"},
+    {f:"|x| \u2264 a means \u2212a \u2264 x \u2264 a (a \u2265 0) \u00b7 |x| \u2265 a means x \u2264 \u2212a or x \u2265 a"},
+    {f:"|x + y| \u2264 |x| + |y|, with equality exactly when xy \u2265 0", k:"trap", note:"That equality condition is itself a standard question \u2014 it is a sign test, not an algebra step."},
+    {f:"|x \u2212 y| = |x| \u2212 |y| requires x and y of the same sign with |x| \u2265 |y|"},
+    {f:"|x \u00b1 y| \u2265 ||x| \u2212 |y||"}
+  ]},
+  {tag:"gif", title:"Greatest integer [x] and least integer (x)", rows:[
+    {f:"[x] = the integer n with n \u2264 x < n+1 \u00b7 domain R \u00b7 range Z"},
+    {f:"x \u2212 1 < [x] \u2264 x \u00b7 [x] \u2264 x < [x] + 1"},
+    {f:"[x + n] = [x] + n for integer n \u00b7 [[x]] = [x] \u00b7 [{x}] = 0"},
+    {f:"[x] + [\u2212x] = 0 when x is an integer, and \u22121 otherwise", k:"trap"},
+    {f:"[x] \u2265 k means x \u2265 k \u00b7 [x] \u2264 k means x < k+1 \u00b7 [x] > k means x \u2265 k+1 \u00b7 [x] < k means x < k  (k \u2208 Z)"},
+    {f:"Hermite: [x] + [x + 1/n] + [x + 2/n] + \u2026 + [x + (n\u22121)/n] = [nx]", k:"count", note:"This one identity collapses whole summation questions in a single line."},
+    {f:"[x/n] + [(x+1)/n] + \u2026 + [(x+n\u22121)/n] = [x] for n \u2208 N"},
+    {f:"Ceiling (x): least integer \u2265 x \u00b7 range Z \u00b7 (x) = [x] for x \u2208 Z and [x] + 1 otherwise"}
+  ]},
+  {tag:"frac", title:"Fractional part {x} and signum", rows:[
+    {f:"{x} = x \u2212 [x] \u00b7 domain R \u00b7 range [0, 1) \u00b7 period 1"},
+    {f:"{x \u00b1 n} = {x} for integer n \u00b7 {x} = 0 exactly when x \u2208 Z"},
+    {f:"{x} + {\u2212x} = 0 for x \u2208 Z and 1 otherwise"},
+    {f:"{x} is neither even nor odd", k:"trap"},
+    {f:"If f(x) = 1/{x} then domain = R \u2212 Z and range = (1, \u221e)"},
+    {f:"sgn(x) = |x|/x for x \u2260 0 and 0 at x = 0, i.e. 1 / \u22121 / 0 \u00b7 range {\u22121, 0, 1}"},
+    {f:"x\u00b7sgn(x) = |x| \u00b7 |x|\u00b7sgn(x) = x \u00b7 sgn(kx) = sgn(x) for k \u2208 N"}
+  ]},
+  {tag:"dr", title:"Domain and range of the standard functions", rows:[
+    {f:"\u221a(a\u00b2\u2212x\u00b2) : [\u2212a, a] \u2192 [0, a]   \u00b7   1/\u221a(a\u00b2\u2212x\u00b2) : (\u2212a, a) \u2192 [1/a, \u221e)"},
+    {f:"\u221a(x\u00b2\u2212a\u00b2) : R \u2212 (\u2212a, a) \u2192 [0, \u221e)   \u00b7   1/\u221a(x\u00b2\u2212a\u00b2) : R \u2212 [\u2212a, a] \u2192 (0, \u221e)"},
+    {f:"a\u02e3 (a > 0, a \u2260 1) and e\u02e3 : R \u2192 (0, \u221e)   \u00b7   log\u2090x : (0, \u221e) \u2192 R"},
+    {f:"|x| : R \u2192 [0, \u221e)   \u00b7   [x] : R \u2192 Z   \u00b7   {x} : R \u2192 [0, 1)   \u00b7   \u221ax : [0, \u221e) \u2192 [0, \u221e)"},
+    {f:"sin x, cos x : R \u2192 [\u22121, 1]   \u00b7   tan x : R \u2212 {(2n+1)\u03c0/2} \u2192 R   \u00b7   cot x : R \u2212 {n\u03c0} \u2192 R"},
+    {f:"cosec x : R \u2212 {n\u03c0} \u2192 R \u2212 (\u22121, 1)   \u00b7   sec x : R \u2212 {(2n+1)\u03c0/2} \u2192 R \u2212 (\u22121, 1)"},
+    {f:"sin\u207b\u00b9x : [\u22121,1] \u2192 [\u2212\u03c0/2, \u03c0/2]   \u00b7   cos\u207b\u00b9x : [\u22121,1] \u2192 [0, \u03c0]   \u00b7   tan\u207b\u00b9x : R \u2192 (\u2212\u03c0/2, \u03c0/2)   \u00b7   cot\u207b\u00b9x : R \u2192 (0, \u03c0)"},
+    {f:"sec\u207b\u00b9x, cosec\u207b\u00b9x : R \u2212 (\u22121, 1) \u2192 [0,\u03c0]\u2212{\u03c0/2} and [\u2212\u03c0/2,\u03c0/2]\u2212{0}"},
+    {f:"a\u00b7cos x + b\u00b7sin x + c : R \u2192 [c \u2212 \u221a(a\u00b2+b\u00b2), c + \u221a(a\u00b2+b\u00b2)]", k:"count"}
+  ]},
+  {tag:"range", title:"The seven ways to get a range", rows:[
+    {f:"Type 1 \u2014 AM \u2265 GM \u2265 HM on positive pieces. Example: x + 1/x gives (\u2212\u221e,\u22122] \u222a [2,\u221e)"},
+    {f:"Type 2 \u2014 quadratic y = ax\u00b2+bx+c : range is [(4ac\u2212b\u00b2)/4a, \u221e) when a > 0 and (\u2212\u221e, (4ac\u2212b\u00b2)/4a] when a < 0"},
+    {f:"Type 3 \u2014 write x = g(y) and ask which y keep x real and inside the domain"},
+    {f:"Type 4 \u2014 on [a,b] solve f\u2032(x) = 0, then compare f at those points with f(a) and f(b)"},
+    {f:"Type 5 \u2014 for P(x)/Q(x) with degree 2, clear the fraction to a quadratic in x and force discriminant \u2265 0", k:"count", note:"This is the workhorse. y(x\u00b2+bx+c) = x\u00b2+px+q rearranges to a quadratic in x whose discriminant, set \u2265 0, is an inequality in y \u2014 and that inequality IS the range."},
+    {f:"Type 6 \u2014 mixed function types: intersect the domains first, then range on that common set"},
+    {f:"Type 7 \u2014 strictly increasing on [a,b] gives [f(a), f(b)]; strictly decreasing gives [f(b), f(a)]"},
+    {f:"If a\u00b2+b\u00b2+c\u00b2 = k then ab+bc+ca ranges over [\u2212k/2, k]"}
+  ]}
+];
+
+let FN_PATTERNS = [
+ {id:"P1", name:"Peel the Constraint Stack",
+  trigger:"\"Find the domain\" and the formula stacks a square root, a logarithm and a denominator.",
+  move:"1) List every piece that restricts x: even root needs \u2265 0, log needs argument > 0, denominator needs \u2260 0, sin\u207b\u00b9 and cos\u207b\u00b9 need the argument in [\u22121,1]. 2) Write one inequality per piece. 3) Solve each separately. 4) Intersect all the answers \u2014 never union.",
+  why:"Each restriction has to hold at the same time for the formula to mean anything. A value survives only if it clears every gate.",
+  mini:"For 1/x + 2^{sin\u207b\u00b9x} + 1/\u221a(x\u22122) the three gates are x \u2260 0, \u22121 \u2264 x \u2264 1 and x > 2, which share nothing, so the domain is empty.",
+  fails:"Common slip: unioning the pieces instead of intersecting them, which hands back a set far too large.",
+  src:"Synopsis \u00b7 domain\u2013range table \u00b7 Ex-IV Q30, Q39, Q40",
+  srcText:{"Ex-IV Q30":"The domain of f(x) = 1/x + 2^{sin\u207b\u00b9x} + 1/\u221a(x\u22122) is  A) (0,\u221e)  B) (\u2212\u221e,0)  C) (1,3)  D) \u03c6","Ex-IV Q39":"The domain of the function f(x) = [9\u02e3 + 27^{(2/3)(x\u22122)} \u2212 219 \u2212 3^{2(x\u22121)}]^{1/4} is  A) [\u22123,3]  B) [3,\u221e)  C) [5/2,\u221e)  D) [0,1]"}},
+
+ {id:"P2", name:"Variable Log Base: Three Gates",
+  trigger:"A logarithm whose base contains x, such as log_{(x\u00b2\u22121)}x or log_{[x\u22121]}(\u2026).",
+  move:"1) Write base > 0. 2) Write base \u2260 1. 3) Write argument > 0. 4) Solve the three and intersect. 5) Only then apply any outer requirement such as an enclosing square root.",
+  why:"A logarithm is defined only for a positive base other than one. When the base moves with x, those two rules become live inequalities rather than background facts.",
+  mini:"For \u221a(log_{(x\u00b2\u22121)}x) the gates x\u00b2\u22121 > 0, x\u00b2\u22121 \u2260 1 and x > 0 leave x > 1 with x \u2260 \u221a2, and the outer root then forces x > \u221a2.",
+  fails:"Common slip: remembering base > 0 but forgetting base \u2260 1, which quietly leaves an extra point in the answer.",
+  src:"Synopsis \u00b7 Ex-III Q1 \u00b7 Ex-IV Q31, Q53, Q76",
+  srcText:{"Ex-III Q1":"The domain of the function f(x) = \u221a(log_{(x\u00b2\u22121)}x) is  1) (\u221a2, \u221e)  2) (0, \u221e)  3) (1, \u221e)  4) R"}},
+
+ {id:"P3", name:"Unwrap Nested Logs Outside-In",
+  trigger:"Logarithms inside logarithms, like log\u2081\u2080(log_{1/3}(log\u2084(x\u22125))).",
+  move:"1) Start at the outermost log and demand its argument > 0. 2) That gives an inequality on the next log inward. 3) Convert it using the base, remembering that a base below 1 reverses the inequality. 4) Repeat inward until only x is left.",
+  why:"Each layer is defined only when the layer inside it lands in the right range, so the conditions cascade from outside to inside.",
+  mini:"log\u2081\u2080(log_{1/3}(log\u2084(x\u22125))) needs log_{1/3}(log\u2084(x\u22125)) > 0, hence 0 < log\u2084(x\u22125) < 1, hence 6 < x < 9.",
+  fails:"Common slip: treating a base below 1 like a base above 1 and keeping the inequality pointing the same way.",
+  src:"Synopsis \u00b7 Ex-III Q6 \u00b7 Ex-IV Q33",
+  srcText:{"Ex-III Q6":"The maximum integral value of x in the domain of f(x) = log\u2081\u2080(log_{1/3}(log\u2084(x\u22125))) is  1) 8  2) 5  3) 7  4) 9"}},
+
+ {id:"P4", name:"Borrow the Domain of the Outer Function",
+  trigger:"You are told the domain of f, and asked for the domain of f(sin x), f([x]) or f(2x+3).",
+  move:"1) Call the inside expression t. 2) Force t to lie in the given domain of f. 3) Solve that inequality for x. 4) Also keep whatever the inside expression itself needs.",
+  why:"The outer function only accepts inputs from its own domain, so the inside expression is what must be trapped there.",
+  mini:"If f is defined on (0,1] then f(sin x) needs 0 < sin x \u2264 1, giving 2n\u03c0 < x < (2n+1)\u03c0.",
+  fails:"Common slip: solving for the inside expression and stopping there, instead of translating it back into a set of x values.",
+  src:"Synopsis \u00b7 Ex-III Q3, Q7 \u00b7 Ex-IV Q126",
+  srcText:{"Ex-III Q7":"If f(x) is defined on (0,1], then the domain of f(sin x) is  1) (2n\u03c0,(2n+1)\u03c0), n \u2208 Z  2) ((2n+1)\u03c0/2,(2n+3)\u03c0/2); n \u2208 Z  3) ((n\u22121)\u03c0,(n+1)\u03c0), n \u2208 Z  4) (n\u03c0,(2n+1)\u03c0) n \u2208 Z"}},
+
+ {id:"P5", name:"Root Inside a Root",
+  trigger:"A square root sitting under another square root, such as \u221a(10 \u2212 \u221a(x\u2074\u221221x\u00b2)).",
+  move:"1) Write the inner radicand \u2265 0. 2) Write the outer radicand \u2265 0. 3) Move the inner root to one side of the outer inequality and square, which is safe because both sides are non-negative. 4) Intersect the two solution sets.",
+  why:"Squaring is only reversible when both sides are already non-negative, and the inner condition is what guarantees that.",
+  mini:"\u221a(10 \u2212 \u221a(x\u2074\u221221x\u00b2)) needs x\u00b2(x\u00b2\u221221) \u2265 0 and x\u2074\u221221x\u00b2 \u2264 100 together.",
+  fails:"Common slip: squaring the outer inequality first and losing the isolated point x = 0 that the inner condition allows.",
+  src:"Synopsis \u00b7 Ex-III Q8",
+  srcText:{"Ex-III Q8":"The domain of the function f(x) = \u221a(10 \u2212 \u221a(x\u2074 \u2212 21x\u00b2)) is  1) [5,\u221e)  2) [\u2212\u221a21, \u221a21]  3) [\u22125,\u2212\u221a21] \u222a [\u221a21,5] \u222a {0}  4) (\u2212\u221e,\u22125)"}},
+
+ {id:"P6", name:"Sign Chart with Even Powers",
+  trigger:"A product or quotient under a square root, with one factor raised to an even power, like x(1\u2212e\u02e3)(x+2)(x\u22123)\u00b2.",
+  move:"1) Find every zero of the expression. 2) Mark them on a line and test the sign in each gap. 3) Treat a factor with an even power as sign-neutral \u2014 it never flips the sign. 4) Keep the intervals where the sign is right, then add back the zeros as isolated points.",
+  why:"An even-power factor is always non-negative, so it contributes a single touching point rather than a sign change.",
+  mini:"x(1\u2212e\u02e3)(x+2)(x\u22123)\u00b2 \u2265 0 holds on (\u2212\u221e,\u22122] and at the two isolated points x = 0 and x = 3.",
+  fails:"Common slip: dropping the isolated zeros, because they satisfy \u2265 0 even though no interval around them does.",
+  src:"Synopsis \u00b7 Ex-III Q9",
+  srcText:{"Ex-III Q9":"Domain of \u221a(x(1\u2212e\u02e3)(x+2)(x\u22123)\u00b2) is  1) [\u22122,3]  2) (\u22122,0]  3) (\u2212\u221e,\u22122] \u222a {0,3}  4) (\u2212\u221e,\u22122) \u222a [0,3]"}},
+
+ {id:"P7", name:"y-Discriminant Range",
+  trigger:"A ratio of two quadratics, and the question asks for the range.",
+  move:"1) Put y equal to the fraction and clear the denominator. 2) Collect it as a quadratic in x. 3) x must be real, so set the discriminant \u2265 0. 4) Solve that inequality in y. 5) Check whether the value of y that kills the x\u00b2 coefficient is actually attained.",
+  why:"Asking which y are reachable is the same as asking which y leave a real x behind, and the discriminant answers exactly that.",
+  mini:"For y = (x\u00b2+x\u22123)/(x\u22121) the discriminant condition gives (y\u22123)\u00b2 + 4 \u2265 0, true for every y, so the range is R.",
+  fails:"Common slip: forgetting to test the y that makes the leading coefficient zero, which is often the one endpoint that must be excluded.",
+  src:"Synopsis \u00b7 range Type 5 \u00b7 W.E-22, W.E-23 \u00b7 Ex-III Q10 \u00b7 Ex-IV Q99",
+  srcText:{"W.E-23":"Find the range of y = (x\u00b2+2x+3)/x. Solution: x\u00b2+(2\u2212y)x+3 = 0, \u0394 \u2265 0 gives y\u00b2\u22124y\u22128 \u2265 0, so y \u2208 (\u2212\u221e, 2\u22122\u221a3] \u222a [2+2\u221a3, \u221e)."}},
+
+ {id:"P8", name:"Split Off the Constant",
+  trigger:"A fraction whose numerator and denominator differ by a constant, like (x\u00b2+3x+4)/(x\u00b2+3x+3).",
+  move:"1) Rewrite the fraction as 1 plus a simpler remainder. 2) Find the range of the inner quadratic. 3) Invert that range, remembering that inverting reverses order on a positive interval. 4) Add the 1 back.",
+  why:"Rewriting turns one hard range into a chain of easy ones, because you only ever handle a quadratic and a reciprocal.",
+  mini:"(x\u00b2+3x+4)/(x\u00b2+3x+3) = 1 + 1/((x+3/2)\u00b2 + 3/4); the bracket runs over [3/4, \u221e), so the answer is (1, 7/3].",
+  fails:"Common slip: keeping the endpoint open or closed the wrong way round after inverting, since the minimum of the bracket becomes the maximum of the whole.",
+  src:"Synopsis \u00b7 Ex-III Q10 hint \u00b7 Ex-IV Q43",
+  srcText:{"Ex-III Q10":"Range of the function f(x) = (x\u00b2+3x+4)/(x\u00b2+3x+3) is  1) [1,2]  2) [1,\u221e)  3) [2, 7/3]  4) (1, 7/3]"}},
+
+ {id:"P9", name:"AM\u2013GM Floor",
+  trigger:"A sum of positive terms whose product is a constant, such as 1/|sin x| + 1/|cos x| or 6\u02e3 + 6\u207b\u02e3.",
+  move:"1) Check every term is positive on the domain. 2) Apply AM \u2265 GM to get a lower bound. 3) Note when equality can actually happen. 4) Check whether the sum can be made arbitrarily large, which fixes the upper end.",
+  why:"AM\u2013GM hands you the smallest possible value directly, and the unbounded side is usually obvious from a term blowing up.",
+  mini:"6\u02e3 + 6\u207b\u02e3 \u2265 2 and 3\u02e3 + 3\u207b\u02e3 \u2265 2, so 6\u02e3+3\u02e3+6\u207b\u02e3+3\u207b\u02e3+2 \u2265 6 and the range is [6, \u221e).",
+  fails:"Common slip: quoting the bound without checking equality is reachable, which turns a closed endpoint into a wrong one.",
+  src:"Synopsis \u00b7 range Type 1 \u00b7 W.E-21 \u00b7 Ex-IV Q44",
+  srcText:{"W.E-21":"The range of the function f(x) = 6\u02e3 + 3\u02e3 + 6\u207b\u02e3 + 3\u207b\u02e3 + 2 is [6, \u221e), since 6\u02e3+6\u207b\u02e3 \u2265 2\u221a(6\u02e3\u00b76\u207b\u02e3) = 2 and likewise for the base-3 pair."}},
+
+ {id:"P10", name:"Endpoints Plus Turning Points",
+  trigger:"The image of a closed interval under a polynomial, or a range asked on [a, b].",
+  move:"1) Differentiate and solve f\u2032(x) = 0. 2) Keep only the roots lying inside the interval. 3) Evaluate f at those roots and at both endpoints. 4) The smallest and largest of that short list bound the range.",
+  why:"On a closed interval a continuous function peaks either at a turning point or at an end. So only those few values matter.",
+  mini:"f(x) = 2x\u00b3\u221224x+107 on [1,3] has no turning point inside except x = 2; comparing f(1), f(2), f(3) gives the image [75, 89].",
+  fails:"Common slip: evaluating at stationary points that lie outside the interval and reporting a value the function never takes there.",
+  src:"Synopsis \u00b7 range Type 4 \u00b7 Ex-III Q12 \u00b7 Ex-IV Q63, Q77",
+  srcText:{"Ex-III Q12":"The image of the interval [1,3] under the mapping f : R \u2192 R, given by f(x) = 2x\u00b3 \u2212 24x + 107 is  1) [0,89]  2) [75,89]  3) [0,75]  4) [70,80]"}},
+
+ {id:"P11", name:"One-One by the Derivative Sign",
+  trigger:"A cubic or higher polynomial, with a parameter, asked to be one-one or an injection.",
+  move:"1) Differentiate. 2) Demand that f\u2032 never changes sign, which for a quadratic f\u2032 means discriminant \u2264 0. 3) Solve that inequality for the parameter. 4) Check the leading coefficient sets the right direction.",
+  why:"A strictly monotonic function passes the horizontal line test, and a quadratic derivative keeps one sign exactly when it has no real roots.",
+  mini:"f(x) = x\u00b3+(a+2)x\u00b2+3ax+5 is one-one when the discriminant of f\u2032 is \u2264 0, which gives a \u2208 [1,4].",
+  fails:"Common slip: solving f\u2032 > 0 at one sample point instead of forcing the discriminant condition across all x.",
+  src:"Synopsis \u00b7 Ex-IV Q7, Q54",
+  srcText:{"Ex-IV Q7":"The set of values of 'a' for which the function f : R \u2192 R given by f(x) = x\u00b3 + (a+2)x\u00b2 + 3ax + 5 is one-one is  A) [\u22122,4]  B) (1,3)  C) [1,4]  D) (1,5)"}},
+
+ {id:"P12", name:"Many-One Flags",
+  trigger:"\"Is f one-one or many-one?\" with no parameter to tune.",
+  move:"1) Test whether f(\u2212x) = f(x); an even function is immediately many-one. 2) Test for periodicity; a periodic function is immediately many-one. 3) Otherwise look for a local maximum or minimum. 4) Only if none of these appear, run the algebraic one-one test.",
+  why:"Evenness and periodicity each guarantee two different inputs share an output, so they settle the question before any algebra.",
+  mini:"f(x) = (x\u00b2+2x+5)/(x\u00b2+x+1) has a turning point, so it is many-one, and its range is a proper subset of R, so it is also into.",
+  fails:"Common slip: checking one-one carefully and then forgetting to compare range with codomain, so the onto half of the question goes unanswered.",
+  src:"Synopsis \u00b7 Ex-IV Q1, Q2, Q5",
+  srcText:{"Ex-IV Q1":"Let f : R \u2192 R be a function defined by f(x) = (x\u00b2+2x+5)/(x\u00b2+x+1) is  A) one-one and into  B) one-one and onto  C) many-one and onto  D) many-one and into"}},
+
+ {id:"P13", name:"Onto Means Range Equals Codomain",
+  trigger:"A codomain is printed in the question and a parameter has to make the map onto.",
+  move:"1) Build the actual range of f. 2) Set that range equal to the printed codomain. 3) Read off the condition on the parameter. 4) Sanity-check one endpoint by substitution.",
+  why:"Onto is not a property of the formula alone. It compares what the formula produces against the codomain the question declares.",
+  mini:"f(x) = tan\u207b\u00b9(x\u00b2+x+\u03bb) is onto [0, \u03c0/2) exactly when the quadratic has minimum 0, i.e. \u03bb = 1/4.",
+  fails:"Common slip: assuming the codomain written after the arrow is automatically the range, which makes every function look onto.",
+  src:"Synopsis \u00b7 Ex-III Q19 \u00b7 Ex-IV Q3, Q46",
+  srcText:{"Ex-IV Q46":"Let A = {x / 0 \u2264 x < \u03c0/2} and f : R \u2192 A is an onto function given by f(x) = tan\u207b\u00b9(x\u00b2+x+\u03bb) where  A) \u03bb > 0  B) \u03bb \u2264 1/4  C) \u03bb = 1/4  D) \u03bb \u2265 1/8"}},
+
+ {id:"P14", name:"Count the Maps",
+  trigger:"\"How many functions / one-one / onto / bijective maps are there from A to B?\"",
+  move:"1) Write down n(A) and n(B). 2) All functions: n(B) to the power n(A). 3) One-one: n(B)P n(A), and zero if n(A) is larger. 4) Onto: use the inclusion-exclusion formula. 5) Bijective: n! and only when the two sizes match.",
+  why:"Each type is a different counting question about the same table of choices, so picking the right formula is most of the work.",
+  mini:"With n(X) = 5 and n(Y) = 7 there are \u2077P\u2085 = 2520 injections X \u2192 Y, while the onto maps Y \u2192 X number 16800.",
+  fails:"Common slip: using the injection formula in the wrong direction, since injections A \u2192 B and injections B \u2192 A are different counts.",
+  src:"Synopsis \u00b7 Ex-IV Q6, Q82",
+  srcText:{"Ex-IV Q82":"Let X be a set with exactly 5 elements and Y be a set with exactly 7 elements. If \u03b1 is the number of one-one functions from X to Y and \u03b2 is the number of onto functions from Y to X, then the value of (1/5!)(\u03b2 \u2212 \u03b1) is \u2026"}},
+
+ {id:"P15", name:"Split x into [x] plus {x}",
+  trigger:"An equation or sum mixing [x] and {x}, or a greatest-integer sum with many terms.",
+  move:"1) Write x = [x] + {x} and substitute. 2) Separate the integer part from the fractional part on each side. 3) Use 0 \u2264 {x} < 1 to bound the integer part to a few cases. 4) Test each case and keep the ones that survive.",
+  why:"One part is a whole number, the other is trapped in [0,1). Separating them turns a single equation into a short finite search.",
+  mini:"2[x] + x = 6{x} becomes 3[x] = 5{x}, and 0 \u2264 {x} < 1 leaves only [x] = 0 and [x] = 1.",
+  fails:"Common slip: forgetting that {x} is strictly below 1, which lets in one extra case that does not exist.",
+  src:"Synopsis \u00b7 Hermite identity \u00b7 Ex-III Q15 \u00b7 Ex-IV Q9, Q10, Q72, Q91",
+  srcText:{"Ex-IV Q9":"The sum of solution(s) of the equation 2[x] + x = 6{x} where [x] denotes greatest integer less than or equal to x and {x} denotes fractional part of x is  A) 0  B) 5/3  C) 3/5  D) 8/5"}},
+
+ {id:"P16", name:"Identical Functions Need Both Halves",
+  trigger:"\"Are f and g the same function?\" or two inverse-trig expressions claimed to be identical.",
+  move:"1) Find the domain of each. 2) Find the range of each. 3) Compare the rules on the shared domain. 4) Declare them equal only if domain and rule agree everywhere.",
+  why:"Two formulas can simplify to the same expression yet be defined on different sets, and a function is its domain together with its rule.",
+  mini:"f(x) = x and g(x) = \u221a(x\u00b2) share the domain R but not the range, since g never goes negative, so they are not identical.",
+  fails:"Common slip: simplifying both sides algebraically and calling them equal without ever comparing domains.",
+  src:"Synopsis \u00b7 W.E-5, W.E-6 \u00b7 Ex-IV Q80",
+  srcText:{"W.E-5":"State whether f(x) = x and g(x) = \u221a(x\u00b2) are identical or not. Solution: domains agree (both R) but the ranges differ, R against [0,\u221e), so f \u2260 g."}}
+,
+ {id:"P17", name:"Quadratic Keeps One Sign",
+  trigger:"\"The graph lies entirely above the axis\", or a quadratic must stay positive for every x.",
+  move:"1) Identify the quadratic and its leading coefficient. 2) Demand that coefficient be positive for an always-positive quadratic. 3) Set the discriminant strictly below zero. 4) Solve that inequality for the parameter.",
+  why:"A quadratic changes sign only where it crosses the axis, so no real root plus an upward opening means it never dips below.",
+  mini:"y = x\u00b2 + kx \u2212 x + 9 stays above the axis when (k\u22121)\u00b2 \u2212 36 < 0, that is \u22125 < k < 7.",
+  fails:"Common slip: allowing discriminant = 0, which lets the curve touch the axis and so fails \"strictly above\".",
+  src:"Synopsis \u00b7 Ex-IV Q41, Q54"},
+
+ {id:"P18", name:"Chain the Ranges Through a Composition",
+  trigger:"A function built by feeding one standard function into another, and the range is wanted.",
+  move:"1) Find the range of the innermost function. 2) Hand that set to the next function as its input set. 3) Read off what that function produces on exactly that set. 4) Repeat outward and watch every endpoint for open or closed.",
+  why:"A composition can only produce what the outer function makes from the inputs it actually receives, which is the inner range and nothing more.",
+  mini:"log x runs over all of R, and tan applied to all of R produces all of R, so tan(log x) has range R.",
+  fails:"Common slip: quoting the outer function's textbook range instead of its range restricted to the inner outputs.",
+  src:"Synopsis \u00b7 domain\u2013range table \u00b7 Ex-IV Q42, Q49, Q51, Q52"}
+];
+
+let FN_GUIDED = [
+ {id:"FG1", tier:3, tax:"F13", pattern:"P1", q:"The domain of f(x) = 1/x + 2^{sin\u207b\u00b9x} + 1/\u221a(x\u22122) is:",
+  opts:["(0,\u221e)","(\u2212\u221e,0)","(1,3)","\u03c6"], correct:3,
+  hints:["Write the requirement of each of the three pieces separately.","1/x needs x \u2260 0, sin\u207b\u00b9x needs \u22121 \u2264 x \u2264 1, 1/\u221a(x\u22122) needs x > 2.","Now intersect \u2014 can a number be both at most 1 and more than 2?"],
+  ans:"\u03c6", why:"The inverse-sine gate caps x at 1 while the root in the denominator demands x above 2, so no value clears both."},
+
+ {id:"FG2", tier:3, tax:"F14", pattern:"P2", q:"The domain of the function f(x) = \u221a(log_{(x\u00b2\u22121)}x) is:",
+  opts:["(\u221a2, \u221e)","(0, \u221e)","(1, \u221e)","R"], correct:0,
+  hints:["A log with a moving base carries three conditions, not one.","Base positive and not equal to 1 gives x > \u221a2 or 1 < x < \u221a2 territory; argument positive gives x > 0.","Now the outer square root needs the log itself to be \u2265 0, which decides between those pieces."],
+  ans:"(\u221a2, \u221e)", why:"Once the base exceeds 1 the log is non-negative only when the argument is at least the base, and that condition survives only beyond \u221a2."},
+
+ {id:"FG3", tier:3, tax:"F15", pattern:"P3", q:"The maximum integral value of x in the domain of f(x) = log\u2081\u2080(log_{1/3}(log\u2084(x\u22125))) is:",
+  opts:["8","5","7","9"], correct:0,
+  hints:["Start from the outside: the argument of the base-10 log must be positive.","So log_{1/3}(log\u2084(x\u22125)) > 0, and a base below 1 flips this to 0 < log\u2084(x\u22125) < 1.","Convert that to 1 < x\u22125 < 4."],
+  ans:"8", why:"The chain closes to 6 < x < 9, whose largest integer is 8 \u2014 the base-one-third layer is what reverses the inequality."},
+
+ {id:"FG4", tier:3, tax:"F16", pattern:"P4", q:"If f(x) is defined on (0,1], then the domain of f(sin x) is:",
+  opts:["(2n\u03c0,(2n+1)\u03c0), n \u2208 Z","((2n+1)\u03c0/2,(2n+3)\u03c0/2); n \u2208 Z","((n\u22121)\u03c0,(n+1)\u03c0), n \u2208 Z","(n\u03c0,(2n+1)\u03c0) n \u2208 Z"], correct:0,
+  hints:["The inside expression must land inside the stated domain of f.","So you need 0 < sin x \u2264 1.","Which x make the sine strictly positive?"],
+  ans:"(2n\u03c0,(2n+1)\u03c0), n \u2208 Z", why:"Sine is strictly positive exactly on the upper half-turns, and the value 1 is included because the domain of f is closed at that end."},
+
+ {id:"FG5", tier:3, tax:"F13", pattern:"P5", q:"The domain of the function f(x) = \u221a(10 \u2212 \u221a(x\u2074 \u2212 21x\u00b2)) is:",
+  opts:["[5,\u221e)","[\u2212\u221a21, \u221a21]","[\u22125,\u2212\u221a21] \u222a [\u221a21,5] \u222a {0}","(\u2212\u221e,\u22125)"], correct:2,
+  hints:["Two conditions: the inner radicand \u2265 0 and the whole outer radicand \u2265 0.","Inner gives x\u00b2(x\u00b2\u221221) \u2265 0; outer gives x\u2074 \u2212 21x\u00b2 \u2264 100.","Factor the second as (x\u00b2\u221225)(x\u00b2+4) \u2264 0 and intersect."],
+  ans:"[\u22125,\u2212\u221a21] \u222a [\u221a21,5] \u222a {0}", why:"The inner condition also allows x = 0 as a single touching point, which is why the answer carries an isolated element."},
+
+ {id:"FG6", tier:3, tax:"F13", pattern:"P6", q:"Domain of \u221a(x(1\u2212e\u02e3)(x+2)(x\u22123)\u00b2) is:",
+  opts:["[\u22122, 3]","(\u22122, 0]","(\u2212\u221e,\u22122] \u222a {0,3}","(\u2212\u221e,\u22122) \u222a [0,3]"], correct:2,
+  hints:["Set the whole product \u2265 0 and locate the zeros: x = 0, x = \u22122, x = 3.","Note (1\u2212e\u02e3) is positive below 0 and negative above it.","The factor (x\u22123)\u00b2 never changes sign \u2014 it only touches."],
+  ans:"(\u2212\u221e,\u22122] \u222a {0,3}", why:"Only one interval survives the sign test, and the two even-power or boundary zeros come back as isolated points where the product equals zero."},
+
+ {id:"FG7", tier:3, tax:"F17", pattern:"P7", q:"Let f : R \u2192 R, f(x) = (x\u00b2+bx+1)/(x\u00b2+2x+b) with b > 1. If f and 1/f have the same bounded set as their range, and b = 2\u221ac \u2212 p with c, p \u2208 N, then c is:",
+  opts:["2","3","4","5"], correct:1,
+  hints:["A bounded range for both f and 1/f means the range excludes 0 and is a finite interval.","Clear the fraction and force the discriminant in x to be non-negative.","Then require the resulting y-interval to be symmetric in the reciprocal sense."],
+  ans:"3", why:"The discriminant condition pins b, and matching it to the printed form 2\u221ac \u2212 p identifies c = 3."},
+
+ {id:"FG8", tier:3, tax:"F17", pattern:"P8", q:"Range of the function f(x) = (x\u00b2+3x+4)/(x\u00b2+3x+3) is:",
+  opts:["[1,2]","[1,\u221e)","[2, 7/3]","(1, 7/3]"], correct:3,
+  hints:["The numerator is exactly one more than the denominator.","So f(x) = 1 + 1/(x\u00b2+3x+3).","Complete the square in the denominator and find its smallest value."],
+  ans:"(1, 7/3]", why:"The bracket runs over [3/4, \u221e), so its reciprocal runs over (0, 4/3], and adding 1 gives an open lower end with a closed maximum."},
+
+ {id:"FG9", tier:3, tax:"F18", pattern:"P9", q:"The range of f(x) = 1/|sin x| + 1/|cos x| is:",
+  opts:["[2\u221a2, \u221e)","(\u221a2, 2\u221a2)","(0, 2\u221a2)","(2\u221a2, 4)"], correct:0,
+  hints:["Both terms are positive wherever the function is defined.","Apply AM \u2265 GM to the two terms.","Equality needs |sin x| = |cos x| \u2014 is that reachable?"],
+  ans:"[2\u221a2, \u221e)", why:"AM\u2013GM gives the floor 2\u221a2, attained at the forty-five degree positions, and either term blows up near an axis so there is no ceiling."},
+
+ {id:"FG10", tier:3, tax:"F19", pattern:"P10", q:"The image of the interval [1,3] under the mapping f : R \u2192 R given by f(x) = 2x\u00b3 \u2212 24x + 107 is:",
+  opts:["[0,89]","[75,89]","[0,75]","[70,80]"], correct:1,
+  hints:["Differentiate and find where the slope vanishes.","Only one stationary point lies inside [1,3].","Compare the value there with the two endpoint values."],
+  ans:"[75,89]", why:"The minimum 75 occurs at the interior stationary point and the maximum 89 at an endpoint, so the image is the closed interval between them."},
+
+ {id:"FG11", tier:3, tax:"F3", pattern:"P11", q:"The set of values of 'a' for which the function f : R \u2192 R given by f(x) = x\u00b3 + (a+2)x\u00b2 + 3ax + 5 is one-one is:",
+  opts:["[\u22122,4]","(1,3)","[1,4]","(1,5)"], correct:2,
+  hints:["A cubic is one-one exactly when its derivative never changes sign.","f\u2032(x) = 3x\u00b2 + 2(a+2)x + 3a, with a positive leading coefficient.","So force the discriminant of f\u2032 to be at most zero."],
+  ans:"[1,4]", why:"The discriminant condition reduces to a\u00b2 \u2212 5a + 4 \u2264 0, which is exactly the closed interval from 1 to 4."},
+
+ {id:"FG12", tier:3, tax:"F4", pattern:"P12", q:"Let f : R \u2192 R be a function defined by f(x) = (x\u00b2+2x+5)/(x\u00b2+x+1). Then f is:",
+  opts:["one-one and into","one-one and onto","many-one and onto","many-one and into"], correct:3,
+  hints:["Rewrite f as 1 plus a remainder and look for a turning point.","A turning point means two inputs share an output.","Then compare the range you get with the codomain R."],
+  ans:"many-one and into", why:"The derivative vanishes somewhere, so f is many-one, and the range is a bounded interval rather than all of R, so f is into."},
+
+ {id:"FG13", tier:3, tax:"F5", pattern:"P13", q:"Let A = {x / 0 \u2264 x < \u03c0/2} and f : R \u2192 A be an onto function given by f(x) = tan\u207b\u00b9(x\u00b2+x+\u03bb). Then:",
+  opts:["\u03bb > 0","\u03bb \u2264 1/4","\u03bb = 1/4","\u03bb \u2265 1/8"], correct:2,
+  hints:["The arctangent is onto [0, \u03c0/2) exactly when its input runs over [0, \u221e).","So the quadratic x\u00b2 + x + \u03bb must have minimum value 0.","The minimum of x\u00b2 + x + \u03bb is \u03bb \u2212 1/4."],
+  ans:"\u03bb = 1/4", why:"Only the exact value \u03bb = 1/4 makes the quadratic reach 0 without ever going negative, which is what onto demands here."},
+
+ {id:"FG14", tier:3, tax:"F6", pattern:"P14", q:"Let X have exactly 5 elements and Y exactly 7. If \u03b1 is the number of one-one functions from X to Y and \u03b2 the number of onto functions from Y to X, then (1/5!)(\u03b2 \u2212 \u03b1) is:",
+  opts:["119","120","121","122"], correct:0,
+  hints:["Injections X \u2192 Y number \u2077P\u2085.","Surjections Y \u2192 X use inclusion-exclusion with 5\u2077 as the leading term.","Subtract, then divide by 120."],
+  ans:"119", why:"With \u03b1 = 2520 and \u03b2 = 16800 the difference is 14280, and dividing by 5! gives 119."},
+
+ {id:"FG15", tier:3, tax:"F10", pattern:"P15", q:"The sum of the solution(s) of the equation 2[x] + x = 6{x}, where [x] is the greatest integer function and {x} the fractional part, is:",
+  opts:["0","5/3","3/5","8/5"], correct:3,
+  hints:["Replace x by [x] + {x} throughout.","The equation collapses to 3[x] = 5{x}.","Since 0 \u2264 {x} < 1, only a couple of integer values of [x] are possible."],
+  ans:"8/5", why:"Only [x] = 0 and [x] = 1 survive the bound on the fractional part, giving x = 0 and x = 8/5, whose sum is 8/5."},
+
+ {id:"FG16", tier:3, tax:"F12", pattern:"P16", q:"If f(x) = sin\u207b\u00b9(2x/(1+x\u00b2)) and g(x) = cos\u207b\u00b9((1\u2212x\u00b2)/(1+x\u00b2)) are identical functions, then:",
+  opts:["Domain is [\u22121,1]","Domain is [0,1]","Range is [\u2212\u03c0/2, \u03c0/2]","Range is [0, \u03c0/2]"], correct:1,
+  hints:["Convert each to a multiple of tan\u207b\u00b9x and note where the sign changes.","f is 2tan\u207b\u00b9x only on [\u22121,1]; g is 2tan\u207b\u00b9x only for x \u2265 0.","Identical means the domains must coincide, not just the simplified rules."],
+  ans:"Domain is [0,1]", why:"Both expressions reduce to 2tan\u207b\u00b9x, but only on the overlap [0,1] \u2014 elsewhere one of them picks up a sign flip, so that overlap is the shared domain."}
+,
+ {id:"FG17", tier:3, tax:"F19", pattern:"P17", q:"The entire graph of y = x\u00b2 + kx \u2212 x + 9 is strictly above the X-axis if and only if:",
+  opts:["K < 7","\u22125 < K < 7","K > \u22125","K > 7"], correct:1,
+  hints:["Collect the coefficient of x: it is (k\u22121).","The parabola opens upward, so it stays above the axis exactly when it has no real root.","Set (k\u22121)\u00b2 \u2212 4\u00b79 < 0."],
+  ans:"\u22125 < K < 7", why:"The discriminant condition k\u00b2 \u2212 2k \u2212 35 < 0 factorises to (k\u22127)(k+5) < 0, giving the open interval between \u22125 and 7."},
+
+ {id:"FG18", tier:3, tax:"F18", pattern:"P18", q:"The range of f(x) = cot\u207b\u00b9(2x \u2212 x\u00b2) is:",
+  opts:["(0, \u03c0)","(\u03c0/4, \u03c0)","(\u03c0/4, \u03c0]","[\u03c0/4, \u03c0)"], correct:3,
+  hints:["First find the range of the inside expression 2x \u2212 x\u00b2.","It is a downward parabola with maximum 1, so the inside runs over (\u2212\u221e, 1].","Now apply cot\u207b\u00b9 to exactly that set, remembering it is decreasing."],
+  ans:"[\u03c0/4, \u03c0)", why:"Because cot\u207b\u00b9 decreases, the inner maximum 1 becomes the smallest output \u03c0/4 and it is attained, while the open end at \u2212\u221e approaches \u03c0 without reaching it."}
+];
+
+let FN_PRACTICE = [
+  /* ---------- Exercise-III (domain / range / types block) ---------- */
+  {src:"Ex-III Q1", doc:"exIII", type:"SC", tier:3, tax:"F14", pat:"P2", q:"The domain of the function f(x) = \u221a(log_{(x\u00b2\u22121)}x) is:", choices:["(\u221a2, \u221e)","(0, \u221e)","(1, \u221e)","R"], correct:0, ans:"(\u221a2, \u221e)", nudge:"Printed hint: log^a_b is defined for a, b > 0 and b \u2260 1."},
+  {src:"Ex-III Q2", doc:"exIII", type:"SC", tier:3, tax:"F13", pat:"P1", q:"The domain of f(x) = log\u2081\u2080((x\u22125)/(x\u00b2\u221210x+24)) \u2212 \u221b(x+5) is:", choices:["(4,5)","(6,\u221e)","(4,5) \u222a (6,\u221e)","(4,5] \u222a (6,\u221e)"], correct:2, ans:"(4,5) \u222a (6,\u221e)", nudge:"The cube root imposes nothing; only the log argument must be strictly positive, and the denominator must not vanish."},
+  {src:"Ex-III Q3", doc:"exIII", type:"SC", tier:3, tax:"F16", pat:"P4", q:"If the domain of y = f(x) is x \u2208 [\u22123,2] then the domain of y = f([|x|]) is (where [\u00b7] denotes the greatest integer function):", choices:["[\u22123,2]","[\u22122,3)","[\u22123,3]","[\u22122,3]"], correct:1, ans:"[\u22122,3)", nudge:"Printed hint: \u22123 \u2264 [|x|] \u2264 2 forces \u22122 \u2264 [x] \u2264 2."},
+  {src:"Ex-III Q4", doc:"exIII", type:"SC", tier:3, tax:"F20", pat:"P15", q:"Let f(x) = log\u2082[1+cos\u00b2x] where [\u00b7] denotes the greatest integer function. I : Domain of f(x) is R. II : Range of f(x) is {0,1}. Which is correct?", choices:["only I is true","only II is true","both I and II are true","neither I nor II are true"], correct:2, ans:"both I and II are true", nudge:"1 \u2264 1+cos\u00b2x \u2264 2, so the bracket is 1 or 2 and the log gives 0 or 1."},
+  {src:"Ex-III Q5", doc:"exIII", type:"SC", tier:3, tax:"F7", pat:"P6", q:"Match Column-I with Column-II. A) If |x\u00b2\u2212x| \u2265 x\u00b2+x then the complete set of values of x is; B) If |x+y| > x\u2212y where x > 0, then the complete set of values of y is; C) If log\u2082x \u2265 log\u2082(x\u00b2), then the complete set of values of x is; D) If [x]+2 \u2265 |x| (where [\u00b7] is the greatest integer function) then the complete set of values of x is. Column-II: P) (0,\u221e)  Q) (\u2212\u221e,0]  R) [\u22121,\u221e)  S) (0,1]", choices:["A\u2212Q, B\u2212P, C\u2212R, D\u2212S","A\u2212Q, B\u2212R, C\u2212S, D\u2212P","A\u2212Q, B\u2212P, C\u2212S, D\u2212R","A\u2212P, B\u2212Q, C\u2212S, D\u2212R"], correct:2, ans:"A\u2212Q, B\u2212P, C\u2212S, D\u2212R", nudge:"Printed hint for this item is simply \u2018Conceptual\u2019 \u2014 work each row as a separate sign or modulus test."},
+  {src:"Ex-III Q6", doc:"exIII", type:"SC", tier:3, tax:"F15", pat:"P3", q:"The maximum integral value of x in the domain of f(x) = log\u2081\u2080(log_{1/3}(log\u2084(x\u22125))) is:", choices:["8","5","7","9"], correct:0, ans:"8", nudge:"Printed hint: log_{1/3}(log\u2084(x\u22125)) > 0 gives 0 < log\u2084(x\u22125) < 1, hence 6 < x < 9."},
+  {src:"Ex-III Q7", doc:"exIII", type:"SC", tier:3, tax:"F16", pat:"P4", q:"If f(x) is defined on (0,1], then the domain of f(sin x) is:", choices:["(2n\u03c0, (2n+1)\u03c0), n \u2208 Z","((2n+1)\u03c0/2, (2n+3)\u03c0/2); n \u2208 Z","((n\u22121)\u03c0, (n+1)\u03c0), n \u2208 Z","(n\u03c0, (2n+1)\u03c0) n \u2208 Z"], correct:0, ans:"(2n\u03c0, (2n+1)\u03c0), n \u2208 Z", nudge:"Printed hint: 0 < sin x \u2264 1 gives 2n\u03c0 < x < (2n+1)\u03c0."},
+  {src:"Ex-III Q8", doc:"exIII", type:"SC", tier:3, tax:"F13", pat:"P5", q:"The domain of the function f(x) = \u221a(10 \u2212 \u221a(x\u2074 \u2212 21x\u00b2)) is:", choices:["[5,\u221e)","[\u2212\u221a21, \u221a21]","[\u22125, \u2212\u221a21] \u222a [\u221a21, 5] \u222a {0}","(\u2212\u221e, \u22125)"], correct:2, ans:"[\u22125, \u2212\u221a21] \u222a [\u221a21, 5] \u222a {0}", nudge:"Printed hint: x\u00b2(x\u00b2\u221221) \u2265 0 and (x\u00b2\u221225)(x\u00b2+4) \u2264 0 must hold together."},
+  {src:"Ex-III Q9", doc:"exIII", type:"SC", tier:3, tax:"F13", pat:"P6", q:"Domain of \u221a(x(1\u2212e\u02e3)(x+2)(x\u22123)\u00b2) is:", choices:["[\u22122, 3]","(\u22122, 0]","(\u2212\u221e, \u22122] \u222a {0, 3}","(\u2212\u221e, \u22122) \u222a [0, 3]"], correct:2, ans:"(\u2212\u221e, \u22122] \u222a {0, 3}", nudge:"The squared factor never flips the sign, so x = 3 survives only as an isolated point."},
+  {src:"Ex-III Q10", doc:"exIII", type:"SC", tier:3, tax:"F17", pat:"P8", q:"Range of the function f(x) = (x\u00b2+3x+4)/(x\u00b2+3x+3) is:", choices:["[1,2]","[1,\u221e)","[2, 7/3]","(1, 7/3]"], correct:3, ans:"(1, 7/3]", nudge:"Printed hint: f(x) = 1 + 1/((x + 3/2)\u00b2 + 3/4)."},
+  {src:"Ex-III Q11", doc:"exIII", type:"SC", tier:3, tax:"F18", pat:"P9", q:"Range of the function f(x) = log\u2082(2 \u2212 log_{\u221a2}(16sin\u00b2x + 1)) is:", choices:["[0,1]","(\u2212\u221e,1]","[\u22121,1]","(\u2212\u221e,\u221e)"], correct:1, ans:"(\u2212\u221e,1]", nudge:"Printed hint: 0 \u2264 log_{\u221a2}(16sin\u00b2x+1) \u2264 log\u2082 17, so 0 < 2 \u2212 log_{\u221a2}(16sin\u00b2x+1) \u2264 2."},
+  {src:"Ex-III Q12", doc:"exIII", type:"SC", tier:3, tax:"F19", pat:"P10", q:"The image of the interval [1,3] under the mapping f : R \u2192 R, given by f(x) = 2x\u00b3 \u2212 24x + 107 is:", choices:["[0,89]","[75,89]","[0,75]","[70,80]"], correct:1, ans:"[75,89]", nudge:"Printed hint: minimum 75 at x = 2, maximum 89 at x = 3."},
+  {src:"Ex-III Q14", doc:"exIII", type:"SC", tier:3, tax:"F8", pat:"P15", q:"If f : R \u2192 R is defined by f(x) = [2x] \u2212 2[x] for x \u2208 R, where [x] is the greatest integer not exceeding x, then the range of f is:", choices:["{x \u2208 R : 0 \u2264 x \u2264 1}","{0, 1}","{x \u2208 R : x > 0}","{x \u2208 R : x < 0}"], correct:1, ans:"{0, 1}", nudge:"Printed hint: [2x] equals 2n or 2n+1, so the difference is 0 or 1."},
+  {src:"Ex-III Q15", doc:"exIII", type:"SC", tier:3, tax:"F10", pat:"P15", q:"If f(x) = {x} + {x+1} + {x+2} + \u2026 + {x+99}, then [f(\u221a2)] (where {\u00b7} is the fractional part and [\u00b7] the greatest integer function) equals:", choices:["5050","41","4950","40"], correct:1, ans:"41", nudge:"Printed hint: {x+I} = {x} for integer I, so f(x) = 100{x} and [f(\u221a2)] = 41."},
+  {src:"Ex-III Q16", doc:"exIII", type:"SC", tier:3, tax:"F8", pat:"P15", q:"The function f : R \u2192 B is defined by f(x) = [x] + [\u2212x] where [\u00b7] is the greatest integer function. If f is surjective then B =", choices:["R","[0, 1]","[\u22121, 0]","{\u22121, 0}"], correct:3, ans:"{\u22121, 0}", nudge:"Printed hint: verify by taking an integer and a decimal number."},
+  {src:"Ex-III Q17", doc:"exIII", type:"SC", tier:3, tax:"F20", pat:"P15", q:"Statement I : The range of the function f(x) = sin([x]\u03c0)/(x\u00b2+x+1) is {0}. Statement II : The range of the function f(x) = (x\u2212[x])/(1+x\u2212[x]) is [0, 1/2). Which is correct?", choices:["only I is true","only II is true","both I and II are true","neither I nor II are true"], correct:2, ans:"both I and II are true", nudge:"Printed hint: sin([x]\u03c0) = 0 always, and {x}/(1+{x}) \u2208 [0, 1/2)."},
+  {src:"Ex-III Q18", doc:"exIII", type:"SC", tier:3, tax:"F5", pat:"P12", q:"Let S be the set of all triangles and R\u207a the set of positive real numbers. Then the function f : S \u2192 R\u207a, f(\u0394) = area of \u0394, where \u0394 \u2208 S, is:", choices:["injective but not surjective","surjective but not injective","injective as well as surjective","neither injective nor surjective"], correct:1, ans:"surjective but not injective", nudge:"Printed hint: two triangles may have equal areas, and every positive real is the area of some triangle."},
+  {src:"Ex-III Q19", doc:"exIII", type:"SC", tier:3, tax:"F5", pat:"P13", q:"If A = {x : \u22122/5 \u2264 x \u2264 (\u03c0\u22122)/5}, B = {y : \u22121 \u2264 y \u2264 1} and f(x) = cos(5x+2), then the mapping f : A \u2192 B is:", choices:["One-one but not onto","Onto but not one-one","Both one-one and onto","Neither one-one nor onto"], correct:2, ans:"Both one-one and onto", nudge:"Printed hint: put t = 5x+2, then f(t) = cos t which is bijective on [0, \u03c0]."},
+
+  /* ---------- Exercise-IV \u00b7 Single Answer (types block) ---------- */
+  {src:"Ex-IV Q1", doc:"exIV", type:"SC", tier:3, tax:"F4", pat:"P12", q:"Let f : R \u2192 R be a function defined by f(x) = (x\u00b2+2x+5)/(x\u00b2+x+1). Then f is:", choices:["one-one and into","one-one and onto","many-one and onto","many-one and into"], correct:3, ans:"many-one and into", nudge:"Printed hint: f(x) = ((x+1)\u00b2+4)/((x+1/2)\u00b2+3/4) > 0 and f\u2032(x) = 0 has a solution, so f is many-one and range \u2260 codomain."},
+  {src:"Ex-IV Q2", doc:"exIV", type:"SC", tier:3, tax:"F4", pat:"P12", q:"f : R \u2192 R is a function defined by f(x) = (e^{|x|} \u2212 e^{\u2212x})/(e\u02e3 + e^{\u2212x}). Then f is:", choices:["a bijection","an injection only","surjection only","neither injection nor surjection"], correct:3, ans:"neither injection nor surjection", nudge:"Printed hint: f(x) = 0 for all x \u2264 0 and f(x) > 0 for all x > 0."},
+  {src:"Ex-IV Q3", doc:"exIV", type:"SC", tier:3, tax:"F5", pat:"P13", q:"If f : R \u2192 [\u03c0/6, \u03c0/2) defined by f(x) = sin\u207b\u00b9((x\u00b2\u2212a)/(x\u00b2+1)) is an onto function, then the set of values of 'a' is:", choices:["(\u2212\u221e, \u22121)","(\u22121, \u221e)","(\u2212\u221e, 0)","(\u2212\u221e, \u221e)"], correct:1, ans:"(\u22121, \u221e)", nudge:"Printed hint: onto forces 1/2 \u2264 (x\u00b2\u2212a)/(x\u00b2+1) < 1, which gives a+1 > 0."},
+  {src:"Ex-IV Q4", doc:"exIV", type:"SC", tier:2, tax:"F7", pat:"P12", q:"Let f : R \u2192 R be any function. Define g : R \u2192 R by g(x) = |f(x)| for all x. Then g is:", choices:["onto if f is onto","one-one if f is one-one","continuous if f is continuous","neither one-one nor onto"], correct:2, ans:"continuous if f is continuous", nudge:"Printed hint: g = h\u2218f with h(x) = |x|, and a composition of continuous functions is continuous."},
+  {src:"Ex-IV Q5", doc:"exIV", type:"SC", tier:3, tax:"F4", pat:"P12", q:"We have f(x) = {3 for x \u2264 0;  3^{\u2212x} \u2212 3\u02e3 + 3 for x > 0}  (as sgn(e^{\u2212x}) = 1 for all x \u2208 R). Then f is:", choices:["one-one and into","one-one and onto","many-one and onto","Neither one-one nor onto"], correct:3, ans:"Neither one-one nor onto", nudge:"Printed hint: f is many-one and its range (\u2212\u221e, 3] is a proper subset of R."},
+  {src:"Ex-IV Q6", doc:"exIV", type:"SC", tier:3, tax:"F6", pat:"P14", q:"Let A = {1,2,3,4,5}. If 'f' is a bijective function from A to A, then the number of such functions for which f(k) \u2260 k, k = 1,2,3,4,5 is:", choices:["5\u2075","120","44","5\u2075 \u2212 120"], correct:2, ans:"44", nudge:"Printed hint: use the derangement formula 5!(1/0! \u2212 1/1! + 1/2! \u2212 1/3! + 1/4! \u2212 1/5!) = 44."},
+  {src:"Ex-IV Q7", doc:"exIV", type:"SC", tier:3, tax:"F3", pat:"P11", q:"The set of values of 'a' for which the function f : R \u2192 R given by f(x) = x\u00b3 + (a+2)x\u00b2 + 3ax + 5 is one-one is:", choices:["[\u22122, 4]","(1, 3)","[1, 4]","(1, 5)"], correct:2, ans:"[1, 4]", nudge:"Printed hint: f\u2032(x) > 0 with leading coefficient 3 needs discriminant < 0, i.e. a\u00b2 \u2212 5a + 4 < 0."},
+  {src:"Ex-IV Q9", doc:"exIV", type:"SC", tier:3, tax:"F10", pat:"P15", q:"The sum of solution(s) of the equation 2[x] + x = 6{x}, where [x] denotes the greatest integer less than or equal to x and {x} the fractional part of x, is:", choices:["0","5/3","3/5","8/5"], correct:3, ans:"8/5", nudge:"Printed hint: 3[x] = 5{x} with {x} \u2208 [0,1) leaves [x] = 0 and [x] = 1."},
+  {src:"Ex-IV Q10", doc:"exIV", type:"SC", tier:3, tax:"F8", pat:"P15", q:"If [x] is the greatest integral function, then \u03a3 (k = 1 to 4020) [1/2 + (k\u22121)/4020] is equal to:", choices:["2010","2009","2011","2005"], correct:0, ans:"2010", nudge:"Printed hint: the bracket is 0 for k = 1 \u2026 2010 and 1 for k = 2011 \u2026 4020."},
+  {src:"Ex-IV Q11", doc:"exIV", type:"SC", tier:3, tax:"F8", pat:"P15", q:"f(x) = sin[x] + [sin x], 0 < x < \u03c0/2, where [\u00b7] is the greatest integer function, can also be represented as:", choices:["{0 for 0 < x < 1;  1 + sin 1 for 1 \u2264 x < \u03c0/2}","{1/\u221a2 for 0 < x < \u03c0/4;  1 + 1/2 + 1/\u221a2 + \u221a3/2 for \u03c0/4 \u2264 x < \u03c0/2}","{0 for 0 < x < 1;  sin 1 for 1 \u2264 x < \u03c0/2}","{0 for 0 < x < \u03c0/4;  1 for \u03c0/4 < x < 1;  sin 1 for 1 \u2264 x < \u03c0/2}"], correct:2, ans:"{0 for 0 < x < 1;  sin 1 for 1 \u2264 x < \u03c0/2}", nudge:"Printed hint: [sin x] = 0 throughout 0 < x < \u03c0/2, and [x] is 0 then 1."},
+  {src:"Ex-IV Q12", doc:"exIV", type:"SC", tier:3, tax:"F10", pat:"P15", q:"If [x] and {x} represent the integral and fractional parts of x respectively, then the value of \u03a3 (r = 1 to 2000) {x+r}/2000 is:", choices:["x","[x]","{x}","x + 2001"], correct:2, ans:"{x}", nudge:"Printed hint: every {x+r} equals {x}, so the sum is 2000{x}/2000."},
+  {src:"Ex-IV Q13", doc:"exIV", type:"SC", tier:3, tax:"F3", pat:"P11", q:"Total number of solutions of 2\u02e3 + 3\u02e3 + 4\u02e3 \u2212 5\u02e3 = 0 is:", choices:["0","1","2","infinitely many"], correct:1, ans:"1", nudge:"Printed hint: divide by 5\u02e3 to get a strictly decreasing function, which cuts the axis once."},
+
+  /* ---------- Exercise-IV \u00b7 Single Answer (domain block) ---------- */
+  {src:"Ex-IV Q30", doc:"exIV", type:"SC", tier:3, tax:"F13", pat:"P1", q:"The domain of f(x) = 1/x + 2^{sin\u207b\u00b9x} + 1/\u221a(x\u22122) is:", choices:["(0, \u221e)","(\u2212\u221e, 0)","(1, 3)","\u03c6"], correct:3, ans:"\u03c6", nudge:"Printed hint: x \u2260 0, x > 2 and \u22121 \u2264 x \u2264 1 have no common region."},
+  {src:"Ex-IV Q31", doc:"exIV", type:"SC", tier:3, tax:"F14", pat:"P2", q:"The domain of f(x) = \u221a(ln_{(|x|\u22121)}(x\u00b2+4x+4)) is:", choices:["[\u22123,\u22121] \u222a [1,2]","(\u22122,\u22121) \u222a [2,\u221e)","(\u2212\u221e,\u22123] \u222a (\u22122,\u22121) \u222a (2,\u221e)","(\u2212\u221e, \u221e)"], correct:2, ans:"(\u2212\u221e,\u22123] \u222a (\u22122,\u22121) \u222a (2,\u221e)", nudge:"Printed hint splits on 0 < |x|\u22121 < 1 and |x|\u22121 > 1, then intersects with (x+2)\u00b2 > 0."},
+  {src:"Ex-IV Q32", doc:"exIV", type:"SC", tier:3, tax:"F13", pat:"P1", q:"The domain of f(x) = \u221a(log_{0.3}|x\u22122| / |x|) is:", choices:["[1,2]","[2,3]","[1,2) \u222a (2,3]","[0,3]"], correct:2, ans:"[1,2) \u222a (2,3]", nudge:"Printed hint: |x\u22122| \u2264 1 with x \u2260 0 and x \u2260 2 gives [1,2) \u222a (2,3]."},
+  {src:"Ex-IV Q33", doc:"exIV", type:"SC", tier:3, tax:"F15", pat:"P3", q:"The domain of f(x) = log\u2081\u2080 log\u2081\u2080 log\u2081\u2080 \u2013\u2013\u2013 log\u2081\u2080 x  ('log' n times) is:", choices:["(10^{10^{10^{\u2026(n\u22122) times}}}, \u221e)","(10^{n\u22122}, \u221e)","(10^{10^{\u2026(n\u22121) times}}, \u221e)","(10^{10^{\u2026(n\u22123) times}}, \u221e)"], correct:0, ans:"(10^{10^{10^{\u2026(n\u22122) times}}}, \u221e)", nudge:"Printed hint: use the definition of the logarithm several times, peeling one layer at a time."},
+  {src:"Ex-IV Q34", doc:"exIV", type:"SC", tier:3, tax:"F13", pat:"P1", q:"The domain of the function f(x) = sin\u207b\u00b9(4/(3 + 2cos x)) is:", choices:["[2n\u03c0 \u2212 \u03c0/3, 2n\u03c0 + \u03c0/3]","[2n\u03c0 \u2212 \u03c0/6, 2n\u03c0 + \u03c0/6]","[2n\u03c0 \u2212 \u03c0/2, 2n\u03c0 + \u03c0/2]","[2n\u03c0 \u2212 \u03c0/3, 2n\u03c0 + \u03c0/2]"], correct:0, ans:"[2n\u03c0 \u2212 \u03c0/3, 2n\u03c0 + \u03c0/3]", nudge:"Printed hint: \u22121 \u2264 4/(3+2cos x) \u2264 1 reduces to cos x \u2265 1/2."},
+  {src:"Ex-IV Q35", doc:"exIV", type:"SC", tier:3, tax:"F13", pat:"P1", q:"The domain of f(x) = sin\u207b\u00b9[2 \u2212 4x\u00b2] (where [\u00b7] is the greatest integer function) is:", choices:["[\u2212\u221a3/2, \u221a3/2]","[\u22123/2, 3/2] \u2212 {0}","[\u2212\u221a3/2, 0) \u222a (0, \u221a3/2]","\u03c6"], correct:2, ans:"[\u2212\u221a3/2, 0) \u222a (0, \u221a3/2]", nudge:"Printed hint: \u22121 \u2264 2\u22124x\u00b2 < 2 gives x\u00b2 \u2264 3/4, but at x = 0 the function is not defined."},
+  {src:"Ex-IV Q36", doc:"exIV", type:"SC", tier:3, tax:"F14", pat:"P2", q:"The domain of f(x) = \u221a(cos(sin x)) + \u221a(log_x{x}) (where {\u00b7} is the fractional part of x) is:", choices:["[1, \u03c0)","(0, 2\u03c0) \u2212 [1, \u03c0)","(0, \u03c0/2) \u2212 {1}","(0, 1)"], correct:3, ans:"(0, 1)", nudge:"Printed hint: cos(sin x) \u2265 0 for all real x, so everything hinges on log_x{x} \u2265 0 with 0 < x < 1."},
+  {src:"Ex-IV Q37", doc:"exIV", type:"SC", tier:3, tax:"F13", pat:"P1", q:"The domain of ([cos\u207b\u00b9(x\u2074)] + |x \u2212 2tan\u207b\u00b9x| + \u221a(sin(ln x))) / ({3x\u00b2 \u2212 7} + a^{\u221a(sin x + 3cos x)} + ln cos(1/\u221a(\u2212x\u00b2)))  (where [\u00b7] is G.I.F and {\u00b7} the fractional part) is:", choices:["(\u22122, \u221a2)","(0, 1)","(\u22121, 1)","\u03c6"], correct:3, ans:"\u03c6", nudge:"Printed hint: 1/\u221a(\u2212x\u00b2) is not defined for any x, so the domain is empty."},
+  {src:"Ex-IV Q38", doc:"exIV", type:"SC", tier:3, tax:"F13", pat:"P1", q:"The domain of f(x) = sin\u207b\u00b9([2 \u2212 3x\u00b2]) (where [\u00b7] is G.I.F) is:", choices:["[\u22121, 1]","(0, 1)","[\u22121, 1] \u2212 {0}","\u03c6"], correct:2, ans:"[\u22121, 1] \u2212 {0}", nudge:"Printed hint: \u22121 \u2264 2\u22123x\u00b2 < 2 gives 0 < x\u00b2 \u2264 1."},
+  {src:"Ex-IV Q39", doc:"exIV", type:"SC", tier:3, tax:"F13", pat:"P1", q:"The domain of the function f(x) = [9\u02e3 + 27^{(2/3)(x\u22122)} \u2212 219 \u2212 3^{2(x\u22121)}]^{1/4} is:", choices:["[\u22123, 3]","[3, \u221e)","[5/2, \u221e)","[0, 1]"], correct:2, ans:"[5/2, \u221e)", nudge:"Printed hint: collect the powers to (73/81)\u00b73^{2x} \u2265 219, hence 3^{2x} \u2265 3\u2075."},
+  {src:"Ex-IV Q40", doc:"exIV", type:"SC", tier:3, tax:"F16", pat:"P4", q:"If f(x) = 2x + |x|, g(x) = (1/3)(2x \u2212 |x|) and h(x) = f(g(x)), then the domain of sin\u207b\u00b9(h(h(h(\u2026h(x))))) (h being repeated n times) is:", choices:["[\u22121, 1]","(0, 1)","(\u22121, 1)","[1/2, 1]"], correct:0, ans:"[\u22121, 1]", nudge:"Printed hint: h(x) = x for every x, so the nested composition collapses to x."},
+  {src:"Ex-IV Q41", doc:"exIV", type:"SC", tier:3, tax:"F19", pat:"P17", q:"The entire graph of y = x\u00b2 + kx \u2212 x + 9 is strictly above the X-axis if and only if:", choices:["K < 7","\u22125 < K < 7","K > \u22125","K > 7"], correct:1, ans:"\u22125 < K < 7", nudge:"Printed hint: (k\u22121)\u00b2 \u2212 4(9) < 0 gives k\u00b2 \u2212 2k \u2212 35 < 0."},
+  {src:"Ex-IV Q42", doc:"exIV", type:"SC", tier:3, tax:"F18", pat:"P18", q:"The range of tan(log x) is:", choices:["(0, \u221e)","(1, \u221e)","(e, \u221e)","(\u2212\u221e, \u221e)"], correct:3, ans:"(\u2212\u221e, \u221e)", nudge:"Printed hint: the range of log x is R, so tan takes every value."},
+  {src:"Ex-IV Q43", doc:"exIV", type:"SC", tier:3, tax:"F20", pat:"P15", q:"The range of f(x) = e\u02e3/(1 + [x]) for x \u2265 0 (where [\u00b7] is G.I.F) is:", choices:["R","R \u2212 {0}","R \u2212 [\u22121, 0)","[1, \u221e)"], correct:3, ans:"[1, \u221e)", nudge:"Printed hint: on [0,1) the value is e\u02e3, on [1,2) it is e\u02e3/2, on [2,3) it is e\u02e3/3, and so on."},
+  {src:"Ex-IV Q44", doc:"exIV", type:"SC", tier:3, tax:"F18", pat:"P9", q:"The range of f(x) = 1/|sin x| + 1/|cos x| is:", choices:["[2\u221a2, \u221e)","(\u221a2, 2\u221a2)","(0, 2\u221a2)","(2\u221a2, 4)"], correct:0, ans:"[2\u221a2, \u221e)", nudge:"Printed hint: use A.M \u2265 G.M on the two positive terms."},
+  {src:"Ex-IV Q45", doc:"exIV", type:"SC", tier:3, tax:"F20", pat:"P15", q:"The range of f(x) = (x \u2212 [x])/(1 \u2212 [x] + x) (where [\u00b7] is G.I.F) is:", choices:["[0, 1/2]","[0, 1]","(0, 1/2]","[0, 1/2)"], correct:3, ans:"[0, 1/2)", nudge:"Printed hint: with y = {x}/(1+{x}) you get {x} = y/(1\u2212y), and 0 \u2264 y/(1\u2212y) < 1."},
+  {src:"Ex-IV Q46", doc:"exIV", type:"SC", tier:3, tax:"F5", pat:"P13", q:"Let A = {x / 0 \u2264 x < \u03c0/2} and f : R \u2192 A is an onto function given by f(x) = tan\u207b\u00b9(x\u00b2 + x + \u03bb) where:", choices:["\u03bb > 0","\u03bb \u2264 1/4","\u03bb = 1/4","\u03bb \u2265 1/8"], correct:2, ans:"\u03bb = 1/4", nudge:"Printed hint: \u03bb = 1/4 is the only solution."},
+  {src:"Ex-IV Q48", doc:"exIV", type:"SC", tier:3, tax:"F20", pat:"P15", q:"The range of f(x) = [1/sin{x}] is (where {\u00b7} is fractional part and [\u00b7] is G.I.F):", choices:["{1, \u22121}","{0}","N","Z"], correct:2, ans:"N", nudge:"Printed hint: 0 < {x} < 1 gives sin 0 < sin{x} < sin 1, so 1/sin{x} > 1.18 and the bracket is \u2265 1."},
+  {src:"Ex-IV Q49", doc:"exIV", type:"SC", tier:3, tax:"F18", pat:"P18", q:"If f(x) = \u03c0((\u221a(x+7) \u2212 4)/(x \u2212 9)), then the range of the function y = sin(2f(x)) is:", choices:["[0, 1]","(0, 1/\u221a2]","(0, 1/\u221a2) \u222a (1/\u221a2, 1]","(0, 1]"], correct:2, ans:"(0, 1/\u221a2) \u222a (1/\u221a2, 1]", nudge:"Printed hint: rationalise to f(x) = \u03c0/(\u221a(x+7)+4), whose range is (0, \u03c0/4] minus {\u03c0/8}."},
+  {src:"Ex-IV Q50", doc:"exIV", type:"SC", tier:3, tax:"F18", pat:"P9", q:"The range of f(x) = \u221a(a\u2212x) + \u221a(x\u2212b) is (where a > b > 0):", choices:["[\u221a(a\u2212b), \u221a(2(a\u2212b))]","[\u221a(a\u2212b), \u221a(a+b)]","[a, b]","(a, b)"], correct:0, ans:"[\u221a(a\u2212b), \u221a(2(a\u2212b))]", nudge:"Printed hint: square to y\u00b2 = (a\u2212b) + 2\u221a(((a\u2212b)/2)\u00b2 \u2212 (x \u2212 (a+b)/2)\u00b2)."},
+  {src:"Ex-IV Q51", doc:"exIV", type:"SC", tier:3, tax:"F18", pat:"P18", q:"The range of f(x) = cot\u207b\u00b9(2x \u2212 x\u00b2) is:", choices:["(0, \u03c0)","(\u03c0/4, \u03c0)","(\u03c0/4, \u03c0]","[\u03c0/4, \u03c0)"], correct:3, ans:"[\u03c0/4, \u03c0)", nudge:"Printed hint: cot y = 2x \u2212 x\u00b2 and (x\u22121)\u00b2 = 1 \u2212 cot y \u2265 0, so cot y \u2264 1."},
+  {src:"Ex-IV Q52", doc:"exIV", type:"SC", tier:3, tax:"F18", pat:"P18", q:"The sum of the maximum and minimum values of f(x) = sin\u207b\u00b9(2x) + cos\u207b\u00b9(2x) + sec\u207b\u00b9(2x) is:", choices:["\u03c0","\u03c0/2","2\u03c0","3\u03c0/2"], correct:2, ans:"2\u03c0", nudge:"Printed hint: the domain collapses to {\u22121/2, 1/2}, giving values \u03c0/2 and 3\u03c0/2."},
+  {src:"Ex-IV Q53", doc:"exIV", type:"SC", tier:3, tax:"F14", pat:"P2", q:"If f(x) = log_{[x\u22121]}(|x|/x), where [\u00b7] is G.I.F, then domain and range are:", choices:["(2,\u221e), (0,1)","[3,\u221e), {0}","[3,\u221e), {0,1}","(\u2212\u221e,\u221e); {0}"], correct:1, ans:"[3,\u221e), {0}", nudge:"Printed hint: |x|/x > 0, [x\u22121] > 0 and [x\u22121] \u2260 1 give x \u2208 [3,\u221e), where |x|/x = 1 so the log is 0."},
+  {src:"Ex-IV Q54", doc:"exIV", type:"SC", tier:3, tax:"F3", pat:"P11", q:"If f(x) = x\u00b3 + 3x\u00b2 + 4x + a sin x + b cos x for all x \u2208 R is an injection, then the greatest value of a\u00b2 + b\u00b2 is:", choices:["1","2","\u221a2","2\u221a2"], correct:0, ans:"1", nudge:"Printed hint: f\u2032 \u2265 0 gives 3(x+1)\u00b2 + 1 \u2265 \u221a(a\u00b2+b\u00b2), whose tightest case is 1."},
+  {src:"Ex-IV Q55", doc:"exIV", type:"SC", tier:3, tax:"F13", pat:"P1", q:"The domain and range of f(x) = sin{log((\u221a(4\u2212x\u00b2))/(1\u2212x))} are:", choices:["(\u22122,1) and [\u22121,1]","(1,3) and [\u22121,1]","[\u22122,1] and [\u22121,1]","(0,\u221e) and [\u22121,1]"], correct:0, ans:"(\u22122,1) and [\u22121,1]", nudge:"Printed hint: \u221a(4\u2212x\u00b2)/(1\u2212x) > 0 with 4\u2212x\u00b2 > 0 gives x \u2208 (\u22122,1)."},
+  {src:"Ex-IV Q62", doc:"exIV", type:"SC", tier:3, tax:"F13", pat:"P1", q:"The domain of the function f(x) = 1/\u221a(\u00b9\u2070C_{x\u22121} \u2212 3\u00d7\u00b9\u2070C_x) contains the points:", choices:["9, 10, 11","9, 10, 12","all natural numbers","none of these"], correct:3, ans:"none of these", nudge:"Printed hint: the inequality forces 4x > 33 with x \u2264 10, so only x = 9 and x = 10 qualify."},
+  {src:"Ex-IV Q63", doc:"exIV", type:"SC", tier:3, tax:"F19", pat:"P10", q:"The range of f(x) = (x+1)(x+2)(x+3)(x+4) + 5 for x \u2208 [\u22126, 6] is:", choices:["[4, 5045]","[0, 5045]","[\u221220, 5045]","none of these"], correct:0, ans:"[4, 5045]", nudge:"Printed hint: pair the factors to (x\u00b2+5x+4)(x\u00b2+5x+6) = t(t+2) with t = x\u00b2+5x, minimum \u22121 and g(6) = 5040."},
+
+  /* ---------- Exercise-IV \u00b7 Multi Answer (reveal mode \u2014 no single option key) ---------- */
+  {src:"Ex-IV Q64", doc:"exIV", type:"MC", tier:3, tax:"F4", pat:"P12", q:"f(x) = (e^{x\u00b3} + e^{\u2212x\u00b3})/(e^{x\u00b3} \u2212 e^{\u2212x\u00b3}), then 'f' is:  A) Many-one function  B) one-one function  C) decreasing in (\u2212\u221e, 0)  D) decreasing in (0, \u221e)", ans:"(B), (C), (D)", opt:"B,C,D", note:"f is undefined at x = 0 and f\u2032(x) = \u221212x\u00b2/(e^{x\u00b3}\u2212e^{\u2212x\u00b3})\u00b2 < 0 for x \u2260 0, so it strictly decreases on each side and is one-one."},
+  {src:"Ex-IV Q65", doc:"exIV", type:"MC", tier:3, tax:"F2", pat:"P12", q:"f(x) = {x if x is rational; 0 if x is irrational} and g(x) = {0 if x is rational; x if x is irrational}. Then f \u2212 g is:  A) one-one and into  B) neither one-one nor onto  C) many one and onto  D) one-one and onto", ans:"(D) one-one and onto", opt:"D", note:"(f\u2212g)(x) = x for rational x and \u2212x for irrational x; every real is hit exactly once, so the difference is a bijection."},
+  {src:"Ex-IV Q66", doc:"exIV", type:"MC", tier:3, tax:"F8", pat:"P15", q:"Let f(x) = [x]\u00b2 + [x+1] \u2212 3 where [x] \u2264 x, and f : R \u2192 R. Then:  A) many-one  B) one-one  C) onto  D) into", ans:"(A) many-one and (D) into", opt:"A,D", note:"f(x) = ([x]+2)([x]\u22121), so the outputs are integers only \u2014 the range is a proper subset of R and whole intervals share a value."},
+  {src:"Ex-IV Q67", doc:"exIV", type:"MC", tier:3, tax:"F8", pat:"P15", q:"Let f(x) = sgn(cot\u207b\u00b9x) + tan((\u03c0/2)[x]), where [x] is the greatest integer function less than or equal to x. Then which of the following alternatives is/are true?  A) Domain of f(x) is \u222a_{n\u2208Z}[2n, 2n+1)  B) f(x) = 1, x \u2208 D_f  C) f(x) is periodic  D) All of above", ans:"(A), (B), (C), (D)", opt:"A,B,C,D", note:"cot\u207b\u00b9x > 0 always so the sgn term is 1; tan((\u03c0/2)[x]) needs [x] even, and the resulting graph repeats with period 2."},
+  {src:"Ex-IV Q69", doc:"exIV", type:"MC", tier:3, tax:"F15", pat:"P3", q:"f : (e, \u221e) \u2192 R defined by f(x) = log(log(log x)). Then:  A) many-one  B) into  C) one-one  D) onto", ans:"(C) one-one and (D) onto", opt:"C,D", note:"f\u2032(x) = 1/(x\u00b7log x\u00b7log(log x)) > 0 on (e,\u221e), and log(log(log x)) sweeps all of R."},
+  {src:"Ex-IV Q70", doc:"exIV", type:"MC", tier:3, tax:"F8", pat:"P15", q:"If [x + [2x]] < 3, where [\u00b7] denotes the greatest integer function, then:  A) x \u2208 [0,1)  B) x \u2208 (\u2212\u221e, 2/3]  C) x \u2208 [0, 3/2)  D) x \u2208 (\u2212\u221e, 1)", ans:"(D) x \u2208 (\u2212\u221e, 1)", opt:"D", note:"The condition is [x] + [2x] \u2264 2; testing the sub-intervals of [0,1) and beyond shows it survives exactly up to but not including 1."},
+  {src:"Ex-IV Q72", doc:"exIV", type:"MC", tier:3, tax:"F10", pat:"P15", q:"If {x} and [x] denote the fractional and integral parts of 'x' and {x+1} + 2x = 4[x+1] \u2212 6 then x is:  A) 1  B) 8/3  C) 0  D) \u22121", ans:"(A) 1 and (B) 8/3", opt:"A,B", note:"Reduces to 3x = 5[x] \u2212 2, then 3{x} = 2[x] \u2212 2 with 0 \u2264 3{x} < 3 forces [x] = 1 or 2."},
+  {src:"Ex-IV Q73", doc:"exIV", type:"MC", tier:3, tax:"F1", pat:"P14", q:"Let f(x) = Ax\u00b2 + Bx + C where A, B, C are real numbers. If f(x) is an integer whenever 'x' is an integer, then which of the following numbers are integers?  A) 2A  B) A+B  C) C  D) A+B+C", ans:"(A), (B), (C), (D)", opt:"A,B,C,D", note:"f(0), f(1), f(\u22121) integers give C, A+B+C and A\u2212B+C integers, hence C, A+B and 2A are all integers."},
+  {src:"Ex-IV Q75", doc:"exIV", type:"MC", tier:3, tax:"F14", pat:"P2", q:"The domain of f(x) = 1/\u221a(log_{1/2}(x\u00b2 \u2212 7x + 13)) is:  A) (3,4)  B) [3,4]  C) (\u2212\u221e,3] \u222a [1,\u221e)  D) (1,3)", ans:"(A) (3,4)", opt:"A", note:"Needs x\u00b2\u22127x+13 > 0 (always true) and x\u00b2\u22127x+13 < 1, i.e. x\u00b2\u22127x+12 < 0."},
+  {src:"Ex-IV Q76", doc:"exIV", type:"MC", tier:3, tax:"F14", pat:"P2", q:"f(x) = log_{(100x)}((2log\u2081\u2080x + 1)/(\u2212x)) exists if x \u2208:  A) (0, 10\u207b\u00b2)  B) (10\u207b\u00b2, 10^{\u22121/2})  C) (10\u00b2, 10\u00b3)  D) (10\u2078, \u221e)", ans:"(A) and (B)", opt:"A,B", note:"100x > 0 with 100x \u2260 1, and (2log\u2081\u2080x+1)/x < 0 gives log\u2081\u2080x < \u22121/2."},
+  {src:"Ex-IV Q77", doc:"exIV", type:"MC", tier:3, tax:"F19", pat:"P10", q:"f : [a,b] \u2192 [5,6] be defined as y = f(x) = 2x\u00b3 \u2212 9x\u00b2 + 12x + 1. Then which of the following is true?  A) Minimum value of a for y = f(x) to be a one-one function is 1/2  B) Maximum value of a for y = f(x) to be a one-one function is 2  C) Minimum value of b for y = f(x) to be an onto function is 1  D) Maximum value of b for y = f(x) to be an onto function is 5/2", ans:"(A), (C), (D)", opt:"A,C,D", note:"The printed hint sketches the curve with the levels 5 and 6 marked at x = 1/2, 1, 2 and 5/2."},
+  {src:"Ex-IV Q78", doc:"exIV", type:"MC", tier:3, tax:"F13", pat:"P1", q:"The domain of definition of the function f(x) given by the equation 2\u02e3 + 2^y = 2 is:  A) 0 < x \u2264 1  B) 0 \u2264 x \u2264 1  C) \u2212\u221e < x \u2264 0  D) \u2212\u221e < x < 1", ans:"(C) and (D)", opt:"C,D", note:"2\u02e3 = 2 \u2212 2^y < 2 forces 0 < 2\u02e3 < 2, hence x < 1; the printed key marks both C and D."},
+  {src:"Ex-IV Q79", doc:"exIV", type:"MC", tier:3, tax:"F14", pat:"P2", q:"For the function f(x) = cos\u207b\u00b9\u221a(log_{[x]}(|x|/x)) (where [\u00b7] is G.I.F):  A) Domain is [1,\u221e)  B) Domain is [2,\u221e)  C) Range is [0,\u221e)  D) Range is {\u03c0/2}", ans:"(B) and (D)", opt:"B,D", note:"|x|/x > 0 needs x > 0, and [x] > 0 with [x] \u2260 1 gives x \u2208 [2,\u221e), where the log is 0 so the arccos is \u03c0/2."},
+  {src:"Ex-IV Q80", doc:"exIV", type:"MC", tier:3, tax:"F12", pat:"P16", q:"If the functions f(x) = sin\u207b\u00b9(2x/(1+x\u00b2)) and g(x) = cos\u207b\u00b9((1\u2212x\u00b2)/(1+x\u00b2)) are identical functions then their:  A) Domain is [\u22121,1]  B) Domain is [0,1]  C) Range is [\u2212\u03c0/2, \u03c0/2]  D) Range is [0, \u03c0/2]", ans:"(B) and (D)", opt:"B,D", note:"f = 2tan\u207b\u00b9x only on [\u22121,1]; g = 2tan\u207b\u00b9x only for x \u2265 0, so they agree exactly on [0,1]."},
+
+  /* ---------- Exercise-IV \u00b7 Integer type ---------- */
+  {src:"Ex-IV Q82", doc:"exIV", type:"Int", tier:3, tax:"F6", pat:"P14", q:"Let X be a set with exactly 5 elements and Y be a set with exactly 7 elements. If \u03b1 is the number of one-one functions from X to Y and \u03b2 is the number of onto functions from Y to X, then the value of (1/5!)(\u03b2 \u2212 \u03b1) is:", ans:"119", note:"\u03b1 = \u2077P\u2085\u00b7 = 2520 and \u03b2 = 5\u2077 \u2212 \u2075C\u20814\u2077 + \u2075C\u20823\u2077 \u2212 \u2075C\u20832\u2077 + \u2075C\u2084 = 16800, so (16800 \u2212 2520)/120 = 119."},
+  {src:"Ex-IV Q83", doc:"exIV", type:"Int", tier:3, tax:"F7", pat:"P6", q:"The number of values of x for which |||x\u00b2 \u2212 x + 4| \u2212 2| \u2212 3| = x\u00b2 + x \u2212 12 is:", ans:"1", note:"x\u00b2\u2212x+4 is always positive, so the nest peels to |x\u00b2\u2212x\u22121| = x\u00b2+x\u221212, leaving 2x = 11."},
+  {src:"Ex-IV Q84", doc:"exIV", type:"Int", tier:3, tax:"F1", pat:"P10", q:"If f(x) = kx \u2212 m such that f(1) \u2208 [\u22124, \u22121] and f(2) \u2208 [\u22121, 5] then the maximum value of f(3) is:", ans:"20", note:"f(3) = 9k \u2212 m = (8f(2) \u2212 5f(1))/3, so f(3) \u2208 [\u22121, 20]."},
+  {src:"Ex-IV Q85", doc:"exIV", type:"Int", tier:3, tax:"F7", pat:"P9", q:"If 4\u02e3 \u2212 2^{x+2} + 5 + ||b\u22121| \u2212 3| = |sin y|, where x, y, b \u2208 R, then the possible positive value of b is:", ans:"4", note:"(2\u02e3\u22122)\u00b2 + 1 + ||b\u22121|\u22123| = |sin y| with LHS \u2265 1 and RHS \u2264 1 forces both to equal 1, giving b = 4 or \u22122."},
+  {src:"Ex-IV Q86", doc:"exIV", type:"Int", tier:3, tax:"F8", pat:"P15", q:"Let the solution set of the equation \u221a(x + [x/2]) + [\u221a{x} + [x/3]] = 3 be [a, b). Find the product ab (where [\u00b7] and {\u00b7} denote the greatest integer and fractional part functions respectively).", ans:"12", note:"[x] + [x/2] = 4 with [x/3] = 1 gives x \u2208 [3,4), so a = 3 and b = 4."},
+  {src:"Ex-IV Q87", doc:"exIV", type:"Int", tier:3, tax:"F8", pat:"P15", q:"Let [K] denote the greatest integer less than or equal to K. If the number of positive integral solutions of the equation [x/[\u03c0\u00b2]] = [x/[11\u00bd]] is n, then the value of n is:", ans:"24", note:"The equation is [x/9] = [x/11]; case-by-case on the common quotient gives 8 + 7 + 5 + 3 + 1 = 24 solutions."},
+  {src:"Ex-IV Q88", doc:"exIV", type:"Int", tier:3, tax:"F20", pat:"P15", q:"Let f(x) = [1/cos{x}] where [y] and {y} denote the greatest integer and fractional part functions, and g(x) = 2x\u00b2 \u2212 3x(k+1) + k(3k+1). If (gof)(x) < 0 for all x \u2208 R then the number of integral values of K is:", ans:"1", note:"f(x) = 1 for all real x, so g(1) < 0 gives k \u2208 (\u22121/3, 1) and only k = 0 is an integer."},
+  {src:"Ex-IV Q91", doc:"exIV", type:"Int", tier:3, tax:"F10", pat:"P15", q:"Let {x} and [x] denote the fractional and integral part of a real number x respectively. Then the number of solutions of the equation 4{x} = x + [x] is:", ans:"2", note:"Writing x = [x] + {x} gives 2{x} = [x], and 0 \u2264 {x} < 1 leaves [x] = 0 and [x] = 1."},
+  {src:"Ex-IV Q95", doc:"exIV", type:"Int", tier:3, tax:"F18", pat:"P18", q:"The number of integers in the range of f(x) = (1/\u03c0)(sin\u207b\u00b9x + tan\u207b\u00b9x) + (x+1)/(x\u00b2+2x+5) is:", ans:"2", note:"The domain is [\u22121,1]; the function is increasing there, and its range spans just two integers."},
+  {src:"Ex-IV Q99", doc:"exIV", type:"Int", tier:3, tax:"F17", pat:"P7", q:"Let f : R \u2192 R, f(x) = (x\u00b2 + bx + 1)/(x\u00b2 + 2x + b), (b > 1) and if the function f(x) and 1/f(x) have the same bounded set as their range, and b = 2\u221ac \u2212 p (where c, p \u2208 N), then the value of c is:", ans:"3", note:"Clearing the fraction and forcing a real x gives the y-interval; matching it to the reciprocal condition pins b, and the printed key identifies c = 3."},
+
+  /* ---------- Exercise-IV \u00b7 Matrix matching ---------- */
+  {src:"Ex-IV Q126", doc:"exIV", type:"MM", tier:3, tax:"F16", pat:"P4", q:"The function f(x) is defined on the interval [0,1]. Match the following columns. Column-I (Function): a) f(tan x)  b) f(sin x)  c) f(cos x)  d) f(2 sin x). Column-II (Domain): p) [2n\u03c0 \u2212 \u03c0/2, 2n\u03c0 + \u03c0/2], n \u2208 Z;  q) [2n\u03c0, 2n\u03c0 + \u03c0/6] \u222a [2n\u03c0 + 5\u03c0/6, (2n+1)\u03c0], n \u2208 Z;  r) [2n\u03c0, (2n+1)\u03c0], n \u2208 Z;  s) [n\u03c0, n\u03c0 + \u03c0/4], n \u2208 Z", ans:"a\u2013s, b\u2013r, c\u2013p, d\u2013q", note:"In each row force the inner expression into [0,1] and solve for x."},
+  {src:"Ex-IV Q127", doc:"exIV", type:"MM", tier:3, tax:"F17", pat:"P6", q:"Let f(x) = (x\u00b2 \u2212 6x + 5)/(x\u00b2 \u2212 5x + 6). Now match the following. COLUMN-I: a) if \u22121 < x < 1 then f(x) satisfies  b) if 1 < x < 2 then f(x) satisfies  c) if 3 < x < 5 then f(x) satisfies  d) if x > 5 then f(x) satisfies. COLUMN-II: p) 0 < f(x) < 1   q) f(x) < 0   r) f(x) > 0   s) f(x) < 1", ans:"a\u2013p,r,s   b\u2013q   c\u2013q   d\u2013p,r,s", note:"Factor to (x\u22121)(x\u22125)/((x\u22122)(x\u22123)) and run a sign chart across the four critical points."}
+];
+
+let FN_PRAC_DOCS = [
+  {id:"exIII", label:"Narayana Module \u00b7 JEE-ADV-MATHS-VOL-IV \u00b7 Functions \u00b7 EXERCISE-III (Q1\u2013Q40)", date:"24 Aug 2026", note:"Domain / range / types items only (Q1\u2013Q12, Q14\u2013Q19). Every option set transcribed from the question pages and cross-checked against the printed EXERCISE-III KEY and the worked HINTS that follow it. Q13 and Q20\u2013Q40 sit in the companion chapter."},
+  {id:"exIV",  label:"Narayana Module \u00b7 JEE-ADV-MATHS-VOL-IV \u00b7 Functions \u00b7 EXERCISE-IV (Q1\u2013Q127)", date:"24 Aug 2026", note:"Single-answer, multi-answer, integer and matrix-matching items belonging to the domain / range / types half. Verified against the complete printed EXERCISE-IV KEY; printed hints were available for Q1\u2013Q90 only."}
+];
+
+const FN_PRAC_TIERS=[{k:"All",l:"All"},{k:"1",l:"Foundation"},{k:"2",l:"JEE Main"},{k:"3",l:"JEE Advanced"},{k:"Flag",l:"\u2605 Flagged"}];
+
 const CONTENT={
   "maths/trig/fg":{key:"trigfg",taxa:TAXA,formulae:FORMULAE,patterns:PATTERNS,guided:GUIDED,practice:PRACTICE,pracTiers:PRAC_TIERS},
   "maths/trig/pev":{key:"pev",taxa:PEV_TAXA,formulae:PEV_FORMULAE,patterns:PEV_PATTERNS,guided:PEV_GUIDED,practice:PEV_PRACTICE,pracDocs:PEV_PRAC_DOCS,pracTiers:PEV_PRAC_TIERS},
@@ -8657,7 +9114,8 @@ const CONTENT={
   "tools/ctool/ctips":{key:"ctips",taxa:CT_TAXA,formulae:CT_CARDS,patterns:CT_PATTERNS,guided:CT_GUIDED,practice:CT_PRACTICE,pracDocs:CT_PRAC_DOCS,pracTiers:CT_PRAC_TIERS},
   "chem/phys/ie":{key:"ie",taxa:IE_TAXA,formulae:IE_FORMULAE,patterns:IE_PATTERNS,guided:IE_GUIDED,practice:IE_PRACTICE,pracDocs:IE_PRAC_DOCS,pracTiers:IE_PRAC_TIERS},
   "chem/phys/ksp":{key:"ksp",taxa:KSP_TAXA,formulae:KSP_FORMULAE,patterns:KSP_PATTERNS,guided:KSP_GUIDED,practice:KSP_PRACTICE,pracDocs:KSP_PRAC_DOCS,pracTiers:KSP_PRAC_TIERS},
-  "chem/phys/ck":{key:"ck",taxa:CK_TAXA,formulae:CK_FORMULAE,patterns:CK_PATTERNS,guided:CK_GUIDED,practice:CK_PRACTICE,figs:CK_FIG,pracDocs:CK_PRAC_DOCS,pracTiers:CK_PRAC_TIERS}
+  "chem/phys/ck":{key:"ck",taxa:CK_TAXA,formulae:CK_FORMULAE,patterns:CK_PATTERNS,guided:CK_GUIDED,practice:CK_PRACTICE,figs:CK_FIG,pracDocs:CK_PRAC_DOCS,pracTiers:CK_PRAC_TIERS},
+  "maths/calc/fn":{key:"fn",taxa:FN_TAXA,formulae:FN_FORMULAE,patterns:FN_PATTERNS,guided:FN_GUIDED,practice:FN_PRACTICE,pracDocs:FN_PRAC_DOCS,pracTiers:FN_PRAC_TIERS}
 };
 function chapPath(a,b,c){return a+"/"+b+"/"+c;}
 function findChapter(path){
@@ -8673,6 +9131,15 @@ function subReady(su,sb){return sb.chapters.filter(c=>CONTENT[chapPath(su,sb.id,
    counts, MCQ %, srcText completeness) are computed live from the data
    above; only descriptive metadata lives here. */
 const CHAPTER_META = [
+  {
+    id:      "maths/calc/fn",
+    grade:   "11th",
+    subject: "Maths",
+    topic:   "Calculus",
+    chapter: "Functions: Domain, Range & Types",
+    sources: ["Narayana JEE-ADV-MATHS-VOL-IV \u00b7 Functions (Synopsis + Exercise-III + Exercise-IV)"],
+    created: "24 Aug 2026"
+  },
   {
     id:      "maths/trig/fg",
     grade:   "11th",
